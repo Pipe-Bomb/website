@@ -1,0 +1,11 @@
+.loading {
+	height: 300px;
+}
+
+.container {
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+}

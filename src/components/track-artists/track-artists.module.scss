@@ -1,0 +1,11 @@
+.artistName {
+	color: var(--fg-secondary);
+
+	&.artistLink {
+		text-decoration: underline;
+	}
+}
+
+.artistJoin {
+	color: var(--fg-tertiary);
+}

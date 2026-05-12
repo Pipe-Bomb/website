@@ -1,0 +1,45 @@
+.container {
+	background: var(--bg-surface);
+	padding: 8px;
+	border-radius: 4px;
+	display: flex;
+
+	.info {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+
+		.plugin {
+			font-size: 0.8rem;
+			color: var(--fg-secondary);
+		}
+	}
+
+	.dependenciesContainer {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		.dependencyCategory {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			.dependencyCategoryTitle {
+				font-weight: bold;
+				font-weight: 1.2rem;
+			}
+
+			.dependency {
+				display: flex;
+				flex-direction: column;
+
+				.dependencyPlugin {
+					color: var(--fg-secondary);
+					font-size: 0.8rem;
+				}
+			}
+		}
+	}
+}

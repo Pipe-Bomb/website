@@ -1,0 +1,119 @@
+.button {
+	background: transparent;
+	border: none;
+	display: block;
+	border-radius: 50%;
+	cursor: pointer;
+	position: relative;
+	isolation: isolate;
+
+	&.primary {
+		--bg: var(--button-primary-bg);
+		--fg: var(--button-primary-fg);
+		--hover: var(--button-primary-hover);
+	}
+
+	&.secondary {
+		--bg: var(--button-secondary-bg);
+		--fg: var(--button-secondary-fg);
+		--hover: var(--button-secondary-hover);
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		transition: inset 0.1s;
+		z-index: -1;
+	}
+
+	&::after {
+		content: "";
+		display: block;
+		position: absolute;
+		inset: -3px;
+		border: 0px solid var(--accent-primary);
+		border-color: var(--accent-primary) var(--accent-primary) transparent
+			transparent;
+		border-radius: 50%;
+		transform: rotate(-45deg);
+	}
+
+	&.styleSimple {
+	}
+
+	&.styleBackground::before {
+		background: var(--bg);
+	}
+
+	&.loading {
+		&::before {
+			inset: 2px;
+		}
+
+		&::after {
+			transition: border-width 0.1s;
+			border-width: 3px;
+			animation: #{spin} 0.7s cubic-bezier(0.5, 0.2, 0.5, 0.8) infinite;
+		}
+	}
+
+	&:active::before {
+		// todo: make this cooler
+		background: var(--button-primary-active);
+		inset: -3px;
+		transition: none;
+	}
+
+	.icon {
+		display: block;
+		color: var(--fg);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	&.sm {
+		padding: 3px;
+		width: 24px;
+		height: 24px;
+
+		.icon {
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	&.md {
+		padding: 4px;
+		width: 32px;
+		height: 32px;
+
+		.icon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	&.lg {
+		padding: 6px;
+		width: 42px;
+		height: 42px;
+
+		.icon {
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
+@keyframes #{spin} {
+	0% {
+		transform: rotate(-45deg);
+	}
+	100% {
+		transform: rotate(315deg);
+	}
+}

@@ -1,0 +1,36 @@
+.container {
+	background: var(--slider-track);
+	height: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+	border: 2px solid var(--slider-track);
+
+	.progress {
+		height: 100%;
+		background: var(--slider-fill);
+		transition: width 0.15s;
+		border-radius: 0 4px 4px 0;
+	}
+
+	.loading {
+		width: 50%;
+		transform: translateX(-50%);
+		height: 100%;
+		background: var(--slider-fill);
+		border-radius: 4px;
+		animation: #{bounce} 1s cubic-bezier(0.77, 0, 0.36, 0.99) infinite;
+		position: relative;
+	}
+}
+
+@keyframes #{bounce} {
+	0% {
+		left: 0;
+	}
+	50% {
+		left: 100%;
+	}
+	100% {
+		left: 0;
+	}
+}

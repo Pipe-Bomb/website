@@ -1,0 +1,47 @@
+.container {
+	width: 400px;
+
+	.sectionTitle {
+		margin: 8px 0 0 0;
+	}
+
+	.entry {
+		display: flex;
+		flex-direction: column;
+		text-align: left;
+		position: relative;
+		padding: 8px 0;
+
+		&::after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			height: 1px;
+			left: 0;
+			right: 0;
+			background: #fff;
+		}
+
+		.key {
+			display: block;
+			font-weight: bold;
+		}
+
+		.valueContainer {
+			display: flex;
+			align-items: center;
+
+			.value {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: pre;
+			}
+		}
+
+		&:last-of-type {
+			&::after {
+				content: initial;
+			}
+		}
+	}
+}

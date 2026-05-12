@@ -1,0 +1,49 @@
+.positioner {
+	--width: 200px;
+
+	width: var(--width);
+	max-width: var(--width);
+	flex-shrink: 0;
+	overflow: hidden;
+	position: relative;
+	transition: width 0.3s cubic-bezier(0.43, 0, 0.18, 0.99);
+	background: var(--bg-base);
+
+	.container {
+		position: absolute;
+		top: 8px;
+		bottom: 8px;
+		left: 8px;
+		width: calc(var(--width) - 8px * 2);
+		background: var(--bg-elevated);
+		border-radius: 8px;
+		padding: 8px;
+		display: flex;
+		flex-direction: column;
+
+		.main {
+			flex-grow: 1;
+
+			.links {
+				.sectionName {
+					color: var(--fg-tertiary);
+					font-size: 0.8rem;
+				}
+
+				.linkList {
+					display: flex;
+					flex-direction: column;
+					gap: 4px;
+
+					a {
+						color: var(--fg-secondary);
+					}
+				}
+			}
+		}
+
+		.bottom {
+			flex-shrink: 0;
+		}
+	}
+}

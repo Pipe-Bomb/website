@@ -1,0 +1,12 @@
+.container {
+	background: var(--bg-surface);
+	padding: 8px;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+
+	.source {
+		font-size: 0.8rem;
+		color: var(--fg-secondary);
+	}
+}

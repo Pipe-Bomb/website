@@ -1,0 +1,79 @@
+.container {
+	height: 89px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	background: var(--player-bg);
+	color: var(--player-fg);
+	padding: 8px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1;
+	overflow: hidden;
+
+	.left {
+		flex: 1;
+
+		.nowPlaying {
+			display: flex;
+			gap: 16px;
+
+			.nowPlayingCover {
+				width: 72px;
+				height: 72px;
+				border-radius: 4px;
+				overflow: hidden;
+			}
+
+			.nowPlayingInfo {
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+
+				.nowPlayingTitle {
+				}
+
+				.nowPlayingArtist {
+					// font-size: 0.8rem;
+					font-size: 1rem;
+				}
+			}
+		}
+	}
+
+	.center {
+		max-width: 600px;
+		flex-grow: 1;
+
+		.centerButtons {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.progressContainer {
+			display: flex;
+
+			.duration {
+				width: 60px;
+				flex-grow: 0;
+				flex-shrink: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.progressTrack {
+				flex-grow: 1;
+			}
+		}
+	}
+
+	.right {
+		flex: 1;
+		display: flex;
+		justify-content: end;
+	}
+}

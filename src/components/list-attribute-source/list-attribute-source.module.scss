@@ -1,0 +1,16 @@
+.container {
+	background: var(--bg-surface);
+	padding: 8px;
+	border-radius: 4px;
+	display: flex;
+
+	.info {
+		display: flex;
+		flex-direction: column;
+
+		.plugin {
+			font-size: 0.8rem;
+			color: var(--fg-secondary);
+		}
+	}
+}

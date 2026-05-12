@@ -1,0 +1,148 @@
+.container {
+	--thumb-size: 20px;
+
+	height: 30px;
+	// border: 2px solid var(--slider-track);
+	position: relative;
+	isolation: isolate;
+
+	&::before {
+		content: "";
+	}
+
+	.input {
+		all: unset;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+
+		&::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: var(--thumb-size);
+			height: var(--thumb-size);
+			border: none;
+		}
+
+		&::-moz-range-thumb {
+			width: var(--thumb-size);
+			height: var(--thumb-size);
+			background: transparent;
+			border: none;
+		}
+	}
+
+	.track {
+		position: absolute;
+		inset: 12px 0;
+		transition: inset 0.15s;
+		background: var(--player-progress-track);
+		border-radius: 5px;
+		pointer-events: none;
+		overflow: hidden;
+
+		.progress {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			width: var(--percent);
+			background: var(--player-progress-played);
+			border-radius: 0 4px 4px 0;
+			z-index: 1;
+			transition:
+				top 0.15s,
+				border-radius 0.15s;
+		}
+	}
+
+	.thumb {
+		position: absolute;
+		inset: 0 calc(var(--thumb-size) / 2);
+		pointer-events: none;
+		opacity: 0;
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			left: var(--percent);
+			width: var(--thumb-size);
+			height: var(--thumb-size);
+			background: var(--player-progress-played);
+			border-radius: 50%;
+			transform: translate(-50%, -50%);
+		}
+	}
+
+	&:active {
+		.track {
+			inset: 10px 0;
+		}
+	}
+
+	&:hover,
+	&:active {
+		.track .progress {
+			width: calc(
+				var(--percent) + var(--thumb-size) * var(--center-offset) / 2
+			);
+			top: 0 !important;
+			border-radius: 0 4px 4px 0 !important;
+		}
+
+		.thumb {
+			opacity: 1 !important;
+		}
+	}
+
+	&.isLoading {
+		.track {
+			.progress {
+				top: 50%;
+				border-radius: 4px;
+			}
+
+			.loading {
+				width: 50%;
+				transform: translateX(-50%);
+				height: 100%;
+				background: var(--player-progress-buffered);
+				border-radius: 4px;
+				animation: #{bounce} 1s cubic-bezier(0.77, 0, 0.36, 0.99) infinite;
+				position: relative;
+			}
+		}
+
+		.thumb {
+			opacity: 0;
+		}
+
+		&:active {
+			.loading {
+				display: none;
+			}
+
+			.progress {
+				top: 0;
+				border-radius: 0 4px 4px 0;
+			}
+
+			.thumb {
+				opacity: 1;
+			}
+		}
+	}
+}
+
+@keyframes #{bounce} {
+	0% {
+		left: 0;
+	}
+	50% {
+		left: 100%;
+	}
+	100% {
+		left: 0;
+	}
+}

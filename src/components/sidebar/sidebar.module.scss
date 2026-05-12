@@ -1,0 +1,31 @@
+.positioner {
+	--width: 400px;
+
+	width: 0;
+	max-width: var(--width);
+	flex-shrink: 0;
+	overflow: hidden;
+	position: relative;
+	transition: width 0.3s cubic-bezier(0.43, 0, 0.18, 0.99);
+	background: var(--bg-base);
+
+	&.open {
+		width: 400px;
+	}
+
+	.container {
+		position: absolute;
+		top: 8px;
+		bottom: 8px;
+		left: 8px;
+		width: calc(var(--width) - 8px * 2);
+		background: var(--bg-elevated);
+		border-radius: 8px;
+		padding: 8px;
+
+		.queue {
+			max-height: 100%;
+			overflow-y: scroll;
+		}
+	}
+}

@@ -1,0 +1,130 @@
+.container {
+	isolation: isolate;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	min-height: 100%;
+
+	.backgroundContainer {
+		position: absolute;
+		background: linear-gradient(
+			var(--color-accent-800),
+			var(--color-accent-900)
+		);
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 100%;
+		z-index: -1;
+		filter: brightness(0.5);
+		overflow: hidden;
+
+		.backgroundImage {
+			position: absolute;
+			inset: 0;
+		}
+	}
+
+	.aboveBackground {
+		height: 300px;
+		position: relative;
+
+		.logo {
+			width: 400px;
+			height: 300px;
+			max-width: 100%;
+			max-height: 100%;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			img {
+				object-fit: contain;
+			}
+		}
+	}
+
+	.body {
+		flex-grow: 1;
+		background: var(--bg-base);
+	}
+}
+
+.top {
+	max-width: 1400px;
+	margin: 0 auto;
+	display: flex;
+	gap: 32px;
+
+	.thumbnailContainer {
+		width: 300px;
+		height: 150px;
+		border-radius: 16px;
+		position: relative;
+		flex-shrink: 0;
+
+		img {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 200%;
+			border-radius: 50%;
+		}
+	}
+
+	.artistName {
+		font-size: 3rem;
+		margin: 8px 0;
+	}
+
+	.genres {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+
+		.genre {
+			background: var(--button-secondary-bg);
+			padding: 4px 8px;
+			border-radius: 100px;
+
+			&:hover {
+				background: var(--button-secondary-hover);
+			}
+
+			&:active {
+				background: var(--button-secondary-active);
+			}
+		}
+	}
+}
+
+.split {
+	display: flex;
+
+	.trackList {
+		flex-grow: 1;
+	}
+
+	.sideBar {
+		width: 300px;
+		max-width: 50%;
+
+		.externalUrl {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+
+			.externalUrlImage {
+				width: 24px;
+				height: 24px;
+				object-fit: contain;
+			}
+
+			.externalUrlLink {
+				text-decoration: underline;
+			}
+		}
+	}
+}

@@ -1,0 +1,28 @@
+.container {
+	position: fixed;
+	z-index: 1000;
+	background: var(--bg-elevated);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	box-shadow: var(--shadow-md);
+	overflow: hidden;
+
+	.element {
+		padding: 8px;
+		border: none;
+		background: var(--button-ghost-bg);
+		color: var(--button-ghost-fg);
+		cursor: pointer;
+		text-align: left;
+
+		&:hover,
+		&:focus {
+			background: var(--button-ghost-hover);
+		}
+
+		&:active {
+			background: var(--button-ghost-active);
+		}
+	}
+}

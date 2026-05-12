@@ -1,0 +1,184 @@
+:root {
+	/* =========================
+     🎨 Core Neutrals (RAW COLORS — do not use directly in components)
+     ========================= */
+	--color-white: #ffffff; /* pure white base */
+	--color-black: #000000; /* pure black base */
+
+	--color-gray-50: #fafafa; /* lightest gray (rarely used directly) */
+	--color-gray-100: #f4f4f5;
+	--color-gray-200: #e4e4e7;
+	--color-gray-300: #d4d4d8;
+	--color-gray-400: #a1a1aa;
+	--color-gray-500: #71717a;
+	--color-gray-600: #52525b;
+	--color-gray-700: #3f3f46;
+	--color-gray-800: #27272a;
+	--color-gray-900: #18181b;
+	--color-gray-950: #09090b; /* darkest app background */
+
+	/* =========================
+     🌈 Brand / Accent (RAW COLORS — base for semantic accent)
+     ========================= */
+	--color-accent-50: #e6f9f0;
+	--color-accent-100: #c2f0db;
+	--color-accent-200: #8fe6c2;
+	--color-accent-300: #5cdbab;
+	--color-accent-400: #2ad094;
+	--color-accent-500: #1db954; /* primary brand color */
+	--color-accent-600: #17a34a;
+	--color-accent-700: #12803a;
+	--color-accent-800: #0d5c2a;
+	--color-accent-900: #08381a;
+
+	/* =========================
+     ⚠️ Semantic Colors (RAW — for state mapping)
+     ========================= */
+	--color-success: #22c55e; /* success indicators (e.g. saved, completed) */
+	--color-warning: #f59e0b; /* warnings (e.g. network unstable) */
+	--color-error: #ef4444; /* errors (e.g. failed playback) */
+	--color-info: #3b82f6; /* informational highlights */
+
+	/* =========================
+     🧱 Backgrounds (MAIN LAYOUT LAYERS)
+     ========================= */
+	--bg-base: var(--color-gray-950); /* app root background (full screen) */
+	--bg-surface: var(--color-gray-900); /* cards, panels, sections */
+	--bg-elevated: var(--color-gray-800); /* modals, popups, dropdowns */
+	--bg-subtle: var(--color-gray-900); /* subtle areas (hover zones, strips) */
+	--bg-inverse: var(
+		--color-white
+	); /* inverted surfaces (rare, e.g. light cards in dark mode) */
+
+	/* =========================
+     📝 Foregrounds (TEXT / ICON HIERARCHY)
+     ========================= */
+	--fg-primary: var(--color-gray-50); /* main text, primary icons */
+	--fg-secondary: var(
+		--color-gray-300
+	); /* secondary text (artist names, labels) */
+	--fg-tertiary: var(--color-gray-500); /* metadata (timestamps, subtle info) */
+	--fg-muted: var(--color-gray-600); /* disabled or deemphasized text */
+	--fg-inverse: var(--color-gray-900); /* text on light/accent backgrounds */
+
+	/* =========================
+     🔲 Borders / Dividers
+     ========================= */
+	--border-default: var(
+		--color-gray-800
+	); /* standard borders (inputs, cards) */
+	--border-subtle: var(--color-gray-900); /* very subtle separators */
+	--border-strong: var(--color-gray-700); /* emphasized borders */
+	--border-focus: var(
+		--color-accent-500
+	); /* focused inputs / active elements */
+	--border-error: var(--color-error); /* error states */
+
+	/* =========================
+     🎯 Accent (SEMANTIC USAGE)
+     ========================= */
+	--accent-primary: var(
+		--color-accent-500
+	); /* main brand color (buttons, highlights) */
+	--accent-primary-hover: var(
+		--color-accent-400
+	); /* hover state for accent elements */
+	--accent-primary-active: var(--color-accent-600); /* active/pressed state */
+	--accent-subtle: rgba(
+		29,
+		185,
+		84,
+		0.15
+	); /* tinted backgrounds using accent */
+
+	/* =========================
+     🔘 Buttons (ALL VARIANTS)
+     ========================= */
+	--button-primary-bg: var(--accent-primary); /* main CTA buttons */
+	--button-primary-fg: var(--color-white); /* text/icons on primary buttons */
+	--button-primary-hover: var(--accent-primary-hover);
+	--button-primary-active: var(--accent-primary-active);
+	--button-primary-disabled: var(--color-gray-700);
+
+	--button-secondary-bg: var(--color-gray-800); /* secondary actions */
+	--button-secondary-fg: var(--fg-primary);
+	--button-secondary-hover: var(--color-gray-700);
+	--button-secondary-active: var(--color-gray-600);
+	--button-secondary-disabled: var(--color-gray-800);
+
+	--button-ghost-bg: transparent; /* minimal buttons (icon buttons, overlays) */
+	--button-ghost-fg: var(--fg-primary);
+	--button-ghost-hover: rgba(255, 255, 255, 0.08);
+	--button-ghost-active: rgba(255, 255, 255, 0.12);
+
+	/* =========================
+     🧾 Inputs / Forms
+     ========================= */
+	--input-bg: var(--bg-surface); /* input background */
+	--input-fg: var(--fg-primary); /* input text */
+	--input-border: var(--border-default);
+	--input-placeholder: var(--fg-tertiary); /* placeholder text */
+	--input-focus-border: var(--border-focus); /* focused input border */
+
+	/* =========================
+     🎚️ Sliders (volume, playback)
+     ========================= */
+	--slider-track: var(--color-gray-700); /* full track background */
+	--slider-fill: var(--accent-primary); /* filled portion (played/volume) */
+	--slider-thumb: var(--color-white); /* draggable handle */
+	--slider-hover: var(--accent-primary-hover);
+
+	/* =========================
+     🎧 Player UI (core music controls)
+     ========================= */
+	--player-bg: var(--bg-elevated); /* player bar / main player panel */
+	--player-fg: var(--fg-primary); /* text/icons in player */
+	--player-controls: var(--fg-secondary); /* less prominent controls */
+
+	--player-progress-track: var(--color-gray-700); /* total track */
+	--player-progress-buffered: var(--color-gray-500); /* buffered portion */
+	--player-progress-played: var(--accent-primary); /* played portion */
+
+	/* =========================
+     📜 Lists / Queue / Library
+     ========================= */
+	--list-bg: transparent; /* base list background */
+	--list-hover: rgba(255, 255, 255, 0.06); /* hover highlight */
+	--list-active: rgba(255, 255, 255, 0.12); /* selected/playing track */
+	--list-active-fg: var(--fg-primary); /* text for active item */
+
+	/* =========================
+     ⚠️ State Colors (APPLIED STATES)
+     ========================= */
+	--state-success-bg: rgba(34, 197, 94, 0.15); /* success background */
+	--state-success-fg: var(--color-success); /* success text/icon */
+
+	--state-warning-bg: rgba(245, 158, 11, 0.15);
+	--state-warning-fg: var(--color-warning);
+
+	--state-error-bg: rgba(239, 68, 68, 0.15);
+	--state-error-fg: var(--color-error);
+
+	--state-info-bg: rgba(59, 130, 246, 0.15);
+	--state-info-fg: var(--color-info);
+
+	/* =========================
+     🌫️ Overlays / Interaction Layers
+     ========================= */
+	--overlay-scrim: rgba(0, 0, 0, 0.6); /* modal backdrop */
+	--overlay-hover: rgba(
+		255,
+		255,
+		255,
+		0.08
+	); /* hover overlay on images/cards */
+	--overlay-active: rgba(255, 255, 255, 0.12); /* pressed state overlay */
+
+	/* =========================
+     ✨ Effects (OPTIONAL)
+     ========================= */
+	--focus-ring: 0 0 0 2px var(--accent-primary); /* focus outline (accessibility) */
+	--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25); /* small elevation */
+	--shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35); /* medium elevation */
+	--shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.45); /* large elevation */
+}
