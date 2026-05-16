@@ -4,12 +4,12 @@
  * Pipe Bomb API
  * OpenAPI spec version: 0.0.1
  */
-import type { Album } from "./album";
+import type { AlbumArtist } from "./albumArtist";
 import type { AttributeMap } from "./attributeMap";
 import type { Identity } from "./identity";
 import type { Track } from "./track";
 
-export interface Artist {
+export interface Album {
 	uuid: string;
 	attributes: AttributeMap | null;
 	/** @nullable */
@@ -17,5 +17,5 @@ export interface Artist {
 	/** @nullable */
 	tracks: Track[] | null;
 	/** @nullable */
-	albums: Album[] | null;
+	artists: AlbumArtist[] | null;
 }

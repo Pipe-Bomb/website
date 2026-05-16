@@ -12,6 +12,9 @@ import {
 	IconPlayerPauseFilled,
 	IconPlayerPlayFilled,
 } from "@tabler/icons-react";
+import { useRightClick } from "@/hook/right-click.hook";
+import { useCallback } from "react";
+import { ContextMenuElement } from "@/context/context-menu.context";
 
 interface Props {
 	track: Track;
@@ -19,12 +22,28 @@ interface Props {
 }
 
 export function QueueTrack({ track, queueIndex }: Props) {
-	const { currentIndex, isPlaying, toggle, playIndex, setIsPlaying } =
+	const { currentIndex, isPlaying, toggle, playIndex, setIsPlaying, remove } =
 		usePlayerStore();
 
 	const cover = useAttribute(track.attributes, "front", "buffer");
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
+
+	const contextMenu = useCallback<() => ContextMenuElement[]>(() => {
+		const menu: ContextMenuElement[] = [];
+
+		if (currentIndex != queueIndex) {
+			menu.push({
+				languageKey: "contextmenu.queue.remove",
+				key: "remove",
+				onClick: () => remove(queueIndex),
+			});
+		}
+
+		return menu;
+	}, [currentIndex, queueIndex]);
+
+	const rightClick = useRightClick(contextMenu);
 
 	return (
 		<div
@@ -33,6 +52,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 				currentIndex == queueIndex && styles.active,
 				currentIndex > queueIndex && styles.history,
 			)}
+			{...rightClick}
 		>
 			<div className={styles.imageContainer}>
 				<ResourceImage

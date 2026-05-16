@@ -18,9 +18,10 @@ interface PlayerStore {
 	seek: (time: number) => void;
 
 	playTrack: (track: Track, indexInList?: number, entireList?: Track[]) => void;
-	addToEnd: (track: Track) => void;
+	addToEnd: (tracks: Track[]) => void;
 	playNext: (track: Track) => void;
 	playNow: (track: Track) => void;
+	remove: (index: number) => void;
 
 	next: () => void;
 	prev: () => void;
@@ -61,9 +62,9 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 
 	// 1. Standard "Add to Queue" (At the very end)
-	addToEnd: (track: Track) => {
+	addToEnd: (tracks: Track[]) => {
 		set((state) => ({
-			queue: [...state.queue, track],
+			queue: [...state.queue, ...tracks],
 		}));
 	},
 
@@ -83,6 +84,12 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			queue: [track],
 			currentIndex: 0,
 			isPlaying: true,
+		}));
+	},
+
+	remove: (index: number) => {
+		set((state) => ({
+			queue: state.queue.filter((_track, i) => i != index),
 		}));
 	},
 

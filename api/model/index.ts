@@ -5,11 +5,14 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from "./album";
+export * from "./albumArtist";
+export * from "./albumsSearchDto";
+export * from "./albumsSearchResponse";
 export * from "./allTasksResponse";
 export * from "./artist";
 export * from "./artistsSearchDto";
 export * from "./artistsSearchResponse";
-export * from "./artistTracksItem";
 export * from "./attributeMap";
 export * from "./attributeSource";
 export * from "./attributeSourceOrderDto";
@@ -30,6 +33,8 @@ export * from "./languageMapKeys";
 export * from "./libraryFindResponse";
 export * from "./librarySearchDto";
 export * from "./orderedAttributeSourceDto";
+export * from "./pluginConfigs";
+export * from "./pluginConfigStub";
 export * from "./pluginLibrary";
 export * from "./resource";
 export * from "./streamInstance";

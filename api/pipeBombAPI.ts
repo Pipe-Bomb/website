@@ -21,6 +21,9 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+	Album,
+	AlbumsSearchDto,
+	AlbumsSearchResponse,
 	AllTasksResponse,
 	Artist,
 	ArtistsSearchDto,
@@ -33,6 +36,7 @@ import type {
 	LanguageMap,
 	LibraryFindResponse,
 	LibrarySearchDto,
+	PluginConfigs,
 	PluginLibrary,
 	StreamInstance,
 	Track,
@@ -1442,31 +1446,29 @@ export type getResponseSuccess = getResponse200 & {
 };
 export type getResponse = getResponseSuccess;
 
-export const getGetUrl = (dir: string, file: string) => {
-	return `/resources/${dir}/${file}`;
+export const getGetUrl = (pluginId: string) => {
+	return `/plugin-config/${pluginId}`;
 };
 
 export const get = async (
-	dir: string,
-	file: string,
+	pluginId: string,
 	options?: RequestInit,
 ): Promise<getResponse> => {
-	return customFetch<getResponse>(getGetUrl(dir, file), {
+	return customFetch<getResponse>(getGetUrl(pluginId), {
 		...options,
 		method: "GET",
 	});
 };
 
-export const getGetQueryKey = (dir: string, file: string) => {
-	return [`/resources/${dir}/${file}`] as const;
+export const getGetQueryKey = (pluginId: string) => {
+	return [`/plugin-config/${pluginId}`] as const;
 };
 
 export const getGetQueryOptions = <
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	dir: string,
-	file: string,
+	pluginId: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1476,16 +1478,16 @@ export const getGetQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetQueryKey(dir, file);
+	const queryKey = queryOptions?.queryKey ?? getGetQueryKey(pluginId);
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof get>>> = ({
 		signal,
-	}) => get(dir, file, { signal, ...requestOptions });
+	}) => get(pluginId, { signal, ...requestOptions });
 
 	return {
 		queryKey,
 		queryFn,
-		enabled: !!(dir && file),
+		enabled: !!pluginId,
 		...queryOptions,
 	} as UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData> & {
 		queryKey: DataTag<QueryKey, TData, TError>;
@@ -1499,8 +1501,7 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	dir: string,
-	file: string,
+	pluginId: string,
 	options: {
 		query: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1523,8 +1524,7 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	dir: string,
-	file: string,
+	pluginId: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1547,8 +1547,7 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	dir: string,
-	file: string,
+	pluginId: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1564,8 +1563,7 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	dir: string,
-	file: string,
+	pluginId: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1576,7 +1574,7 @@ export function useGet<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetQueryOptions(dir, file, options);
+	const queryOptions = getGetQueryOptions(pluginId, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -1734,6 +1732,445 @@ export function useGetIcon<
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
 	const queryOptions = getGetIconQueryOptions(pluginId, iconId, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export type getAlbumResponse200 = {
+	data: Album;
+	status: 200;
+};
+
+export type getAlbumResponse404 = {
+	data: void;
+	status: 404;
+};
+
+export type getAlbumResponseSuccess = getAlbumResponse200 & {
+	headers: Headers;
+};
+export type getAlbumResponseError = getAlbumResponse404 & {
+	headers: Headers;
+};
+
+export type getAlbumResponse = getAlbumResponseSuccess | getAlbumResponseError;
+
+export const getGetAlbumUrl = (albumUuid: string) => {
+	return `/albums/${albumUuid}`;
+};
+
+export const getAlbum = async (
+	albumUuid: string,
+	options?: RequestInit,
+): Promise<getAlbumResponse> => {
+	return customFetch<getAlbumResponse>(getGetAlbumUrl(albumUuid), {
+		...options,
+		method: "GET",
+	});
+};
+
+export const getGetAlbumQueryKey = (albumUuid: string) => {
+	return [`/albums/${albumUuid}`] as const;
+};
+
+export const getGetAlbumQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAlbum>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetAlbumQueryKey(albumUuid);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getAlbum>>> = ({
+		signal,
+	}) => getAlbum(albumUuid, { signal, ...requestOptions });
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!albumUuid,
+		...queryOptions,
+	} as UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+};
+
+export type GetAlbumQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAlbum>>
+>;
+export type GetAlbumQueryError = void;
+
+export function useGetAlbum<
+	TData = Awaited<ReturnType<typeof getAlbum>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAlbum>>,
+					TError,
+					Awaited<ReturnType<typeof getAlbum>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAlbum<
+	TData = Awaited<ReturnType<typeof getAlbum>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAlbum>>,
+					TError,
+					Awaited<ReturnType<typeof getAlbum>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAlbum<
+	TData = Awaited<ReturnType<typeof getAlbum>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetAlbum<
+	TData = Awaited<ReturnType<typeof getAlbum>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAlbum>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAlbumQueryOptions(albumUuid, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export type searchAlbumsResponse200 = {
+	data: AlbumsSearchResponse;
+	status: 200;
+};
+
+export type searchAlbumsResponseSuccess = searchAlbumsResponse200 & {
+	headers: Headers;
+};
+export type searchAlbumsResponse = searchAlbumsResponseSuccess;
+
+export const getSearchAlbumsUrl = () => {
+	return `/albums`;
+};
+
+export const searchAlbums = async (
+	albumsSearchDto: AlbumsSearchDto,
+	options?: RequestInit,
+): Promise<searchAlbumsResponse> => {
+	return customFetch<searchAlbumsResponse>(getSearchAlbumsUrl(), {
+		...options,
+		method: "POST",
+		headers: { "Content-Type": "application/json", ...options?.headers },
+		body: JSON.stringify(albumsSearchDto),
+	});
+};
+
+export const getSearchAlbumsMutationOptions = <
+	TError = unknown,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof searchAlbums>>,
+		TError,
+		{ data: AlbumsSearchDto },
+		TContext
+	>;
+	request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof searchAlbums>>,
+	TError,
+	{ data: AlbumsSearchDto },
+	TContext
+> => {
+	const mutationKey = ["searchAlbums"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof searchAlbums>>,
+		{ data: AlbumsSearchDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return searchAlbums(data, requestOptions);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type SearchAlbumsMutationResult = NonNullable<
+	Awaited<ReturnType<typeof searchAlbums>>
+>;
+export type SearchAlbumsMutationBody = AlbumsSearchDto;
+export type SearchAlbumsMutationError = unknown;
+
+export const useSearchAlbums = <TError = unknown, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof searchAlbums>>,
+			TError,
+			{ data: AlbumsSearchDto },
+			TContext
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof searchAlbums>>,
+	TError,
+	{ data: AlbumsSearchDto },
+	TContext
+> => {
+	return useMutation(getSearchAlbumsMutationOptions(options), queryClient);
+};
+
+export type getAlbumExternalUrlsResponse200 = {
+	data: ExternalUrl[];
+	status: 200;
+};
+
+export type getAlbumExternalUrlsResponse404 = {
+	data: void;
+	status: 404;
+};
+
+export type getAlbumExternalUrlsResponseSuccess =
+	getAlbumExternalUrlsResponse200 & {
+		headers: Headers;
+	};
+export type getAlbumExternalUrlsResponseError =
+	getAlbumExternalUrlsResponse404 & {
+		headers: Headers;
+	};
+
+export type getAlbumExternalUrlsResponse =
+	| getAlbumExternalUrlsResponseSuccess
+	| getAlbumExternalUrlsResponseError;
+
+export const getGetAlbumExternalUrlsUrl = (albumUuid: string) => {
+	return `/albums/${albumUuid}/urls`;
+};
+
+export const getAlbumExternalUrls = async (
+	albumUuid: string,
+	options?: RequestInit,
+): Promise<getAlbumExternalUrlsResponse> => {
+	return customFetch<getAlbumExternalUrlsResponse>(
+		getGetAlbumExternalUrlsUrl(albumUuid),
+		{
+			...options,
+			method: "GET",
+		},
+	);
+};
+
+export const getGetAlbumExternalUrlsQueryKey = (albumUuid: string) => {
+	return [`/albums/${albumUuid}/urls`] as const;
+};
+
+export const getGetAlbumExternalUrlsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetAlbumExternalUrlsQueryKey(albumUuid);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getAlbumExternalUrls>>
+	> = ({ signal }) =>
+		getAlbumExternalUrls(albumUuid, { signal, ...requestOptions });
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!albumUuid,
+		...queryOptions,
+	} as UseQueryOptions<
+		Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAlbumExternalUrlsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAlbumExternalUrls>>
+>;
+export type GetAlbumExternalUrlsQueryError = void;
+
+export function useGetAlbumExternalUrls<
+	TData = Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+					TError,
+					Awaited<ReturnType<typeof getAlbumExternalUrls>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAlbumExternalUrls<
+	TData = Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+					TError,
+					Awaited<ReturnType<typeof getAlbumExternalUrls>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAlbumExternalUrls<
+	TData = Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetAlbumExternalUrls<
+	TData = Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+	TError = void,
+>(
+	albumUuid: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAlbumExternalUrls>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAlbumExternalUrlsQueryOptions(albumUuid, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -2676,6 +3113,166 @@ export function useGetLanguageMap<
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
 	const queryOptions = getGetLanguageMapQueryOptions(languageId, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export type getAllPluginConfigsResponse200 = {
+	data: PluginConfigs;
+	status: 200;
+};
+
+export type getAllPluginConfigsResponseSuccess =
+	getAllPluginConfigsResponse200 & {
+		headers: Headers;
+	};
+export type getAllPluginConfigsResponse = getAllPluginConfigsResponseSuccess;
+
+export const getGetAllPluginConfigsUrl = () => {
+	return `/plugin-config`;
+};
+
+export const getAllPluginConfigs = async (
+	options?: RequestInit,
+): Promise<getAllPluginConfigsResponse> => {
+	return customFetch<getAllPluginConfigsResponse>(getGetAllPluginConfigsUrl(), {
+		...options,
+		method: "GET",
+	});
+};
+
+export const getGetAllPluginConfigsQueryKey = () => {
+	return [`/plugin-config`] as const;
+};
+
+export const getGetAllPluginConfigsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAllPluginConfigs>>,
+	TError = unknown,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<
+			Awaited<ReturnType<typeof getAllPluginConfigs>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customFetch>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetAllPluginConfigsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getAllPluginConfigs>>
+	> = ({ signal }) => getAllPluginConfigs({ signal, ...requestOptions });
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getAllPluginConfigs>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAllPluginConfigsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAllPluginConfigs>>
+>;
+export type GetAllPluginConfigsQueryError = unknown;
+
+export function useGetAllPluginConfigs<
+	TData = Awaited<ReturnType<typeof getAllPluginConfigs>>,
+	TError = unknown,
+>(
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAllPluginConfigs>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAllPluginConfigs>>,
+					TError,
+					Awaited<ReturnType<typeof getAllPluginConfigs>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllPluginConfigs<
+	TData = Awaited<ReturnType<typeof getAllPluginConfigs>>,
+	TError = unknown,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAllPluginConfigs>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAllPluginConfigs>>,
+					TError,
+					Awaited<ReturnType<typeof getAllPluginConfigs>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllPluginConfigs<
+	TData = Awaited<ReturnType<typeof getAllPluginConfigs>>,
+	TError = unknown,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAllPluginConfigs>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetAllPluginConfigs<
+	TData = Awaited<ReturnType<typeof getAllPluginConfigs>>,
+	TError = unknown,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAllPluginConfigs>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAllPluginConfigsQueryOptions(options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,

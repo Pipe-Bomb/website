@@ -2,6 +2,7 @@
 	width: 180px;
 
 	.imageContainer {
+		display: block;
 		width: 180px;
 		height: 180px;
 		background: var(--bg-elevated);
@@ -24,5 +25,11 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: pre;
+		font-weight: bold;
+		margin-top: 4px;
+	}
+
+	.artists {
+		font-size: 0.9rem;
 	}
 }

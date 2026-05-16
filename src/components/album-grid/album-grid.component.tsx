@@ -1,15 +1,16 @@
 "use client";
 
 import { Spinner } from "@/components/spinner/spinner.component";
-import { useSearchArtists } from "@api";
+import { useSearchAlbums, useSearchArtists } from "@api";
 import { useState, useEffect } from "react";
-import styles from "./artist-grid.module.scss";
+import styles from "./album-grid.module.scss";
 import { GridArtist } from "@/components/grid-artist/grid-artist.component";
 import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
+import { GridAlbum } from "@/components/grid-album/grid-album.component";
 
-export function ArtistGrid() {
-	const search = useSearchArtists();
+export function AlbumGrid() {
+	const search = useSearchAlbums();
 	const { currentPage } = useUrlPagination();
 
 	useEffect(() => {
@@ -29,13 +30,14 @@ export function ArtistGrid() {
 		);
 	}
 
-	const artists = search.data.data.artists;
+	const albums = search.data.data.albums;
+	console.log(albums);
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.grid}>
-				{artists.map((artist) => (
-					<GridArtist key={artist.uuid} artist={artist} />
+				{albums.map((album) => (
+					<GridAlbum key={album.uuid} album={album} />
 				))}
 			</div>
 			<Paginator urlKey="page" />

@@ -57,7 +57,7 @@ export function ListTrack({ track }: Props) {
 		{
 			languageKey: "contextmenu.track.add-to-queue",
 			key: "add-to-queue",
-			onClick: () => addToEnd(track),
+			onClick: () => addToEnd([track]),
 		},
 		{
 			languageKey: "contextmenu.track.view-info",

@@ -24,7 +24,13 @@ export function Navbar() {
 						</Link>
 					</div>
 
-					<Link href="/artists">Artists</Link>
+					<div>
+						<Link href="/artists">Artists</Link>
+					</div>
+					<div>
+						<Link href="/albums">Albums</Link>
+					</div>
+
 					<div className={styles.links}>
 						<span className={styles.sectionName}>Libraries</span>
 						{libraries.data ? (

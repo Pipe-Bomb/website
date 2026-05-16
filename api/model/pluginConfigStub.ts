@@ -5,4 +5,6 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type ArtistTracksItem = { [key: string]: unknown };
+export interface PluginConfigStub {
+	id: string;
+}

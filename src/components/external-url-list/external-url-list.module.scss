@@ -1,0 +1,21 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.url {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		.urlImage {
+			width: 24px;
+			height: 24px;
+			object-fit: contain;
+		}
+
+		.urlLink {
+			text-decoration: underline;
+		}
+	}
+}

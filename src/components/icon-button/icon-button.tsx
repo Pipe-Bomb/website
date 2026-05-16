@@ -5,7 +5,7 @@ import { cc } from "@/lib/util";
 
 type ButtonStyle = "simple" | "background";
 type ButtonVariant = "primary" | "secondary" | "tertiary";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md" | "lg" | "xl";
 
 type Props = {
 	icon: Icon;
@@ -14,6 +14,7 @@ type Props = {
 	loading?: boolean;
 	variant?: ButtonVariant;
 	size?: ButtonSize;
+	disabled?: boolean;
 };
 
 const STYLE_CLASSES: Record<ButtonStyle, string> = {

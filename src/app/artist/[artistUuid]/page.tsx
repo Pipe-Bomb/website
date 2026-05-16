@@ -5,6 +5,8 @@ import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import Link from "next/link";
 import { Metadata } from "next";
+import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
+import { GridAlbum } from "@/components/grid-album/grid-album.component";
 
 interface Props {
 	params: Promise<{
@@ -95,37 +97,36 @@ export default async function Page({ params }: Props) {
 				</div>
 
 				<div className={styles.split}>
-					<div className={styles.trackList}>
-						<h3>Tracks</h3>
-						<div>
-							{artist.tracks?.map((track) => (
-								<ListTrack
-									track={track}
-									key={`${track.pluginId} ${track.libraryId} ${track.id}`}
-								/>
-							))}
+					<div className={styles.main}>
+						<div className={styles.trackList}>
+							<h3>Tracks</h3>
+							<div>
+								{artist.tracks?.map((track) => (
+									<ListTrack
+										track={track}
+										key={`${track.pluginId} ${track.libraryId} ${track.id}`}
+									/>
+								))}
+							</div>
 						</div>
+
+						{!!artist.albums?.length && (
+							<div className={styles.albums}>
+								<h3>Albums</h3>
+								<div className={styles.albumList}>
+									{artist.albums.map((album) => (
+										<GridAlbum album={album} key={album.uuid} />
+									))}
+								</div>
+							</div>
+						)}
 					</div>
+
 					<div className={styles.sideBar}>
 						{artistUrlsResponse.status == 200 &&
 							!!artistUrlsResponse.data.length && (
 								<div>
-									<h3>External Urls</h3>
-									{artistUrlsResponse.data.map((url, index) => (
-										<div key={index} className={styles.externalUrl}>
-											<img
-												className={styles.externalUrlImage}
-												src={`http://127.0.0.1:3000${url.iconUrl}`}
-											/>
-											<Link
-												href={url.url}
-												target="_blank"
-												className={styles.externalUrlLink}
-											>
-												{url.name}
-											</Link>
-										</div>
-									))}
+									<ExternalUrlList urls={artistUrlsResponse.data} />
 								</div>
 							)}
 					</div>

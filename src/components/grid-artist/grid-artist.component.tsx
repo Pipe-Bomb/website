@@ -35,7 +35,7 @@ export function GridArtist({ artist }: Props) {
 				<div className={styles.imageContainer}>
 					<ResourceImage resource={thumbnail} className={styles.image} />
 				</div>
-				<span>{name ?? "Unknown Artist"}</span>
+				<span className={styles.name}>{name ?? "Unknown Artist"}</span>
 			</Link>
 			<ArtistInfoModal
 				artist={artist}
