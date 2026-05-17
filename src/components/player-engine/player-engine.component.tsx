@@ -48,7 +48,7 @@ export default function AudioEngine() {
 			.then(({ data: session }) => {
 				if (cancelled || !audio) return;
 
-				const baseUrl = `http://127.0.0.1:3000/streaming/${session.id}`;
+				const baseUrl = `http://192.168.68.84:3000/streaming/${session.id}`;
 
 				if (session.type === "stream") {
 					audio.src = `${baseUrl}/stream`;

@@ -1,0 +1,15 @@
+.heading {
+	margin: 8px 0;
+
+	&.sm {
+		font-size: 1.2rem;
+	}
+
+	&.md {
+		font-size: 1.8rem;
+	}
+
+	&.lg {
+		font-size: 2.2rem;
+	}
+}

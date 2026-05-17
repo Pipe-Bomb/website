@@ -79,7 +79,7 @@ function Content({ artist }: InnerProps) {
 							{values.map((value, index) =>
 								typeof value == "object" ? (
 									<Link
-										href={`http://127.0.0.1:3000${value.url}`}
+										href={`http://192.168.68.84:3000${value.url}`}
 										key={index}
 										target="_blank"
 										className={styles.identityValue}

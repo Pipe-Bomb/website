@@ -16,7 +16,7 @@ export function ResourceImage({ resource, className, fallbackSrc }: Props) {
 
 	useEffect(() => {
 		if (resource?.url) {
-			setUrl(`http://127.0.0.1:3000${resource.url}`);
+			setUrl(`http://192.168.68.84:3000${resource.url}`);
 		} else {
 			setUrl(fallbackSrc ?? null);
 		}

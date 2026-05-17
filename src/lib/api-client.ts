@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:3000";
+const BASE_URL = "http://192.168.68.84:3000";
 
 interface RequestConfig {
 	method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE";

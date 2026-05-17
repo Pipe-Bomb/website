@@ -36,6 +36,8 @@ import type {
 	LanguageMap,
 	LibraryFindResponse,
 	LibrarySearchDto,
+	PluginConfig,
+	PluginConfigUpdateDto,
 	PluginConfigs,
 	PluginLibrary,
 	StreamInstance,
@@ -1446,29 +1448,31 @@ export type getResponseSuccess = getResponse200 & {
 };
 export type getResponse = getResponseSuccess;
 
-export const getGetUrl = (pluginId: string) => {
-	return `/plugin-config/${pluginId}`;
+export const getGetUrl = (dir: string, file: string) => {
+	return `/resources/${dir}/${file}`;
 };
 
 export const get = async (
-	pluginId: string,
+	dir: string,
+	file: string,
 	options?: RequestInit,
 ): Promise<getResponse> => {
-	return customFetch<getResponse>(getGetUrl(pluginId), {
+	return customFetch<getResponse>(getGetUrl(dir, file), {
 		...options,
 		method: "GET",
 	});
 };
 
-export const getGetQueryKey = (pluginId: string) => {
-	return [`/plugin-config/${pluginId}`] as const;
+export const getGetQueryKey = (dir: string, file: string) => {
+	return [`/resources/${dir}/${file}`] as const;
 };
 
 export const getGetQueryOptions = <
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	pluginId: string,
+	dir: string,
+	file: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1478,16 +1482,16 @@ export const getGetQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetQueryKey(pluginId);
+	const queryKey = queryOptions?.queryKey ?? getGetQueryKey(dir, file);
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof get>>> = ({
 		signal,
-	}) => get(pluginId, { signal, ...requestOptions });
+	}) => get(dir, file, { signal, ...requestOptions });
 
 	return {
 		queryKey,
 		queryFn,
-		enabled: !!pluginId,
+		enabled: !!(dir && file),
 		...queryOptions,
 	} as UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData> & {
 		queryKey: DataTag<QueryKey, TData, TError>;
@@ -1501,7 +1505,8 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	pluginId: string,
+	dir: string,
+	file: string,
 	options: {
 		query: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1524,7 +1529,8 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	pluginId: string,
+	dir: string,
+	file: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1547,7 +1553,8 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	pluginId: string,
+	dir: string,
+	file: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1563,7 +1570,8 @@ export function useGet<
 	TData = Awaited<ReturnType<typeof get>>,
 	TError = unknown,
 >(
-	pluginId: string,
+	dir: string,
+	file: string,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof get>>, TError, TData>
@@ -1574,7 +1582,7 @@ export function useGet<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetQueryOptions(pluginId, options);
+	const queryOptions = getGetQueryOptions(dir, file, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -3281,6 +3289,299 @@ export function useGetAllPluginConfigs<
 
 	return { ...query, queryKey: queryOptions.queryKey };
 }
+
+export type getPluginConfigResponse200 = {
+	data: PluginConfig;
+	status: 200;
+};
+
+export type getPluginConfigResponse404 = {
+	data: void;
+	status: 404;
+};
+
+export type getPluginConfigResponseSuccess = getPluginConfigResponse200 & {
+	headers: Headers;
+};
+export type getPluginConfigResponseError = getPluginConfigResponse404 & {
+	headers: Headers;
+};
+
+export type getPluginConfigResponse =
+	| getPluginConfigResponseSuccess
+	| getPluginConfigResponseError;
+
+export const getGetPluginConfigUrl = (pluginId: string) => {
+	return `/plugin-config/${pluginId}`;
+};
+
+export const getPluginConfig = async (
+	pluginId: string,
+	options?: RequestInit,
+): Promise<getPluginConfigResponse> => {
+	return customFetch<getPluginConfigResponse>(getGetPluginConfigUrl(pluginId), {
+		...options,
+		method: "GET",
+	});
+};
+
+export const getGetPluginConfigQueryKey = (pluginId: string) => {
+	return [`/plugin-config/${pluginId}`] as const;
+};
+
+export const getGetPluginConfigQueryOptions = <
+	TData = Awaited<ReturnType<typeof getPluginConfig>>,
+	TError = void,
+>(
+	pluginId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getPluginConfig>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetPluginConfigQueryKey(pluginId);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getPluginConfig>>> = ({
+		signal,
+	}) => getPluginConfig(pluginId, { signal, ...requestOptions });
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!pluginId,
+		...queryOptions,
+	} as UseQueryOptions<
+		Awaited<ReturnType<typeof getPluginConfig>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPluginConfigQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getPluginConfig>>
+>;
+export type GetPluginConfigQueryError = void;
+
+export function useGetPluginConfig<
+	TData = Awaited<ReturnType<typeof getPluginConfig>>,
+	TError = void,
+>(
+	pluginId: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getPluginConfig>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getPluginConfig>>,
+					TError,
+					Awaited<ReturnType<typeof getPluginConfig>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPluginConfig<
+	TData = Awaited<ReturnType<typeof getPluginConfig>>,
+	TError = void,
+>(
+	pluginId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getPluginConfig>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getPluginConfig>>,
+					TError,
+					Awaited<ReturnType<typeof getPluginConfig>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPluginConfig<
+	TData = Awaited<ReturnType<typeof getPluginConfig>>,
+	TError = void,
+>(
+	pluginId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getPluginConfig>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetPluginConfig<
+	TData = Awaited<ReturnType<typeof getPluginConfig>>,
+	TError = void,
+>(
+	pluginId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getPluginConfig>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetPluginConfigQueryOptions(pluginId, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export type updatePluginConfigResponse200 = {
+	data: PluginConfig;
+	status: 200;
+};
+
+export type updatePluginConfigResponse404 = {
+	data: void;
+	status: 404;
+};
+
+export type updatePluginConfigResponseSuccess =
+	updatePluginConfigResponse200 & {
+		headers: Headers;
+	};
+export type updatePluginConfigResponseError = updatePluginConfigResponse404 & {
+	headers: Headers;
+};
+
+export type updatePluginConfigResponse =
+	| updatePluginConfigResponseSuccess
+	| updatePluginConfigResponseError;
+
+export const getUpdatePluginConfigUrl = (pluginId: string) => {
+	return `/plugin-config/${pluginId}`;
+};
+
+export const updatePluginConfig = async (
+	pluginId: string,
+	pluginConfigUpdateDto: PluginConfigUpdateDto,
+	options?: RequestInit,
+): Promise<updatePluginConfigResponse> => {
+	return customFetch<updatePluginConfigResponse>(
+		getUpdatePluginConfigUrl(pluginId),
+		{
+			...options,
+			method: "POST",
+			headers: { "Content-Type": "application/json", ...options?.headers },
+			body: JSON.stringify(pluginConfigUpdateDto),
+		},
+	);
+};
+
+export const getUpdatePluginConfigMutationOptions = <
+	TError = void,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof updatePluginConfig>>,
+		TError,
+		{ pluginId: string; data: PluginConfigUpdateDto },
+		TContext
+	>;
+	request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof updatePluginConfig>>,
+	TError,
+	{ pluginId: string; data: PluginConfigUpdateDto },
+	TContext
+> => {
+	const mutationKey = ["updatePluginConfig"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof updatePluginConfig>>,
+		{ pluginId: string; data: PluginConfigUpdateDto }
+	> = (props) => {
+		const { pluginId, data } = props ?? {};
+
+		return updatePluginConfig(pluginId, data, requestOptions);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type UpdatePluginConfigMutationResult = NonNullable<
+	Awaited<ReturnType<typeof updatePluginConfig>>
+>;
+export type UpdatePluginConfigMutationBody = PluginConfigUpdateDto;
+export type UpdatePluginConfigMutationError = void;
+
+export const useUpdatePluginConfig = <TError = void, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof updatePluginConfig>>,
+			TError,
+			{ pluginId: string; data: PluginConfigUpdateDto },
+			TContext
+		>;
+		request?: SecondParameter<typeof customFetch>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof updatePluginConfig>>,
+	TError,
+	{ pluginId: string; data: PluginConfigUpdateDto },
+	TContext
+> => {
+	return useMutation(
+		getUpdatePluginConfigMutationOptions(options),
+		queryClient,
+	);
+};
 
 export type getTrackResponse200 = {
 	data: Track;

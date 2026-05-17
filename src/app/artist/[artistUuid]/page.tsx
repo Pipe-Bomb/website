@@ -35,7 +35,7 @@ export async function generateMetadata({
 	return {
 		title: `${name ?? "Unknown Artist"} - Pipe Bomb`,
 		// openGraph: {
-		// 	images: image ? [`http://127.0.0.1:3000${image.url}`] : [],
+		// 	images: image ? [`http://192.168.68.84:3000${image.url}`] : [],
 		// },
 	};
 }

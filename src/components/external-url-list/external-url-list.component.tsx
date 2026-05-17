@@ -15,7 +15,7 @@ export function ExternalUrlList({ urls }: Props) {
 					<div key={index} className={styles.url}>
 						<img
 							className={styles.urlImage}
-							src={`http://127.0.0.1:3000${url.iconUrl}`}
+							src={`http://192.168.68.84:3000${url.iconUrl}`}
 						/>
 						<Link href={url.url} target="_blank" className={styles.urlLink}>
 							{url.name}
