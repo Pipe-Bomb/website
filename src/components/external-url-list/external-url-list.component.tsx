@@ -1,4 +1,4 @@
-import { ExternalUrl } from "@api/model";
+import { ExternalUrl } from "@api";
 import styles from "./external-url-list.module.scss";
 import Link from "next/link";
 

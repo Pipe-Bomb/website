@@ -1,4 +1,4 @@
-import { AttributeSource } from "@api/model";
+import { AttributeSource } from "@api";
 import styles from "./list-attribute-source.module.scss";
 import { useTranslation } from "@/context/language.context";
 

@@ -1,4 +1,4 @@
-import { PluginLibrary } from "@api/model";
+import { PluginLibrary } from "@api";
 import styles from "./list-library.module.scss";
 import { useTranslation } from "@/context/language.context";
 

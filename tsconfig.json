@@ -21,18 +21,20 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@c/*": ["./src/components/*"],
-			"@api": ["./api/pipeBombAPI"],
-			"@api/*": ["./api/*"],
+			// "@api": ["../api-client/dist/*"],
+			// "@api/*": ["./api/*"],
+			"@api": ["./node_modules/pipe-bomb-tanstack-client/dist"],
+			"@api/*": ["./node_modules/pipe-bomb-tanstack-client/dist/*"],
 			"@hook/*": ["./src/hook/*.hook"]
 		}
 	},
 	"include": [
 		"next-env.d.ts",
-		"**/*.ts",
-		"**/*.tsx",
+		"src/**/*.ts",
+		"src/**/*.tsx",
 		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts",
-		"**/*.mts"
+		"src/**/*.mts"
 	],
 	"exclude": ["node_modules"]
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { IconButton } from "@/components/icon-button/icon-button";
-import { Task, TaskStatus } from "@api/model";
+import { Task, TaskStatus } from "@api";
 import {
 	Icon,
 	IconPlayerPauseFilled,

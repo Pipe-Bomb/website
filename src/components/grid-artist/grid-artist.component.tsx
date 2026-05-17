@@ -1,5 +1,5 @@
 import { useAttribute } from "@/hook/attribute.hook";
-import { Artist } from "@api/model";
+import { Artist } from "@api";
 import styles from "./grid-artist.module.scss";
 import Link from "next/link";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";

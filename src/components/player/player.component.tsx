@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { usePlayerStore } from "@/store/player.store";
 import { formatTime } from "@/lib/util";
-import { Track } from "@api/model";
+import { Track } from "@api";
 import { useAttribute } from "@/hook/attribute.hook";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";

@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 	title: "Pipe Bomb",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
 	children,
 }: Readonly<{

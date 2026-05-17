@@ -1,7 +1,7 @@
 "use client";
 
 import { usePlayerStore } from "@/store/player.store";
-import { Album } from "@api/model";
+import { Album } from "@api";
 import styles from "./album-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconPlayerPlayFilled, IconPlaylistAdd } from "@tabler/icons-react";

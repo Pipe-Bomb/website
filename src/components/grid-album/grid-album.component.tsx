@@ -1,7 +1,7 @@
 "use client";
 
 import { useAttribute } from "@/hook/attribute.hook";
-import { Album } from "@api/model";
+import { Album } from "@api";
 import styles from "./grid-album.module.scss";
 import Link from "next/link";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";

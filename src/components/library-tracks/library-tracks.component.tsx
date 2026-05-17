@@ -1,6 +1,6 @@
 "use client";
 
-import { PluginLibrary } from "@api/model";
+import { PluginLibrary } from "@api";
 import { useEffect } from "react";
 import { ListTrack } from "../list-track/list-track.component";
 import styles from "./library-tracks.module.scss";

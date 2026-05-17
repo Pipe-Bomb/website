@@ -6,7 +6,7 @@ import { useSidebarStore } from "@/store/sidebar.store";
 import { usePlayerStore } from "@/store/player.store";
 import { QueueTrack } from "@/components/queue-track/queue-track.component";
 import { SortableList } from "@/components/sortable-list/sortable-list.component";
-import { Track } from "@api/model";
+import { Track } from "@api";
 
 export function SideBar() {
 	const { open } = useSidebarStore();

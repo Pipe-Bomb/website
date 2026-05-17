@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageMap } from "@api/model";
+import { LanguageMap } from "@api";
 import { createContext, useContext, ReactNode } from "react";
 
 const LanguageContext = createContext<LanguageMap | null>(null);

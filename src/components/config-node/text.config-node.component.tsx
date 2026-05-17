@@ -1,5 +1,5 @@
 import styles from "./text.config-node.module.scss";
-import { TextConfigNode as TextConfigNodeType } from "@api/model";
+import { TextConfigNode as TextConfigNodeType } from "@api";
 import { useEffect, useState } from "react";
 
 interface Props {

@@ -1,5 +1,5 @@
 import { useAttribute } from "@/hook/attribute.hook";
-import { Track } from "@api/model";
+import { Track } from "@api";
 import { FormattedArtists } from "@/components/formatted-artists/formatted-artists.component";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { AlbumArtist, Artist, TrackArtist } from "@api/model";
+import { AlbumArtist, Artist, TrackArtist } from "@api";
 import { Fragment } from "react/jsx-runtime";
 import styles from "./formatted-artists.module.scss";
 import { useAttribute } from "@/hook/attribute.hook";

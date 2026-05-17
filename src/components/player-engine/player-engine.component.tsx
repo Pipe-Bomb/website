@@ -1,9 +1,9 @@
 "use client";
 
 import { usePlayerStore } from "@/store/player.store";
-import { createTrackAudioSession } from "@api";
 import { useEffect, useRef } from "react";
 import Hls from "hls.js";
+import { createTrackAudioSession } from "@api";
 
 export default function AudioEngine() {
 	const audioRef = useRef<HTMLAudioElement | null>(null);

@@ -3,7 +3,7 @@ import {
 	AttributeValueByType,
 	getAttribute,
 } from "@/lib/attribute.util";
-import { AttributeMap } from "@api/model";
+import { AttributeMap } from "@api";
 import { useMemo } from "react";
 
 export function useAttribute<T extends AttributeUnion["type"]>(

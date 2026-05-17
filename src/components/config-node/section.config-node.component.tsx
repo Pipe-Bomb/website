@@ -1,4 +1,4 @@
-import { SectionConfigNode as SectionConfigNodeType } from "@api/model";
+import { SectionConfigNode as SectionConfigNodeType } from "@api";
 import styles from "./section.config-node.module.scss";
 import { ConfigNode } from "@/components/config-node/config-node.component";
 

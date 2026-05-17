@@ -1,11 +1,10 @@
 "use client";
 
 import { ListAttributeSource } from "@/components/list-attribute-source/list-attribute-source.component";
-import { List } from "@/components/list/list.component";
 import { SortableList } from "@/components/sortable-list/sortable-list.component";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { setAttributeSourceOrder, useGetAllAttributeSources } from "@api";
-import { AttributeSource } from "@api/model";
+import { AttributeSource } from "@api";
 import { useEffect, useState } from "react";
 
 export default function Page() {

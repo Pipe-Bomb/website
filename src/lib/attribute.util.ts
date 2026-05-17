@@ -5,7 +5,7 @@ import {
 	StringAttribute,
 	AttributeMap,
 	BufferAttribute,
-} from "@api/model";
+} from "@api";
 
 export type AttributeUnion =
 	| BooleanAttribute

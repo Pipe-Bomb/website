@@ -1,6 +1,6 @@
 "use client";
 
-import { Track } from "@api/model";
+import { Track } from "@api";
 import styles from "./queue-track.module.scss";
 import { useAttribute } from "@/hook/attribute.hook";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";

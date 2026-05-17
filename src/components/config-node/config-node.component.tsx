@@ -1,4 +1,4 @@
-import { PluginConfig } from "@api/model";
+import { PluginConfig } from "@api";
 import { SectionConfigNode } from "@/components/config-node/section.config-node.component";
 import { HeadingConfigNode } from "@/components/config-node/heading.config-node.component";
 import { TextConfigNode } from "@/components/config-node/text.config-node.component";

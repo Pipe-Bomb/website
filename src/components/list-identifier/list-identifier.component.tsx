@@ -1,4 +1,4 @@
-import { Identifier, IdentifierDependency } from "@api/model";
+import { Identifier, IdentifierDependency } from "@api";
 import styles from "./list-identifier.module.scss";
 import { useTranslation } from "@/context/language.context";
 

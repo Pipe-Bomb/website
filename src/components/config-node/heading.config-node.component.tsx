@@ -1,4 +1,4 @@
-import { HeadingConfigNode as HeadingConfigNodeType } from "@api/model";
+import { HeadingConfigNode as HeadingConfigNodeType } from "@api";
 import styles from "./heading.config-node.module.scss";
 import { cc } from "@/lib/util";
 

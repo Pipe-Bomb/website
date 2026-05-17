@@ -1,4 +1,4 @@
-import { Track } from "@api/model";
+import { Track } from "@api";
 import { create } from "zustand";
 
 interface PlayerStore {

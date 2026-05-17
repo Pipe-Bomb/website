@@ -1,6 +1,6 @@
 "use client";
 
-import { Track } from "@api/model";
+import { Track } from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {

@@ -1,7 +1,7 @@
 import { ConfigNode } from "@/components/config-node/config-node.component";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { getGetPluginConfigQueryKey, updatePluginConfig } from "@api";
-import { PluginConfig } from "@api/model";
+import { PluginConfig } from "@api";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
