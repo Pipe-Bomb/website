@@ -1,4 +1,5 @@
-const BASE_URL = "http://192.168.68.84:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+console.log(BASE_URL);
 
 interface RequestConfig {
 	method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE";

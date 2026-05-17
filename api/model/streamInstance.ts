@@ -8,5 +8,6 @@ import type { StreamInstanceType } from "./streamInstanceType";
 
 export interface StreamInstance {
 	id: string;
+	baseUrl: string;
 	type: StreamInstanceType;
 }

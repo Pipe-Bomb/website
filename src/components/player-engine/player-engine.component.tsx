@@ -48,16 +48,14 @@ export default function AudioEngine() {
 			.then(({ data: session }) => {
 				if (cancelled || !audio) return;
 
-				const baseUrl = `http://192.168.68.84:3000/streaming/${session.id}`;
-
 				if (session.type === "stream") {
-					audio.src = `${baseUrl}/stream`;
+					audio.src = `${session.baseUrl}/stream`;
 					audio.load();
 					audio.play();
 				}
 
 				if (session.type === "hls") {
-					const url = `${baseUrl}/hls/playlist.m3u8`;
+					const url = `${session.baseUrl}/hls/playlist.m3u8`;
 
 					// Safari has native HLS support
 					if (audio.canPlayType("application/vnd.apple.mpegurl")) {
