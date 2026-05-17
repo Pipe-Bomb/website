@@ -21,10 +21,7 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@c/*": ["./src/components/*"],
-			// "@api": ["../api-client/dist/*"],
-			// "@api/*": ["./api/*"],
-			"@api": ["./node_modules/pipe-bomb-tanstack-client/dist"],
-			"@api/*": ["./node_modules/pipe-bomb-tanstack-client/dist/*"],
+			"@api": ["./src/api"],
 			"@hook/*": ["./src/hook/*.hook"]
 		}
 	},
