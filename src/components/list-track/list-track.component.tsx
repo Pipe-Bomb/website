@@ -16,6 +16,7 @@ import { ResourceImage } from "@/components/resource-image/resource-image.compon
 import { usePlayerStore } from "@/store/player.store";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { cc } from "@/lib/util";
+import { TrackAlbum } from "@/components/track-album/track-album.component";
 
 interface Props {
 	track: Track;
@@ -103,10 +104,16 @@ export function ListTrack({ track }: Props) {
 					>
 						{title}
 					</Link>
-					<span className={styles.artist}>
-						<TrackArtists track={track} />
-					</span>
-					<span className={styles.album}>{album}</span>
+					{!!track.artists && (
+						<span className={styles.artist}>
+							<TrackArtists track={track} />
+						</span>
+					)}
+					{!!track.albums && (
+						<span className={styles.album}>
+							<TrackAlbum album={track.albums?.[0] ?? null} fallback={album} />
+						</span>
+					)}
 				</div>
 			</div>
 			<TrackInfoModal
