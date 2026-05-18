@@ -2,11 +2,12 @@
 
 import { Spinner } from "@/components/spinner/spinner.component";
 import { useSearchArtists } from "@api";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import styles from "./artist-grid.module.scss";
 import { GridArtist } from "@/components/grid-artist/grid-artist.component";
 import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
+import { Grid } from "@/components/grid/grid.component";
 
 export function ArtistGrid() {
 	const search = useSearchArtists();
@@ -33,11 +34,11 @@ export function ArtistGrid() {
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.grid}>
+			<Grid>
 				{artists.map((artist) => (
 					<GridArtist key={artist.uuid} artist={artist} />
 				))}
-			</div>
+			</Grid>
 			<Paginator urlKey="page" />
 		</div>
 	);

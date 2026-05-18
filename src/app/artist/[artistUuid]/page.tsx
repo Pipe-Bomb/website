@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
+import { Grid } from "@/components/grid/grid.component";
 
 interface Props {
 	params: Promise<{
@@ -110,10 +111,12 @@ export default async function Page({ params }: Props) {
 						{!!artist.albums?.length && (
 							<div className={styles.albums}>
 								<h3>Albums</h3>
-								<div className={styles.albumList}>
-									{artist.albums.map((album) => (
-										<GridAlbum album={album} key={album.uuid} />
-									))}
+								<div className={styles.albumGrid}>
+									<Grid>
+										{artist.albums.map((album) => (
+											<GridAlbum album={album} key={album.uuid} />
+										))}
+									</Grid>
 								</div>
 							</div>
 						)}
