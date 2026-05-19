@@ -1,20 +1,23 @@
-import { Icon } from "@tabler/icons-react";
 import styles from "./icon-button.module.scss";
-import { useMemo } from "react";
+import { ComponentType, SVGProps, useMemo } from "react";
 import { cc } from "@/lib/util";
 
 type ButtonStyle = "simple" | "background";
 type ButtonVariant = "primary" | "secondary" | "tertiary";
 type ButtonSize = "sm" | "md" | "lg" | "xl";
 
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
 type Props = {
-	icon: Icon;
+	icon: IconComponent;
 	style?: ButtonStyle;
-	onClick?: () => void;
+	onClick?: (() => void) | null;
 	loading?: boolean;
 	variant?: ButtonVariant;
 	size?: ButtonSize;
 	disabled?: boolean;
+	// strokeWidth?: number;
+	iconSource: "lucide" | "tabler";
 };
 
 const STYLE_CLASSES: Record<ButtonStyle, string> = {
@@ -29,6 +32,8 @@ export function IconButton({
 	loading,
 	variant,
 	size,
+	// strokeWidth,
+	iconSource,
 }: Props) {
 	const IconComponent = icon;
 	const styleClass = useMemo(
@@ -47,9 +52,12 @@ export function IconButton({
 				sizeClass,
 				loading && styles.loading,
 			)}
-			onClick={onClick}
+			onClick={onClick ?? undefined}
 		>
-			<IconComponent className={styles.icon} />
+			<IconComponent
+				className={cc(styles.icon, styles[iconSource])}
+				strokeWidth={2.5}
+			/>
 		</button>
 	);
 }

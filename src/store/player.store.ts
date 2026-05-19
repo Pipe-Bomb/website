@@ -22,6 +22,7 @@ interface PlayerStore {
 	playNext: (track: Track) => void;
 	playNow: (track: Track) => void;
 	remove: (index: number) => void;
+	insert: (tracks: Track[], index: number) => void;
 
 	next: () => void;
 	prev: () => void;
@@ -84,6 +85,12 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			queue: [track],
 			currentIndex: 0,
 			isPlaying: true,
+		}));
+	},
+
+	insert: (tracks, index) => {
+		set((state) => ({
+			queue: [...state.queue.splice(index, 0, ...tracks)],
 		}));
 	},
 

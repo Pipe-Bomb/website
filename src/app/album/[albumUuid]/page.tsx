@@ -6,8 +6,6 @@ import styles from "./page.module.scss";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { AlbumArtists } from "@/components/album-artists/album-artists.component";
-import { IconButton } from "@/components/icon-button/icon-button";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { AlbumButtons } from "@/components/album-buttons/album-buttons.component";
 
 interface Props {

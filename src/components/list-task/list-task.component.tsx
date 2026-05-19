@@ -56,6 +56,7 @@ export function ListTask({ task }: Props) {
 			<IconButton
 				icon={buttonIcon}
 				style="background"
+				iconSource="tabler"
 				onClick={() => {
 					if (task.status == TaskStatus.running) {
 						console.log("Cancelling task"); // todo: implement

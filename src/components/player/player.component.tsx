@@ -45,6 +45,7 @@ export function Player() {
 				<div className={styles.centerButtons}>
 					<IconButton
 						icon={IconPlayerSkipBackFilled}
+						iconSource="tabler"
 						onClick={() => {
 							prev();
 							setIsPlaying(true);
@@ -52,12 +53,14 @@ export function Player() {
 					/>
 					<IconButton
 						icon={isPlaying ? IconPlayerPauseFilled : IconPlayerPlayFilled}
+						iconSource="tabler"
 						style="background"
 						size="lg"
 						onClick={toggle}
 					/>
 					<IconButton
 						icon={IconPlayerSkipForwardFilled}
+						iconSource="tabler"
 						onClick={() => {
 							next();
 							setIsPlaying(true);
@@ -81,6 +84,7 @@ export function Player() {
 			</div>
 			<div className={styles.right}>
 				<IconButton
+					iconSource="tabler"
 					icon={
 						isSidebarOpen
 							? IconLayoutSidebarRightCollapseFilled

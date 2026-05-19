@@ -20,7 +20,7 @@ export function Navbar() {
 				<div className={styles.main}>
 					<div>
 						<Link href="/">
-							<IconButton icon={IconHome} />
+							<IconButton icon={IconHome} iconSource="tabler" />
 						</Link>
 					</div>
 
@@ -51,7 +51,7 @@ export function Navbar() {
 				</div>
 				<div className={styles.bottom}>
 					<Link href="/settings/tasks">
-						<IconButton icon={IconServerCog} />
+						<IconButton icon={IconServerCog} iconSource="tabler" />
 					</Link>
 				</div>
 			</div>

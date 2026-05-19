@@ -62,6 +62,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 				/>
 				<div className={styles.playButton}>
 					<IconButton
+						iconSource="tabler"
 						icon={
 							currentIndex == queueIndex && isPlaying
 								? IconPlayerPauseFilled

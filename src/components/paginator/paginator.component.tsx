@@ -15,11 +15,13 @@ export function Paginator({ urlKey }: Props) {
 			<IconButton
 				icon={IconCaretLeftFilled}
 				onClick={() => setPage(currentPage - 1)}
+				iconSource="tabler"
 			/>
 			<span className={styles.pageNumber}>{currentPage}</span>
 			<IconButton
 				icon={IconCaretRightFilled}
 				onClick={() => setPage(currentPage + 1)}
+				iconSource="tabler"
 			/>
 		</div>
 	);

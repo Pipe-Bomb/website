@@ -53,6 +53,10 @@ function Inner({ track }: InnerProps) {
 		return <Spinner />;
 	}
 
+	if (fullTrackResponse.status == 404 || identitiesResponse.status == 404) {
+		return <h1>Track not found</h1>;
+	}
+
 	const fullTrack = fullTrackResponse.data;
 	const attributes: Record<string, AttributeUnion> | null =
 		fullTrack.attributes;
@@ -101,6 +105,7 @@ function Inner({ track }: InnerProps) {
 							<IconButton
 								icon={IconCopyFilled}
 								size="sm"
+								iconSource="tabler"
 								onClick={() => copyToClipboard(identity.value)}
 							/>
 						</div>

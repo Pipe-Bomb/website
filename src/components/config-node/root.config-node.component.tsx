@@ -79,6 +79,7 @@ export function RootConfigNode({ config, pluginId }: Props) {
 			<div>
 				<IconButton
 					icon={IconDeviceFloppy}
+					iconSource="tabler"
 					style={hasChanges ? "background" : "simple"}
 					onClick={save}
 				/>

@@ -1,0 +1,41 @@
+.top {
+	display: flex;
+	gap: 32px;
+	margin: 32px;
+
+	.coverArt {
+		width: 240px;
+		height: 240px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		border-radius: 8px;
+	}
+
+	.topInfo {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 4px;
+
+		.title {
+			font-size: 3rem;
+		}
+
+		.topButtons {
+			padding-top: 12px;
+		}
+	}
+}
+
+.split {
+	display: flex;
+
+	.main {
+		flex-grow: 1;
+	}
+
+	.sidebar {
+		width: 300px;
+		max-width: 50%;
+	}
+}

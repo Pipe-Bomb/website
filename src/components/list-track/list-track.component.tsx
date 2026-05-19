@@ -86,6 +86,7 @@ export function ListTrack({ track }: Props) {
 									? IconPlayerPauseFilled
 									: IconPlayerPlayFilled
 							}
+							iconSource="tabler"
 							style={isPlayingThis ? "simple" : "background"}
 							onClick={() => {
 								if (isPlayingThis) {
@@ -98,12 +99,14 @@ export function ListTrack({ track }: Props) {
 					</div>
 				</div>
 				<div className={styles.info}>
-					<Link
-						className={styles.title}
-						href={`/library/${track.pluginId}/${track.libraryId}/${track.id}`}
-					>
-						{title}
-					</Link>
+					<span className={styles.title}>
+						<Link
+							href={`/track/${track.pluginId}/${track.libraryId}/${track.id}`}
+						>
+							{title}
+						</Link>
+					</span>
+
 					{!!track.artists && (
 						<span className={styles.artist}>
 							<TrackArtists track={track} />

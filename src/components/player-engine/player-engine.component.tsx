@@ -46,7 +46,7 @@ export default function AudioEngine() {
 			currentTrack.id,
 		)
 			.then(({ data: session }) => {
-				if (cancelled || !audio) return;
+				if (cancelled || !audio || !session) return;
 
 				if (session.type === "stream") {
 					audio.src = `${session.baseUrl}/stream`;
