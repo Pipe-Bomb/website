@@ -17,8 +17,8 @@
 		position: absolute;
 		top: 8px;
 		bottom: 8px;
-		left: 8px;
-		width: calc(var(--width) - 8px * 2);
+		left: 0;
+		width: calc(var(--width) - 8px);
 		background: var(--bg-elevated);
 		border-radius: 8px;
 		padding: 8px;

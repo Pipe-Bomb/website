@@ -1,0 +1,27 @@
+.searchContainer {
+	padding: 16px 0;
+	display: flex;
+
+	.searchBox {
+		background: var(--input-bg);
+		color: var(--input-fg);
+		border: 2px solid var(--input-border);
+		font-size: 1.2rem;
+		padding: 4px 8px;
+		border-radius: 4px;
+		width: 100%;
+
+		&::placeholder {
+			color: var(--input-placeholder);
+		}
+
+		&:focus {
+			outline: none;
+			border-color: var(--input-focus-border);
+		}
+	}
+}
+
+.searchLoading {
+	height: 300px;
+}
