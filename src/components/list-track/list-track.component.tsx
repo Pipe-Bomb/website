@@ -1,6 +1,6 @@
 "use client";
 
-import { Track } from "@api";
+import { EphemeralTrack, Track } from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
@@ -19,7 +19,7 @@ import { cc } from "@/lib/util";
 import { TrackAlbum } from "@/components/track-album/track-album.component";
 
 interface Props {
-	track: Track;
+	track: Track | EphemeralTrack;
 }
 
 export function ListTrack({ track }: Props) {
@@ -49,23 +49,25 @@ export function ListTrack({ track }: Props) {
 	const album = useAttribute(track.attributes, "album", "string");
 	const image = useAttribute(track.attributes, "front", "buffer");
 
-	const rightClick = useRightClick(() => [
-		{
-			languageKey: "contextmenu.track.play-next",
-			key: "play-next",
-			onClick: () => playNext(track),
-		},
-		{
-			languageKey: "contextmenu.track.add-to-queue",
-			key: "add-to-queue",
-			onClick: () => addToEnd([track]),
-		},
-		{
-			languageKey: "contextmenu.track.view-info",
-			key: "view-info",
-			onClick: () => setInfoOpen(true),
-		},
-	]);
+	const rightClick = useRightClick(() =>
+		[
+			{
+				languageKey: "contextmenu.track.play-next",
+				key: "play-next",
+				onClick: () => playNext(track),
+			},
+			{
+				languageKey: "contextmenu.track.add-to-queue",
+				key: "add-to-queue",
+				onClick: () => addToEnd([track]),
+			},
+			"identifiers" in track && {
+				languageKey: "contextmenu.track.view-info",
+				key: "view-info",
+				onClick: () => setInfoOpen(true),
+			},
+		].filter((e) => !!e),
+	);
 
 	return (
 		<>
@@ -107,23 +109,25 @@ export function ListTrack({ track }: Props) {
 						</Link>
 					</span>
 
-					{!!track.artists && (
+					{"artists" in track && !!track.artists && (
 						<span className={styles.artist}>
 							<TrackArtists track={track} />
 						</span>
 					)}
-					{!!track.albums && (
+					{"albums" in track && !!track.albums && (
 						<span className={styles.album}>
 							<TrackAlbum album={track.albums?.[0] ?? null} fallback={album} />
 						</span>
 					)}
 				</div>
 			</div>
-			<TrackInfoModal
-				track={track}
-				open={infoOpen}
-				onClose={() => setInfoOpen(false)}
-			/>
+			{"identities" in track && (
+				<TrackInfoModal
+					track={track}
+					open={infoOpen}
+					onClose={() => setInfoOpen(false)}
+				/>
+			)}
 		</>
 	);
 }

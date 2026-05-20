@@ -1,58 +1,98 @@
 "use client";
 
-import { SearchDto, useSearch } from "@api";
+import { EphemeralSource, useGetAllEphemeralSources } from "@api";
 import styles from "./page.module.scss";
-import { useEffect, useState } from "react";
-import { useDebounce } from "@/hook/debounce.hook";
-import { Spinner } from "@/components/spinner/spinner.component";
-import { SearchResults } from "@/components/search-results/search-results.component";
+import { useMemo, useState } from "react";
+import { cc } from "@/lib/util";
+import { LocalSearch } from "@/components/search/local-search.component";
+import { EphemeralSearch } from "@/components/search/ephemeral-source.component";
+import { useUrlParam } from "@/hook/url-param.hook";
 
 export default function Home() {
-	const [options, setOptions] = useState<SearchDto>({
-		withAlbums: true,
-		withArtists: true,
-		withTracks: true,
+	const [query, setQuery] = useState("");
+	// const [currentSource, setCurrentSource] = useState<EphemeralSource | null>(
+	// 	null,
+	// );
+	const [sourceId, setSourceId] = useUrlParam("source");
+
+	const { data: ephemeralSources } = useGetAllEphemeralSources({
+		query: {
+			enabled: true,
+		},
 	});
-	const [debouncedOptions, isDebouncingOptions] = useDebounce(options, 1_000);
 
-	const search = useSearch();
+	const currentSource = useMemo(() => {
+		if (!sourceId || !ephemeralSources) {
+			return null;
+		}
+		const parts = sourceId.split("~");
+		if (parts.length != 2) {
+			return null;
+		}
+		const source = ephemeralSources.data.find(
+			(source) => source.pluginId == parts[0] && source.id == parts[1],
+		);
+		return source ?? null;
+	}, [sourceId, ephemeralSources]);
 
-	useEffect(() => {
-		search.mutate({
-			data: debouncedOptions,
-		});
-	}, [debouncedOptions]);
+	const toggleSource = (source: EphemeralSource) => {
+		if (currentSource === source) {
+			setSourceId(null);
+		} else {
+			setSourceId(`${source.pluginId}~${source.id}`);
+		}
+	};
+
+	// const [options, setOptions] = useState<SearchDto>({
+	// 	withAlbums: true,
+	// 	withArtists: true,
+	// 	withTracks: true,
+	// 	query: null,
+	// 	source: null,
+	// });
+	// const [debouncedOptions, isDebouncingOptions] = useDebounce(options, 1_000);
+
+	// const search = useSearch();
 
 	return (
 		<div>
 			<div className={styles.searchContainer}>
 				<input
 					type="text"
-					value={options.query ?? ""}
+					value={query}
 					className={styles.searchBox}
-					onInput={(e) => {
-						const value = e.currentTarget.value;
-						setOptions((current) => ({
-							...current,
-							query: value || undefined,
-						}));
-					}}
+					onInput={(e) => setQuery(e.currentTarget.value)}
+					placeholder="Search"
 				/>
 			</div>
-
-			{search.data && !isDebouncingOptions ? (
-				<div>
-					<SearchResults
-						tracks={search.data.data.tracks}
-						artists={search.data.data.artists}
-						albums={search.data.data.albums}
-					/>
-				</div>
-			) : (
-				<div className={styles.searchLoading}>
-					<Spinner position="expand" />
+			{ephemeralSources?.status == 200 && (
+				<div className={styles.ephemeralSources}>
+					{ephemeralSources.data.map((source) => (
+						<button
+							key={`${source.pluginId} ${source.id}`}
+							onClick={() => toggleSource(source)}
+							className={cc(
+								styles.ephemeralSourceButton,
+								currentSource == source && styles.active,
+							)}
+						>
+							{source.name}
+						</button>
+					))}
 				</div>
 			)}
+
+			<div className={styles.results}>
+				{currentSource ? (
+					<EphemeralSearch
+						query={query}
+						pluginId={currentSource.pluginId}
+						sourceId={currentSource.id}
+					/>
+				) : (
+					<LocalSearch query={query} />
+				)}
+			</div>
 		</div>
 	);
 }

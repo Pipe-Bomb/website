@@ -1,8 +1,10 @@
-import { Track } from "@api";
+import { EphemeralTrack, Track } from "@api";
 import { create } from "zustand";
 
+type SupportedTrack = Track | EphemeralTrack;
+
 interface PlayerStore {
-	queue: Track[];
+	queue: SupportedTrack[];
 	currentIndex: number;
 	isPlaying: boolean;
 
@@ -17,12 +19,16 @@ interface PlayerStore {
 	updateProgress: (time: number, duration: number) => void;
 	seek: (time: number) => void;
 
-	playTrack: (track: Track, indexInList?: number, entireList?: Track[]) => void;
-	addToEnd: (tracks: Track[]) => void;
-	playNext: (track: Track) => void;
-	playNow: (track: Track) => void;
+	playTrack: (
+		track: SupportedTrack,
+		indexInList?: number,
+		entireList?: SupportedTrack[],
+	) => void;
+	addToEnd: (tracks: SupportedTrack[]) => void;
+	playNext: (track: SupportedTrack) => void;
+	playNow: (track: SupportedTrack) => void;
 	remove: (index: number) => void;
-	insert: (tracks: Track[], index: number) => void;
+	insert: (tracks: SupportedTrack[], index: number) => void;
 
 	next: () => void;
 	prev: () => void;
@@ -63,14 +69,14 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 
 	// 1. Standard "Add to Queue" (At the very end)
-	addToEnd: (tracks: Track[]) => {
+	addToEnd: (tracks: SupportedTrack[]) => {
 		set((state) => ({
 			queue: [...state.queue, ...tracks],
 		}));
 	},
 
 	// 2. "Play Next" (Insert right after the current track)
-	playNext: (track: Track) => {
+	playNext: (track: SupportedTrack) => {
 		set((state) => {
 			const newQueue = [...state.queue];
 			// Insert at the position right after the current index
@@ -80,7 +86,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 
 	// 3. Helper to start playing if the queue was empty
-	playNow: (track: Track) => {
+	playNow: (track: SupportedTrack) => {
 		set((state) => ({
 			queue: [track],
 			currentIndex: 0,

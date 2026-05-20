@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { usePlayerStore } from "@/store/player.store";
 import { formatTime } from "@/lib/util";
-import { Track } from "@api";
+import { EphemeralTrack, Track } from "@api";
 import { useAttribute } from "@/hook/attribute.hook";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
@@ -34,7 +34,7 @@ export function Player() {
 		setIsPlaying,
 		isBuffering,
 	} = usePlayerStore();
-	const nowPlaying: Track | null = queue[currentIndex];
+	const nowPlaying: Track | EphemeralTrack | null = queue[currentIndex];
 
 	return (
 		<div className={styles.container}>
@@ -98,7 +98,7 @@ export function Player() {
 }
 
 interface NowPlayingProps {
-	track: Track;
+	track: Track | EphemeralTrack;
 }
 
 function NowPlaying({ track }: NowPlayingProps) {
@@ -116,7 +116,11 @@ function NowPlaying({ track }: NowPlayingProps) {
 			<div className={styles.nowPlayingInfo}>
 				<span className={styles.nowPlayingTitle}>{title}</span>
 				<span className={styles.nowPlayingArtist}>
-					<TrackArtists track={track} />
+					{"artists" in track ? (
+						<TrackArtists track={track} />
+					) : (
+						<span>Unknown Artist</span>
+					)}
 				</span>
 			</div>
 		</div>

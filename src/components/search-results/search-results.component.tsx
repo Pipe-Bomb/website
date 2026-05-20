@@ -3,12 +3,12 @@ import { GridArtist } from "@/components/grid-artist/grid-artist.component";
 import { Grid } from "@/components/grid/grid.component";
 import { ListTrack } from "@/components/list-track/list-track.component";
 import { List } from "@/components/list/list.component";
-import { Album, Artist, Track } from "@api";
+import { Album, Artist, EphemeralTrack, Track } from "@api";
 import { useMemo } from "react";
 import styles from "./search-results.module.scss";
 
 interface Props {
-	tracks: Track[];
+	tracks: (Track | EphemeralTrack)[];
 	artists: Artist[];
 	albums: Album[];
 }
