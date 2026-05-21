@@ -21,6 +21,8 @@
 				inset: 0;
 				isolation: isolate;
 				padding-right: 8px;
+				display: flex;
+				flex-direction: column;
 			}
 		}
 	}

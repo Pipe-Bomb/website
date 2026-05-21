@@ -1,23 +1,44 @@
 "use client";
 import Link from "next/link";
 import styles from "./navbar.module.scss";
-import { useGetAllLibraries } from "@api";
-import { List } from "@/components/list/list.component";
+import { logoutUser, useGetAllLibraries } from "@api";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconHome, IconServerCog } from "@tabler/icons-react";
+import { useAuth } from "@/context/auth.context";
+import { Button } from "@/components/button/button.component";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
+	const user = useAuth();
+	const router = useRouter();
+
 	const libraries = useGetAllLibraries({
 		query: {
 			enabled: true,
 		},
 	});
 
+	const logout = () => {
+		logoutUser()
+			.then(() => {
+				router.refresh();
+			})
+			.catch((e) => console.error(e));
+	};
+
 	return (
 		<div className={styles.positioner}>
 			<div className={styles.container}>
 				<div className={styles.main}>
+					{user && (
+						<div>
+							<span>{user.username}</span>
+							<Button style="secondary" onClick={logout}>
+								Log Out
+							</Button>
+						</div>
+					)}
 					<div>
 						<Link href="/">
 							<IconButton icon={IconHome} iconSource="tabler" />

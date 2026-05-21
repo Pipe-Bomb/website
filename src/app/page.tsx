@@ -7,13 +7,23 @@ import { cc } from "@/lib/util";
 import { LocalSearch } from "@/components/search/local-search.component";
 import { EphemeralSearch } from "@/components/search/ephemeral-source.component";
 import { useUrlParam } from "@/hook/url-param.hook";
+import { RequireAuth } from "@/guard/auth.guard";
 
 export default function Home() {
-	const [query, setQuery] = useState("");
-	// const [currentSource, setCurrentSource] = useState<EphemeralSource | null>(
-	// 	null,
-	// );
-	const [sourceId, setSourceId] = useUrlParam("source");
+	return (
+		<RequireAuth>
+			<Contents />
+		</RequireAuth>
+	);
+}
+
+function Contents() {
+	const [query, setQuery] = useUrlParam("query", {
+		replace: true,
+	});
+	const [sourceId, setSourceId] = useUrlParam("source", {
+		replace: true,
+	});
 
 	const { data: ephemeralSources } = useGetAllEphemeralSources({
 		query: {
@@ -43,23 +53,12 @@ export default function Home() {
 		}
 	};
 
-	// const [options, setOptions] = useState<SearchDto>({
-	// 	withAlbums: true,
-	// 	withArtists: true,
-	// 	withTracks: true,
-	// 	query: null,
-	// 	source: null,
-	// });
-	// const [debouncedOptions, isDebouncingOptions] = useDebounce(options, 1_000);
-
-	// const search = useSearch();
-
 	return (
 		<div>
 			<div className={styles.searchContainer}>
 				<input
 					type="text"
-					value={query}
+					value={query ?? ""}
 					className={styles.searchBox}
 					onInput={(e) => setQuery(e.currentTarget.value)}
 					placeholder="Search"
@@ -85,12 +84,12 @@ export default function Home() {
 			<div className={styles.results}>
 				{currentSource ? (
 					<EphemeralSearch
-						query={query}
+						query={query ?? ""}
 						pluginId={currentSource.pluginId}
 						sourceId={currentSource.id}
 					/>
 				) : (
-					<LocalSearch query={query} />
+					<LocalSearch query={query ?? ""} />
 				)}
 			</div>
 		</div>

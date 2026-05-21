@@ -1,4 +1,9 @@
 .container {
+	--color-1: var(--color-gray-700);
+	--color-2: var(--color-gray-900);
+	--size: 32px;
+	--border: 5px;
+
 	&.positionAbsolute {
 		position: absolute;
 		top: 50%;
@@ -15,9 +20,24 @@
 		align-items: center;
 	}
 
+	&.accent {
+		--color-1: var(--color-accent-500);
+		--color-2: var(--color-gray-100);
+	}
+
+	&.sm {
+		--size: 24px;
+		--border: 3px;
+	}
+
+	&.lg {
+		--size: 48px;
+		--border: 7px;
+	}
+
 	.spinner {
-		width: 32px;
-		height: 32px;
+		width: var(--size);
+		height: var(--size);
 		position: relative;
 		border-radius: 50%;
 
@@ -25,10 +45,9 @@
 			content: "";
 			position: absolute;
 			inset: 0;
-			border: 5px solid transparent;
+			border: var(--border) solid transparent;
 			border-radius: 50%;
-			border-color: var(--border-strong) var(--border-subtle)
-				var(--border-strong) var(--border-subtle);
+			border-color: var(--color-1) var(--color-2) var(--color-1) var(--color-2);
 			animation: #{spin} 0.7s cubic-bezier(0.5, 0.2, 0.5, 0.8) infinite;
 		}
 	}

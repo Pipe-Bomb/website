@@ -6,6 +6,8 @@ type SpinnerPosition = "absolute" | "normal" | "expand";
 
 interface Props {
 	position?: SpinnerPosition;
+	color?: "accent" | "dark";
+	size?: "sm" | "md" | "lg";
 }
 
 const POSITION_CLASSES: Record<SpinnerPosition, string> = {
@@ -14,14 +16,18 @@ const POSITION_CLASSES: Record<SpinnerPosition, string> = {
 	expand: "positionExpand",
 };
 
-export function Spinner({ position }: Props) {
+export function Spinner({ position, color, size }: Props) {
 	const positionClass = useMemo(
 		() => styles[POSITION_CLASSES[position ?? "normal"]],
 		[position],
 	);
 
+	const colorClass = useMemo(() => styles[color ?? "dark"], [color]);
+
+	const sizeClass = useMemo(() => styles[size ?? "md"], [size]);
+
 	return (
-		<div className={cc(styles.container, positionClass)}>
+		<div className={cc(styles.container, positionClass, colorClass, sizeClass)}>
 			<div className={styles.spinner} />
 		</div>
 	);

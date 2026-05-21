@@ -1,0 +1,19 @@
+.container {
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 300px;
+
+	.buttons {
+		margin-top: 8px;
+		display: flex;
+		justify-content: space-between;
+	}
+}
