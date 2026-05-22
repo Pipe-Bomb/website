@@ -29,6 +29,7 @@
 	.aboveBackground {
 		height: 300px;
 		position: relative;
+		flex-shrink: 0;
 
 		.logo {
 			width: 400px;

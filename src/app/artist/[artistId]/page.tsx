@@ -1,6 +1,5 @@
 import { ListTrack } from "@/components/list-track/list-track.component";
 import { getAttribute } from "@/lib/attribute.util";
-import { getArtist, getArtistExternalUrls } from "@api";
 import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import Link from "next/link";
@@ -8,40 +7,47 @@ import { Metadata } from "next";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
 import { Grid } from "@/components/grid/grid.component";
+import { getArtistExternalUrls } from "@/api";
+import { getArtistById } from "@/lib/api.util";
+import { ArtistEphemeralContentTabs } from "@/components/artist-ephemeral-content-tabs/artist-ephemeral-content-tabs.component";
 
 interface Props {
 	params: Promise<{
-		artistUuid: string;
+		artistId: string;
 	}>;
 }
 
 export async function generateMetadata({
 	params,
 }: Props): Promise<Metadata | null> {
-	const { artistUuid } = await params;
+	const { artistId } = await params;
 
-	const artistResponse = await getArtist(artistUuid);
+	try {
+		const artistResponse = await getArtistById(artistId);
 
-	if (artistResponse.status != 200) {
-		return null;
-	}
+		if (artistResponse.status != 200) {
+			return null;
+		}
 
-	const artist = artistResponse.data;
+		const artist = artistResponse.data;
 
-	const name = getAttribute(artist.attributes, "name", "string");
-	// const image =
-	// 	getAttribute(artist.attributes, "background", "buffer") ??
-	// 	getAttribute(artist.attributes, "thumb", "buffer");
+		const name = getAttribute(artist.attributes, "name", "string");
+		// const image =
+		// 	getAttribute(artist.attributes, "background", "buffer") ??
+		// 	getAttribute(artist.attributes, "thumb", "buffer");
 
-	return {
-		title: `${name ?? "Unknown Artist"} - Pipe Bomb`,
-	};
+		return {
+			title: `${name ?? "Unknown Artist"} - Pipe Bomb`,
+		};
+	} catch {}
+
+	return null;
 }
 
 export default async function Page({ params }: Props) {
-	const { artistUuid } = await params;
+	const { artistId } = await params;
 
-	const artistResponse = await getArtist(artistUuid);
+	const artistResponse = await getArtistById(artistId);
 
 	if (artistResponse.status == 404) {
 		return <h1>Artist not found</h1>;
@@ -49,7 +55,8 @@ export default async function Page({ params }: Props) {
 
 	const artist = artistResponse.data;
 
-	const artistUrlsResponse = await getArtistExternalUrls(artist.uuid);
+	const artistUrlsResponse =
+		(!!artist.uuid && (await getArtistExternalUrls(artist.uuid))) || null;
 
 	const name = getAttribute(artist.attributes, "name", "string");
 	const thumbnail = getAttribute(artist.attributes, "thumb", "buffer");
@@ -123,7 +130,7 @@ export default async function Page({ params }: Props) {
 					</div>
 
 					<div className={styles.sideBar}>
-						{artistUrlsResponse.status == 200 &&
+						{artistUrlsResponse?.status == 200 &&
 							!!artistUrlsResponse.data.length && (
 								<div>
 									<ExternalUrlList urls={artistUrlsResponse.data} />
@@ -132,6 +139,7 @@ export default async function Page({ params }: Props) {
 					</div>
 				</div>
 			</div>
+			<ArtistEphemeralContentTabs artistId={artistId} />
 		</div>
 	);
 }

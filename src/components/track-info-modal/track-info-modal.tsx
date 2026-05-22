@@ -96,7 +96,7 @@ function Inner({ track }: InnerProps) {
 			<div>
 				{identities.map((identity) => (
 					<div
-						key={`${identity.entityId} ${identity.pluginId} ${identity.identityId} ${identity.ordinal}`}
+						key={`${identity.pluginId} ${identity.identityId} ${identity.ordinal}`}
 						className={styles.entry}
 					>
 						<span className={styles.key}>{identity.identityId}</span>

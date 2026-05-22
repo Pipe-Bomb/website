@@ -4,6 +4,7 @@ import styles from "./formatted-artists.module.scss";
 import { useAttribute } from "@/hook/attribute.hook";
 import Link from "next/link";
 import { cc } from "@/lib/util";
+import { useMemo } from "react";
 
 interface Props {
 	artists: (TrackArtist | AlbumArtist)[] | null;
@@ -51,12 +52,24 @@ interface ArtistLinkProps {
 function ArtistLink({ artist }: ArtistLinkProps) {
 	const name = useAttribute(artist.attributes, "name", "string", false);
 
-	return (
-		<Link
-			href={`/artist/${artist.uuid}`}
-			className={cc(styles.artistName, styles.artistLink)}
-		>
-			{name ?? "Unknown Artist"}
-		</Link>
-	);
+	const url = useMemo(() => {
+		if (artist.uuid) {
+			return `/artist/${artist.uuid}`;
+		}
+		if (artist.identities?.length) {
+			const identity = artist.identities[0];
+			return `/artist/${identity.pluginId}~${identity.identityId}~${identity.value}`;
+		}
+		return null;
+	}, [artist]);
+
+	if (url) {
+		return (
+			<Link href={url} className={cc(styles.artistName, styles.artistLink)}>
+				{name ?? "Unknown Artist"}
+			</Link>
+		);
+	}
+
+	return <span className={styles.artistName}>{name ?? "Unknown Artist"}</span>;
 }

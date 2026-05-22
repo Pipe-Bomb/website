@@ -1,9 +1,9 @@
 import { useAttribute } from "@/hook/attribute.hook";
-import { Track } from "@api";
+import { EphemeralTrack, Track } from "@api";
 import { FormattedArtists } from "@/components/formatted-artists/formatted-artists.component";
 
 interface Props {
-	track: Track;
+	track: Track | EphemeralTrack;
 }
 
 export function TrackArtists({ track }: Props) {

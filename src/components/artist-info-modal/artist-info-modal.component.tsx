@@ -3,31 +3,34 @@
 import Modal from "@/components/modal/modal.component";
 import { Artist } from "@api";
 import styles from "./artist-info-modal.module.scss";
-import { useAttribute } from "@/hook/attribute.hook";
 import { useGetArtist } from "@api";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { useTranslation } from "@/context/language.context";
 import Link from "next/link";
 
-interface Props extends InnerProps {
+interface Props {
+	artist: Artist;
 	open: boolean;
 	onClose?: () => void;
 }
 
 export function ArtistInfoModal({ artist, open, onClose }: Props) {
+	if (!artist.uuid) {
+		return null;
+	}
 	return (
 		<Modal open={open} onClose={onClose} className={styles.container}>
-			<Inner artist={artist} />
+			<Inner artistUuid={artist.uuid} />
 		</Modal>
 	);
 }
 
 interface InnerProps {
-	artist: Artist;
+	artistUuid: string;
 }
 
-function Inner({ artist }: InnerProps) {
-	const { data: fullArtistResponse } = useGetArtist(artist.uuid, {
+function Inner({ artistUuid }: InnerProps) {
+	const { data: fullArtistResponse } = useGetArtist(artistUuid, {
 		query: {
 			enabled: true,
 		},
@@ -52,7 +55,11 @@ function Inner({ artist }: InnerProps) {
 	return <Content artist={fullArtistResponse.data} />;
 }
 
-function Content({ artist }: InnerProps) {
+interface ContentProps {
+	artist: Artist;
+}
+
+function Content({ artist }: ContentProps) {
 	const { t } = useTranslation();
 
 	return (
