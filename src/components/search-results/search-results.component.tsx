@@ -6,6 +6,7 @@ import { List } from "@/components/list/list.component";
 import { Album, Artist, EphemeralTrack, Track } from "@api";
 import { useMemo } from "react";
 import styles from "./search-results.module.scss";
+import { TrackList } from "@/components/track-list/track-list.component";
 
 interface Props {
 	tracks: (Track | EphemeralTrack)[];
@@ -27,14 +28,10 @@ export function SearchResults({ tracks, artists, albums }: Props) {
 			{!!topTracks.length && (
 				<div>
 					<h3 className={styles.sectionTitle}>Top Tracks</h3>
-					<List>
-						{topTracks.map((track) => (
-							<ListTrack
-								track={track}
-								key={`${track.pluginId} ${track.libraryId} ${track.id}`}
-							/>
-						))}
-					</List>
+					<TrackList
+						tracks={topTracks}
+						trackNumber={(_track, index) => index + 1}
+					/>
 				</div>
 			)}
 			{!!artists.length && (
@@ -60,14 +57,10 @@ export function SearchResults({ tracks, artists, albums }: Props) {
 			{!!remainingTracks.length && (
 				<div>
 					<h3 className={styles.sectionTitle}>Tracks</h3>
-					<List>
-						{remainingTracks.map((track) => (
-							<ListTrack
-								track={track}
-								key={`${track.pluginId} ${track.libraryId} ${track.id}`}
-							/>
-						))}
-					</List>
+					<TrackList
+						tracks={remainingTracks}
+						trackNumber={(_track, index) => index + topTracks.length + 1}
+					/>
 				</div>
 			)}
 		</div>

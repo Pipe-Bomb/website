@@ -17,12 +17,21 @@ import { usePlayerStore } from "@/store/player.store";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { cc } from "@/lib/util";
 import { TrackAlbum } from "@/components/track-album/track-album.component";
+import { AttributeUnion } from "@/lib/attribute.util";
+
+export interface ListTrackColumn {
+	attribute: string;
+	attributeType: AttributeUnion["type"];
+	width: number;
+}
 
 interface Props {
 	track: Track | EphemeralTrack;
+	columns?: ListTrackColumn[];
+	number?: number;
 }
 
-export function ListTrack({ track }: Props) {
+export function ListTrack({ track, number }: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
 	const {
 		addToEnd,
@@ -75,12 +84,8 @@ export function ListTrack({ track }: Props) {
 				className={cc(styles.container, isPlayingThis && styles.active)}
 				{...rightClick}
 			>
-				<div className={styles.imageContainer}>
-					<ResourceImage
-						resource={image}
-						className={styles.cover}
-						fallbackSrc="/no_album_art.jpg"
-					/>
+				<div className={styles.trackNumber}>
+					{number}
 					<div className={styles.playButton}>
 						<IconButton
 							icon={
@@ -99,6 +104,13 @@ export function ListTrack({ track }: Props) {
 							}}
 						/>
 					</div>
+				</div>
+				<div className={styles.imageContainer}>
+					<ResourceImage
+						resource={image}
+						className={styles.cover}
+						fallbackSrc="/no_album_art.jpg"
+					/>
 				</div>
 				<div className={styles.info}>
 					<span className={styles.title}>

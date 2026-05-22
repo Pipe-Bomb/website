@@ -11,6 +11,25 @@
 		background: var(--bg-surface);
 	}
 
+	.trackNumber {
+		width: 38px;
+		flex-shrink: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: var(--fg-tertiary);
+		font-weight: bold;
+		position: relative;
+
+		.playButton {
+			display: none;
+			position: absolute;
+			inset: 0;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
 	.imageContainer {
 		width: 38px;
 		height: 38px;
@@ -21,10 +40,6 @@
 		align-items: center;
 		overflow: hidden;
 		flex-shrink: 0;
-
-		.playButton {
-			display: none;
-		}
 
 		.cover {
 			position: absolute;
@@ -62,9 +77,9 @@
 
 	&.active,
 	&:hover {
-		.imageContainer {
+		.trackNumber {
 			.playButton {
-				display: block;
+				display: flex;
 			}
 
 			.cover {
