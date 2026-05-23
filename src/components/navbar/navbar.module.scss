@@ -11,39 +11,28 @@
 
 	.container {
 		position: absolute;
-		top: 8px;
-		bottom: 8px;
+		top: 0;
+		bottom: 0;
 		left: 8px;
 		width: calc(var(--width) - 8px * 2);
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		border-radius: 8px;
-		padding: 8px;
 		display: flex;
 		flex-direction: column;
 
 		.main {
 			flex-grow: 1;
 
-			.links {
-				.sectionName {
-					color: var(--fg-tertiary);
-					font-size: 0.8rem;
-				}
-
-				.linkList {
-					display: flex;
-					flex-direction: column;
-					gap: 4px;
-
-					a {
-						color: var(--fg-secondary);
-					}
-				}
+			.sectionName {
+				color: var(--fg-tertiary);
+				font-size: 0.8rem;
+				margin: 0 8px;
 			}
 		}
 
 		.bottom {
 			flex-shrink: 0;
+			padding: 8px;
 		}
 	}
 }

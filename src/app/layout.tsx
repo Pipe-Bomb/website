@@ -19,10 +19,19 @@ import {
 	AttributeColumn,
 	TrackColumnsProvider,
 } from "@/context/track-columns.context";
+import localFont from "next/font/local";
+import { cc } from "@/lib/util";
+import { TopBar } from "@/components/top-bar/top-bar.component";
 
 const inter = Inter({
 	variable: "--font-inter",
 	subsets: ["latin"],
+});
+
+export const outfit = localFont({
+	src: "../font/outfit/Outfit-Variable.woff2",
+	variable: "--font-outfit",
+	display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -61,7 +70,7 @@ export default async function RootLayout({
 	}
 
 	return (
-		<html lang="en" className={`${inter.variable}`}>
+		<html lang="en" className={cc(inter.variable, outfit.variable)}>
 			<body>
 				<LanguageProvider data={res.data}>
 					<AuthProvider user={user}>
@@ -70,6 +79,7 @@ export default async function RootLayout({
 								<ModalProvider>
 									<ReactQueryProvider>
 										<div className={styles.container}>
+											<TopBar />
 											<div className={styles.body}>
 												{user && <Navbar />}
 

@@ -1,25 +1,27 @@
 "use client";
 
 import {
-	useGetArtistEphemeralContent,
-	useGetArtistEphemeralContentByIdentity,
-	useGetArtistEphemeralSources,
+	useGetAlbumEphemeralContent,
+	useGetAlbumEphemeralContentByIdentity,
+	useGetAlbumEphemeralSources,
 } from "@api";
-import styles from "./artist-ephemeral-content-tabs.module.scss";
+import styles from "./ephemeral-content-tabs.module.scss";
 import { useEffect, useMemo } from "react";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { Tabs } from "@/components/tabs/tabs.component";
 import { Button } from "@/components/button/button.component";
 import { SearchResults } from "@/components/search-results/search-results.component";
 import { useUrlParam } from "@/hook/url-param.hook";
+import { List } from "@/components/list/list.component";
+import { ListTrack } from "@/components/list-track/list-track.component";
 
 interface Props {
-	artistId: string;
+	albumId: string;
 }
 
-export function ArtistEphemeralContentTabs({ artistId }: Props) {
-	if (artistId.includes("~")) {
-		const parts = artistId.split("~");
+export function AlbumEphemeralContentTabs({ albumId }: Props) {
+	if (albumId.includes("~")) {
+		const parts = albumId.split("~");
 		if (parts.length == 3) {
 			const [pluginId, identityId, identity] = parts;
 			return (
@@ -31,7 +33,7 @@ export function ArtistEphemeralContentTabs({ artistId }: Props) {
 			);
 		}
 	} else {
-		return <ViaUuid uuid={artistId} />;
+		return <ViaUuid uuid={albumId} />;
 	}
 
 	return null;
@@ -44,7 +46,7 @@ interface ViaIdentityProps {
 }
 
 function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
-	const sources = useGetArtistEphemeralContentByIdentity();
+	const sources = useGetAlbumEphemeralContentByIdentity();
 
 	useEffect(() => {
 		sources.mutate({
@@ -64,21 +66,22 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 		);
 	}
 
-	if (data.status == 404) {
+	if (data.status == 400) {
 		return null;
 	}
 
-	const { source, tracks } = data.data;
+	const { tracks } = data.data;
 
 	return (
-		<div className={styles.container}>
-			<h2 className={styles.heading}>From Other Sources</h2>
-			<Tabs className={styles.tabs}>
-				<Button style="primary">{source.name}</Button>
-			</Tabs>
-			<div className={styles.results}>
-				<SearchResults tracks={tracks} artists={[]} albums={[]} />
-			</div>
+		<div className={styles.results}>
+			<List>
+				{tracks.map((track) => (
+					<ListTrack
+						track={track}
+						key={`${track.pluginId} ${track.libraryId} ${track.id}`}
+					/>
+				))}
+			</List>
 		</div>
 	);
 }
@@ -88,7 +91,7 @@ interface ViaUuid {
 }
 
 function ViaUuid({ uuid }: ViaUuid) {
-	const sourcesQuery = useGetArtistEphemeralSources(uuid);
+	const sourcesQuery = useGetAlbumEphemeralSources(uuid);
 	const sources = useMemo(() => {
 		console.log(sourcesQuery.data);
 		if (sourcesQuery.data && sourcesQuery.data.status == 200) {
@@ -96,7 +99,7 @@ function ViaUuid({ uuid }: ViaUuid) {
 		}
 		return null;
 	}, [sourcesQuery.data]);
-	const contentQuery = useGetArtistEphemeralContent();
+	const contentQuery = useGetAlbumEphemeralContent();
 
 	const [sourceId, setSourceId] = useUrlParam("source", {
 		replace: true,
@@ -119,7 +122,7 @@ function ViaUuid({ uuid }: ViaUuid) {
 	useEffect(() => {
 		if (activeSource) {
 			contentQuery.mutate({
-				artistUuid: uuid,
+				albumUuid: uuid,
 				data: {
 					pluginId: activeSource.pluginId,
 					sourceId: activeSource.id,
@@ -130,7 +133,7 @@ function ViaUuid({ uuid }: ViaUuid) {
 		}
 	}, [activeSource, uuid]);
 
-	if (sourcesQuery.isPending) {
+	if (sourcesQuery.isPending || contentQuery.isPending) {
 		return (
 			<div className={styles.loading}>
 				<Spinner position="expand" />
@@ -138,15 +141,15 @@ function ViaUuid({ uuid }: ViaUuid) {
 		);
 	}
 
-	if (!sources) {
-		return null;
-	}
-
 	const content =
 		(contentQuery.data &&
 			contentQuery.data.status == 200 &&
 			contentQuery.data.data) ||
 		null;
+
+	if (!sources || !content) {
+		return null;
+	}
 
 	return (
 		<div className={styles.container}>

@@ -8,6 +8,7 @@ import { useSearchLibrary } from "@api";
 import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
 import { Spinner } from "@/components/spinner/spinner.component";
+import { TrackList } from "@/components/track-list/track-list.component";
 
 interface Props {
 	library: PluginLibrary;
@@ -45,11 +46,7 @@ export function LibraryTracks({ library }: Props) {
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.trackList}>
-				{tracks.map((track) => (
-					<ListTrack track={track} key={track.id} />
-				))}
-			</div>
+			<TrackList tracks={tracks} />
 			<div className={styles.pageBar}>
 				<Paginator urlKey="page" />
 			</div>

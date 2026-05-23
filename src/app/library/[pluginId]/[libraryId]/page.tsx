@@ -2,6 +2,7 @@ import { getLibrary } from "@api";
 import { LibraryTracks } from "@c/library-tracks/library-tracks.component";
 import styles from "./page.module.scss";
 import { Metadata } from "next";
+import { RootPadding } from "@/components/root-padding/root-padding.component";
 
 interface Props {
 	params: Promise<{
@@ -36,9 +37,9 @@ export default async function Page({ params }: Props) {
 	const library = libraryResponse.data;
 
 	return (
-		<div>
+		<RootPadding vertical>
 			<h1 className={styles.libraryName}>{library.name}</h1>
 			<LibraryTracks library={library} />
-		</div>
+		</RootPadding>
 	);
 }

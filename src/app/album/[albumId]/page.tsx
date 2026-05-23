@@ -9,17 +9,19 @@ import { AlbumArtists } from "@/components/album-artists/album-artists.component
 import { AlbumButtons } from "@/components/album-buttons/album-buttons.component";
 import { TrackList } from "@/components/track-list/track-list.component";
 import { getAlbumById } from "@/lib/api.util";
+import { AlbumEphemeralContentTabs } from "@/components/ephemeral-content-tabs/album-ephemeral-content-tabs.component";
+import { RootPadding } from "@/components/root-padding/root-padding.component";
 
 interface Props {
 	params: Promise<{
-		albumUuid: string;
+		albumId: string;
 	}>;
 }
 
 export default async function Page({ params }: Props) {
-	const { albumUuid } = await params;
+	const { albumId } = await params;
 
-	const albumResponse = await getAlbumById(albumUuid);
+	const albumResponse = await getAlbumById(albumId);
 
 	if (albumResponse.status == 404) {
 		return <h1>Album not found</h1>;
@@ -51,7 +53,7 @@ export default async function Page({ params }: Props) {
 					</div>
 				</div>
 			</div>
-			<div className={styles.split}>
+			<RootPadding className={styles.split}>
 				<div className={styles.main}>
 					{!!album.tracks?.length && (
 						<TrackList
@@ -69,7 +71,8 @@ export default async function Page({ params }: Props) {
 							</div>
 						)}
 				</div>
-			</div>
+			</RootPadding>
+			<AlbumEphemeralContentTabs albumId={albumId} />
 		</div>
 	);
 }

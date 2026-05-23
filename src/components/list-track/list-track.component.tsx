@@ -79,8 +79,8 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 				{...rightClick}
 			>
 				<div className={styles.main}>
-					<div className={styles.trackNumber}>
-						{number}
+					<div className={styles.trackNumberContainer}>
+						<span className={styles.trackNumber}>{number}</span>
 						<div className={styles.playButton}>
 							<IconButton
 								icon={

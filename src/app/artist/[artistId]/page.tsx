@@ -9,7 +9,10 @@ import { GridAlbum } from "@/components/grid-album/grid-album.component";
 import { Grid } from "@/components/grid/grid.component";
 import { getArtistExternalUrls } from "@/api";
 import { getArtistById } from "@/lib/api.util";
-import { ArtistEphemeralContentTabs } from "@/components/artist-ephemeral-content-tabs/artist-ephemeral-content-tabs.component";
+import { ArtistEphemeralContentTabs } from "@/components/ephemeral-content-tabs/artist-ephemeral-content-tabs.component";
+import { TrackList } from "@/components/track-list/track-list.component";
+import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
+import { RootPadding } from "@/components/root-padding/root-padding.component";
 
 interface Props {
 	params: Promise<{
@@ -101,32 +104,9 @@ export default async function Page({ params }: Props) {
 					</div>
 				</div>
 
-				<div className={styles.split}>
+				<RootPadding className={styles.split}>
 					<div className={styles.main}>
-						<div className={styles.trackList}>
-							<h3>Tracks</h3>
-							<div>
-								{artist.tracks?.map((track) => (
-									<ListTrack
-										track={track}
-										key={`${track.pluginId} ${track.libraryId} ${track.id}`}
-									/>
-								))}
-							</div>
-						</div>
-
-						{!!artist.albums?.length && (
-							<div className={styles.albums}>
-								<h3>Albums</h3>
-								<div className={styles.albumGrid}>
-									<Grid>
-										{artist.albums.map((album) => (
-											<GridAlbum album={album} key={album.uuid} />
-										))}
-									</Grid>
-								</div>
-							</div>
-						)}
+						{artist.tracks && <TrackList tracks={artist.tracks} />}
 					</div>
 
 					<div className={styles.sideBar}>
@@ -137,7 +117,16 @@ export default async function Page({ params }: Props) {
 								</div>
 							)}
 					</div>
-				</div>
+				</RootPadding>
+				{artist.albums && (
+					<div className={styles.albums}>
+						<HorizontalScroller heading="Albums">
+							{artist.albums.map((album) => (
+								<GridAlbum album={album} key={album.uuid} />
+							))}
+						</HorizontalScroller>
+					</div>
+				)}
 			</div>
 			<ArtistEphemeralContentTabs artistId={artistId} />
 		</div>

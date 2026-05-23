@@ -11,12 +11,14 @@
 		--bg: var(--button-primary-bg);
 		--fg: var(--button-primary-fg);
 		--hover: var(--button-primary-hover);
+		--disabled: var(--button-primary-disabled);
 	}
 
 	&.secondary {
 		--bg: var(--button-secondary-bg);
 		--fg: var(--button-secondary-fg);
 		--hover: var(--button-secondary-hover);
+		--disabled: var(--button-secondary-disabled);
 	}
 
 	&::before {
@@ -41,10 +43,19 @@
 	}
 
 	&.styleSimple {
+		&:disabled {
+			.icon {
+				color: var(--fg-muted);
+			}
+		}
 	}
 
 	&.styleBackground::before {
 		background: var(--bg);
+	}
+
+	&.styleBackground:disabled::before {
+		background: var(--disabled);
 	}
 
 	&.loading {
@@ -59,11 +70,19 @@
 		}
 	}
 
-	&:active::before {
+	&:active:not(:disabled)::before {
 		// todo: make this cooler
 		background: var(--button-primary-active);
 		inset: -3px;
 		transition: none;
+	}
+
+	&:disabled {
+		cursor: default;
+	}
+
+	&:disabled:active::before {
+		inset: 0 !important;
 	}
 
 	.icon {

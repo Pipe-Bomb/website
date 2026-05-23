@@ -23,66 +23,109 @@ const COLUMN_MIN_WIDTH = 50;
 
 export function TrackList({ tracks, keys, trackNumbers, noArt }: Props) {
 	const { columns, setColumns } = useTrackColumns();
-
 	const { ref, width } = useResizeDetector();
 
+	// 1. Compute visible columns based on available space budget
 	const boundColumns = useMemo<AttributeColumn[]>(() => {
 		if (!width) {
 			return [];
 		}
-		if (width < MAIN_MIN_WIDTH + columns.length * COLUMN_MIN_WIDTH) {
-			return []; // todo: better responsiveness
+
+		const totalMinColumnsWidth = columns.length * COLUMN_MIN_WIDTH;
+		const maxAvailableColumnSpace = width - MAIN_MIN_WIDTH;
+
+		if (maxAvailableColumnSpace < totalMinColumnsWidth) {
+			return columns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
 		}
-		const targetWidth =
-			columns.reduce((width, column) => width + column.width, 0) + 200;
-		if (width >= targetWidth) {
+
+		const totalRequestedWidth = columns.reduce(
+			(sum, col) => sum + col.width,
+			0,
+		);
+
+		if (totalRequestedWidth <= maxAvailableColumnSpace) {
 			return columns;
 		}
-		// intelligently resize columns
 
-		const extraSpace =
-			width - MAIN_MIN_WIDTH - columns.length * COLUMN_MIN_WIDTH;
-		return columns.map((column) => ({
-			...column,
-			width: COLUMN_MIN_WIDTH + (extraSpace / targetWidth) * column.width,
-		}));
+		const flexibleSpaceAvailable =
+			maxAvailableColumnSpace - totalMinColumnsWidth;
+		const totalFlexibleSpaceRequested =
+			totalRequestedWidth - totalMinColumnsWidth;
+
+		if (totalFlexibleSpaceRequested <= 0) {
+			return columns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
+		}
+
+		return columns.map((column) => {
+			const columnFlexibleRequested = column.width - COLUMN_MIN_WIDTH;
+			const scaledFlexibleSpace =
+				columnFlexibleRequested *
+				(flexibleSpaceAvailable / totalFlexibleSpaceRequested);
+
+			return {
+				...column,
+				width: COLUMN_MIN_WIDTH + scaledFlexibleSpace,
+			};
+		});
 	}, [columns, width]);
 
+	// 2. Optimized Drag Handler with hard-boundary locking
 	const startDrag = (e: MouseEvent, index: number) => {
 		const mover = e.currentTarget as HTMLSpanElement | null;
-		if (!mover) {
+		if (!mover || !width) {
 			return;
 		}
 
 		const startX = e.clientX;
-		const initialWidth = columns[index].width;
+
+		// Capture snapshot of current VISIBLE widths when drag starts.
+		// This prevents columns from "snapping" if they were previously squished by a small window.
+		const currentVisibleWidths = boundColumns.map((c) => c.width);
+		const initialWidth = currentVisibleWidths[index];
+
+		// Calculate the maximum space available for ALL columns
+		const maxAvailableColumnSpace = width - MAIN_MIN_WIDTH;
+
+		// Sum up what the OTHER columns are currently taking up on screen
+		const otherColumnsWidth = currentVisibleWidths.reduce(
+			(sum, w, idx) => sum + (idx === index ? 0 : w),
+			0,
+		);
+
+		// This is the absolute largest this column can grow before violating MAIN_MIN_WIDTH
+		const maxPossibleWidth = maxAvailableColumnSpace - otherColumnsWidth;
 
 		const moveListener = (e: MouseEvent) => {
-			const offset = e.pageX - startX;
+			const offset = e.clientX - startX;
 
-			setColumns((columns) => [
-				...columns.map((column, columnIndex) => {
-					if (columnIndex == index) {
-						return {
-							...column,
-							width: Math.max(initialWidth - offset, 50),
-						};
+			// Calculate raw target width based on your direction configuration
+			let newWidth = initialWidth - offset;
+
+			// Clamp: Must be at least COLUMN_MIN_WIDTH, and cannot exceed our calculated budget wall
+			newWidth = Math.max(
+				COLUMN_MIN_WIDTH,
+				Math.min(newWidth, maxPossibleWidth),
+			);
+
+			setColumns((prevColumns) =>
+				prevColumns.map((column, columnIndex) => {
+					if (columnIndex === index) {
+						return { ...column, width: newWidth };
 					}
-					return column;
+					// Crucial: Lock all other columns to their exact current visible widths
+					// during active drag states to eliminate unexpected layout shifting.
+					return { ...column, width: currentVisibleWidths[columnIndex] };
 				}),
-			]);
+			);
 		};
 
 		window.addEventListener("mousemove", moveListener);
-
 		window.addEventListener(
 			"mouseup",
-			(e) => {
+			() => {
 				window.removeEventListener("mousemove", moveListener);
 			},
-			{
-				once: true,
-			},
+			{ once: true },
 		);
 	};
 
@@ -93,13 +136,10 @@ export function TrackList({ tracks, keys, trackNumbers, noArt }: Props) {
 				{boundColumns.map((column, index) => (
 					<div
 						key={index}
-						style={{
-							width: `${column.width}px`,
-						}}
+						style={{ width: `${column.width}px` }}
 						className={styles.columnHeading}
 					>
 						<span className={styles.columnName}>{column.attribute}</span>
-
 						<span
 							className={styles.mover}
 							onMouseDown={(e) => startDrag(e as any, index)}
@@ -107,7 +147,7 @@ export function TrackList({ tracks, keys, trackNumbers, noArt }: Props) {
 					</div>
 				))}
 			</div>
-			<List>
+			<div className={styles.trackList}>
 				{tracks.map((track, index) => (
 					<ListTrack
 						track={track}
@@ -121,7 +161,7 @@ export function TrackList({ tracks, keys, trackNumbers, noArt }: Props) {
 						noArt={noArt}
 					/>
 				))}
-			</List>
+			</div>
 		</div>
 	);
 }

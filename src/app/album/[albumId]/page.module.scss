@@ -1,7 +1,7 @@
 .top {
 	display: flex;
 	gap: 32px;
-	margin: 32px;
+	margin: 16px;
 
 	.coverArt {
 		width: 240px;
@@ -19,6 +19,7 @@
 
 		.title {
 			font-size: 3rem;
+			font-family: var(--font-heading);
 		}
 
 		.topButtons {
@@ -29,6 +30,8 @@
 
 .split {
 	display: flex;
+	gap: 16px;
+	margin-top: 32px;
 
 	.main {
 		flex-grow: 1;
@@ -37,5 +40,6 @@
 	.sidebar {
 		width: 300px;
 		max-width: 50%;
+		flex-shrink: 0;
 	}
 }

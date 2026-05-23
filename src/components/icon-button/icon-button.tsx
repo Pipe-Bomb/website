@@ -16,7 +16,6 @@ type Props = {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
 	disabled?: boolean;
-	// strokeWidth?: number;
 	iconSource: "lucide" | "tabler";
 };
 
@@ -32,8 +31,8 @@ export function IconButton({
 	loading,
 	variant,
 	size,
-	// strokeWidth,
 	iconSource,
+	disabled,
 }: Props) {
 	const IconComponent = icon;
 	const styleClass = useMemo(
@@ -53,6 +52,7 @@ export function IconButton({
 				loading && styles.loading,
 			)}
 			onClick={onClick ?? undefined}
+			disabled={disabled}
 		>
 			<IconComponent
 				className={cc(styles.icon, styles[iconSource])}

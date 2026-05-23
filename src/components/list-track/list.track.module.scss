@@ -4,12 +4,12 @@
 	gap: 3px;
 	align-items: center;
 	position: relative;
-	background: var(--bg-base);
+	background: var(--bg-surface);
 	border-radius: 8px;
 	height: 54px;
 
 	&:hover {
-		background: var(--bg-surface);
+		background: var(--bg-hover);
 	}
 
 	.main {
@@ -17,8 +17,9 @@
 		flex-grow: 1;
 		display: flex;
 		align-items: center;
+		overflow: hidden;
 
-		.trackNumber {
+		.trackNumberContainer {
 			width: 42px;
 			flex-shrink: 0;
 			display: flex;
@@ -63,12 +64,19 @@
 			flex-grow: 1;
 			margin-left: 12px;
 			flex-direction: column;
+			overflow: hidden;
 
 			.title {
+				white-space: pre;
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 
 			.artist {
 				font-size: 0.8rem;
+				white-space: pre;
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 
 			.title,
@@ -104,13 +112,13 @@
 
 	&.active,
 	&:hover {
-		.trackNumber {
+		.trackNumberContainer {
 			.playButton {
 				display: flex;
 			}
 
-			.cover {
-				opacity: 0.5;
+			.trackNumber {
+				opacity: 0;
 			}
 		}
 	}

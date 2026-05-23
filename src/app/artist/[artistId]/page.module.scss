@@ -49,13 +49,14 @@
 
 	.body {
 		flex-grow: 1;
-		background: var(--bg-base);
+		background: var(--bg-surface);
 	}
 }
 
 .top {
 	max-width: 1400px;
-	margin: 0 auto;
+	width: calc(100% - 32px);
+	margin: 0 auto 32px auto;
 	display: flex;
 	gap: 32px;
 
@@ -79,6 +80,7 @@
 	.artistName {
 		font-size: 3rem;
 		margin: 8px 0;
+		font-family: var(--font-heading);
 	}
 
 	.genres {
@@ -104,26 +106,21 @@
 
 .split {
 	display: flex;
+	gap: 16px;
 
 	.main {
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
-		gap: 32px;
-
-		.albums {
-			.albumGrid {
-				margin-top: 8px;
-			}
-		}
-
-		.trackList {
-			flex-grow: 1;
-		}
 	}
 
 	.sideBar {
 		width: 300px;
 		max-width: 50%;
+		flex-shrink: 0;
 	}
+}
+
+.albums {
+	margin-top: 32px;
 }

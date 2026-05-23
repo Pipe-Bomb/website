@@ -1,0 +1,16 @@
+.link {
+	display: block;
+	padding: 4px 8px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.icon {
+		width: 24px;
+	}
+
+	&.active {
+		background: var(--bg-elevated);
+	}
+}

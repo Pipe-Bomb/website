@@ -1,0 +1,26 @@
+.container {
+	.top {
+		display: flex;
+		align-items: center;
+		margin-bottom: 16px;
+
+		.heading {
+			margin-right: 16px;
+			font-size: 1.5rem;
+			margin-left: 16px;
+		}
+	}
+
+	.content {
+		overflow-x: scroll;
+		padding: 0 16px;
+		isolation: isolate;
+
+		.scroll {
+			display: flex;
+			width: max-content;
+			gap: 16px;
+			margin-bottom: 16px;
+		}
+	}
+}

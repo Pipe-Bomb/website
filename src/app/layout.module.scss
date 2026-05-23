@@ -9,18 +9,21 @@
 		display: flex;
 		flex-grow: 1;
 		align-items: stretch;
+		margin-bottom: 8px;
 
 		.contentPlacement {
 			flex-grow: 1;
 			position: relative;
 			overflow-x: hidden;
 			overflow-y: auto;
+			background: var(--bg-surface);
+			border-radius: 8px;
+			margin-right: 8px;
 
 			.content {
 				position: absolute;
 				inset: 0;
 				isolation: isolate;
-				padding-right: 8px;
 				display: flex;
 				flex-direction: column;
 			}

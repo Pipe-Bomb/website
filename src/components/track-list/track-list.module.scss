@@ -6,19 +6,18 @@
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	background: var(--bg-base);
-	margin-bottom: 8px;
+	background: var(--bg-surface);
 
 	.columnHeadingExpander {
 		flex-grow: 1;
-		background: var(--bg-surface);
+		background: var(--bg-elevated);
 		border-radius: 3px;
 	}
 
 	.columnHeading {
 		flex-grow: 0;
 		flex-shrink: 0;
-		background: var(--bg-surface);
+		background: var(--bg-elevated);
 		position: relative;
 		user-select: none;
 		border-radius: 3px;
@@ -42,4 +41,8 @@
 			cursor: col-resize;
 		}
 	}
+}
+
+.trackList {
+	margin-top: 8px;
 }
