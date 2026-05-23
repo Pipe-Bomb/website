@@ -23,7 +23,7 @@ export function AlbumButtons({ album }: Props) {
 
 		return [
 			() => playTrack(tracklist[0], 0, tracklist),
-			() => insert(tracklist, currentIndex + 1),
+			() => insert(tracklist, currentIndex),
 			() => addToEnd(tracklist),
 		];
 	}, [album, playTrack]);

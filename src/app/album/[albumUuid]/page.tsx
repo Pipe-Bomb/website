@@ -7,6 +7,7 @@ import { ExternalUrlList } from "@/components/external-url-list/external-url-lis
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { AlbumArtists } from "@/components/album-artists/album-artists.component";
 import { AlbumButtons } from "@/components/album-buttons/album-buttons.component";
+import { TrackList } from "@/components/track-list/track-list.component";
 import { getAlbumById } from "@/lib/api.util";
 
 interface Props {
@@ -52,11 +53,13 @@ export default async function Page({ params }: Props) {
 			</div>
 			<div className={styles.split}>
 				<div className={styles.main}>
-					<List>
-						{album.tracks?.map((track) => (
-							<ListTrack track={track} key={track.id} />
-						))}
-					</List>
+					{!!album.tracks?.length && (
+						<TrackList
+							tracks={album.tracks}
+							trackNumbers={album.tracks.map((_, index) => index + 1)}
+							noArt
+						/>
+					)}
 				</div>
 				<div className={styles.sidebar}>
 					{albumUrlsResponse?.status == 200 &&
