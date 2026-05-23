@@ -1,13 +1,14 @@
 import { ListTrack } from "@/components/list-track/list-track.component";
 import { List } from "@/components/list/list.component";
 import { getAttribute } from "@/lib/attribute.util";
-import { getAlbum, getAlbumExternalUrls } from "@api";
+import { getAlbumExternalUrls } from "@api";
 import styles from "./page.module.scss";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { AlbumArtists } from "@/components/album-artists/album-artists.component";
 import { AlbumButtons } from "@/components/album-buttons/album-buttons.component";
 import { TrackList } from "@/components/track-list/track-list.component";
+import { getAlbumById } from "@/lib/api.util";
 
 interface Props {
 	params: Promise<{
@@ -18,7 +19,7 @@ interface Props {
 export default async function Page({ params }: Props) {
 	const { albumUuid } = await params;
 
-	const albumResponse = await getAlbum(albumUuid);
+	const albumResponse = await getAlbumById(albumUuid);
 
 	if (albumResponse.status == 404) {
 		return <h1>Album not found</h1>;
@@ -29,7 +30,8 @@ export default async function Page({ params }: Props) {
 		getAttribute(album.attributes, "title", "string") ?? "Unknown Album";
 	const front = getAttribute(album.attributes, "front", "buffer");
 
-	const albumUrlsResponse = await getAlbumExternalUrls(album.uuid);
+	const albumUrlsResponse =
+		(!!album.uuid && (await getAlbumExternalUrls(album.uuid))) || null;
 
 	return (
 		<div>
@@ -60,7 +62,7 @@ export default async function Page({ params }: Props) {
 					)}
 				</div>
 				<div className={styles.sidebar}>
-					{albumUrlsResponse.status == 200 &&
+					{albumUrlsResponse?.status == 200 &&
 						!!albumUrlsResponse.data.length && (
 							<div>
 								<ExternalUrlList urls={albumUrlsResponse.data} />
