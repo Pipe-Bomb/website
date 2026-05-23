@@ -51,7 +51,11 @@ export function EphemeralSearch({ query, sourceId, pluginId }: Props) {
 
 	return (
 		<div>
-			<SearchResults tracks={results.tracks} artists={[]} albums={[]} />
+			<SearchResults
+				tracks={results.tracks}
+				artists={results.artists}
+				albums={results.albums}
+			/>
 		</div>
 	);
 }
