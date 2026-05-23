@@ -15,6 +15,10 @@ import { SideBar } from "@/components/sidebar/sidebar.component";
 import { Navbar } from "@/components/navbar/navbar.component";
 import { cookies } from "next/headers";
 import { AuthProvider } from "@/context/auth.context";
+import {
+	AttributeColumn,
+	TrackColumnsProvider,
+} from "@/context/track-columns.context";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -35,29 +39,52 @@ export default async function RootLayout({
 	const user = await getAuthenticatedUser();
 	const res = await getLanguageMap("en_US"); // todo: make this configurable
 
+	const cookieStore = await cookies();
+	const trackColumnsCookie = cookieStore.get("track_columns");
+	let initialTrackColumns: AttributeColumn[] = [
+		{
+			attribute: "genre",
+			attributeType: "string",
+			width: 100,
+		},
+		{
+			attribute: "duration",
+			attributeType: "decimal",
+			width: 100,
+		},
+	];
+
+	if (trackColumnsCookie) {
+		try {
+			initialTrackColumns = JSON.parse(trackColumnsCookie.value);
+		} catch {}
+	}
+
 	return (
 		<html lang="en" className={`${inter.variable}`}>
 			<body>
 				<LanguageProvider data={res.data}>
 					<AuthProvider user={user}>
 						<ContextMenuProvider>
-							<ModalProvider>
-								<ReactQueryProvider>
-									<div className={styles.container}>
-										<div className={styles.body}>
-											{user && <Navbar />}
+							<TrackColumnsProvider initialColumns={initialTrackColumns}>
+								<ModalProvider>
+									<ReactQueryProvider>
+										<div className={styles.container}>
+											<div className={styles.body}>
+												{user && <Navbar />}
 
-											<div className={styles.contentPlacement}>
-												<div className={styles.content}>{children}</div>
+												<div className={styles.contentPlacement}>
+													<div className={styles.content}>{children}</div>
+												</div>
+												{user && <SideBar />}
 											</div>
-											{user && <SideBar />}
+											{user && <Player />}
+											<AudioEngine />
 										</div>
-										{user && <Player />}
-										<AudioEngine />
-									</div>
-									<ModalBackground />
-								</ReactQueryProvider>
-							</ModalProvider>
+										<ModalBackground />
+									</ReactQueryProvider>
+								</ModalProvider>
+							</TrackColumnsProvider>
 						</ContextMenuProvider>
 					</AuthProvider>
 				</LanguageProvider>

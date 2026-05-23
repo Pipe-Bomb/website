@@ -96,7 +96,11 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 	insert: (tracks, index) => {
 		set((state) => ({
-			queue: [...state.queue.splice(index, 0, ...tracks)],
+			queue: [
+				...state.queue.slice(0, index + 1),
+				...tracks,
+				...state.queue.slice(index + 1),
+			],
 		}));
 	},
 

@@ -54,7 +54,8 @@ export default async function Page({ params }: Props) {
 					{!!album.tracks?.length && (
 						<TrackList
 							tracks={album.tracks}
-							trackNumber={(_track, index) => index + 1}
+							trackNumbers={album.tracks.map((_, index) => index + 1)}
+							noArt
 						/>
 					)}
 				</div>

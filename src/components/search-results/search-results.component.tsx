@@ -1,8 +1,6 @@
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
 import { GridArtist } from "@/components/grid-artist/grid-artist.component";
 import { Grid } from "@/components/grid/grid.component";
-import { ListTrack } from "@/components/list-track/list-track.component";
-import { List } from "@/components/list/list.component";
 import { Album, Artist, EphemeralTrack, Track } from "@api";
 import { useMemo } from "react";
 import styles from "./search-results.module.scss";

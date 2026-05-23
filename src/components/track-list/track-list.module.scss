@@ -1,0 +1,45 @@
+.columnHeadingContainer {
+	display: flex;
+	gap: 3px;
+	border-radius: 8px;
+	overflow: hidden;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: var(--bg-base);
+	margin-bottom: 8px;
+
+	.columnHeadingExpander {
+		flex-grow: 1;
+		background: var(--bg-surface);
+		border-radius: 3px;
+	}
+
+	.columnHeading {
+		flex-grow: 0;
+		flex-shrink: 0;
+		background: var(--bg-surface);
+		position: relative;
+		user-select: none;
+		border-radius: 3px;
+
+		.columnName {
+			position: relative;
+			padding: 2px 4px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 100%;
+			display: block;
+		}
+
+		.mover {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: -5px;
+			width: 10px;
+			opacity: 0.5;
+			cursor: col-resize;
+		}
+	}
+}

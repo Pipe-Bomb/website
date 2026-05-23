@@ -1,66 +1,93 @@
 .container {
 	border: none;
 	display: flex;
-	padding: 3px;
-	gap: 6px;
+	gap: 3px;
 	align-items: center;
 	position: relative;
-	background: var(--bg-background);
+	background: var(--bg-base);
+	border-radius: 8px;
+	height: 54px;
 
 	&:hover {
 		background: var(--bg-surface);
 	}
 
-	.trackNumber {
-		width: 38px;
-		flex-shrink: 0;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: var(--fg-tertiary);
-		font-weight: bold;
-		position: relative;
-
-		.playButton {
-			display: none;
-			position: absolute;
-			inset: 0;
-			justify-content: center;
-			align-items: center;
-		}
-	}
-
-	.imageContainer {
-		width: 38px;
-		height: 38px;
-		position: relative;
-		isolation: isolate;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		overflow: hidden;
-		flex-shrink: 0;
-
-		.cover {
-			position: absolute;
-			z-index: -1;
-			inset: 0;
-			flex-shrink: 0;
-			border-radius: 4px;
-			overflow: hidden;
-		}
-	}
-
-	.info {
+	.main {
 		display: flex;
 		flex-grow: 1;
+		display: flex;
+		align-items: center;
 
-		.title,
-		.artist,
-		.album {
-			flex: 1;
-			text-align: left;
+		.trackNumber {
+			width: 42px;
+			flex-shrink: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: var(--fg-tertiary);
+			font-weight: bold;
+			position: relative;
+
+			.playButton {
+				display: none;
+				position: absolute;
+				inset: 0;
+				justify-content: center;
+				align-items: center;
+			}
 		}
+
+		.imageContainer {
+			width: 42px;
+			height: 42px;
+			position: relative;
+			isolation: isolate;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+			flex-shrink: 0;
+
+			.cover {
+				position: absolute;
+				z-index: -1;
+				inset: 0;
+				flex-shrink: 0;
+				border-radius: 4px;
+				overflow: hidden;
+			}
+		}
+
+		.info {
+			display: flex;
+			flex-grow: 1;
+			margin-left: 12px;
+			flex-direction: column;
+
+			.title {
+			}
+
+			.artist {
+				font-size: 0.8rem;
+			}
+
+			.title,
+			.artist,
+			.album {
+				flex: 1;
+				text-align: left;
+			}
+		}
+	}
+
+	.column {
+		// background: red;
+		flex-grow: 0;
+		flex-shrink: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: pre;
+		color: var(--fg-secondary);
 	}
 
 	&:hover,
