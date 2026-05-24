@@ -1,5 +1,3 @@
-import { ListTrack } from "@/components/list-track/list-track.component";
-import { List } from "@/components/list/list.component";
 import { getAttribute } from "@/lib/attribute.util";
 import { getAlbumExternalUrls } from "@api";
 import styles from "./page.module.scss";
@@ -11,6 +9,7 @@ import { TrackList } from "@/components/track-list/track-list.component";
 import { getAlbumById } from "@/lib/api.util";
 import { AlbumEphemeralContentTabs } from "@/components/ephemeral-content-tabs/album-ephemeral-content-tabs.component";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
+import { TrackListProvider } from "@/context/tracklist.context";
 
 interface Props {
 	params: Promise<{
@@ -36,43 +35,47 @@ export default async function Page({ params }: Props) {
 		(!!album.uuid && (await getAlbumExternalUrls(album.uuid))) || null;
 
 	return (
-		<div>
-			<div className={styles.top}>
-				<ResourceImage
-					resource={front}
-					fallbackSrc="/no_album_art.jpg"
-					className={styles.coverArt}
-				/>
-				<div className={styles.topInfo}>
-					<h1 className={styles.title}>{title}</h1>
-					<div className={styles.artists}>
-						<AlbumArtists album={album} />
-					</div>
-					<div className={styles.topButtons}>
-						<AlbumButtons album={album} />
+		<TrackListProvider>
+			<div>
+				<div className={styles.top}>
+					<ResourceImage
+						resource={front}
+						fallbackSrc="/no_album_art.jpg"
+						className={styles.coverArt}
+					/>
+					<div className={styles.topInfo}>
+						<h1 className={styles.title}>{title}</h1>
+						<div className={styles.artists}>
+							<AlbumArtists album={album} />
+						</div>
+						<div className={styles.topButtons}>
+							<AlbumButtons album={album} />
+						</div>
 					</div>
 				</div>
-			</div>
-			<RootPadding className={styles.split}>
-				<div className={styles.main}>
-					{!!album.tracks?.length && (
-						<TrackList
-							tracks={album.tracks}
-							trackNumbers={album.tracks.map((_, index) => index + 1)}
-							noArt
-						/>
-					)}
-				</div>
-				<div className={styles.sidebar}>
-					{albumUrlsResponse?.status == 200 &&
-						!!albumUrlsResponse.data.length && (
-							<div>
-								<ExternalUrlList urls={albumUrlsResponse.data} />
-							</div>
+				<RootPadding className={styles.split}>
+					<div className={styles.main}>
+						{!!album.tracks?.length && (
+							<TrackList
+								tracks={album.tracks}
+								trackNumbers={album.tracks.map((_, index) => index + 1)}
+								noArt
+							/>
 						)}
-				</div>
-			</RootPadding>
-			<AlbumEphemeralContentTabs albumId={albumId} />
-		</div>
+					</div>
+					<div className={styles.sidebar}>
+						{albumUrlsResponse?.status == 200 &&
+							!!albumUrlsResponse.data.length && (
+								<div>
+									<ExternalUrlList urls={albumUrlsResponse.data} />
+								</div>
+							)}
+					</div>
+				</RootPadding>
+				<RootPadding>
+					<AlbumEphemeralContentTabs albumId={albumId} />
+				</RootPadding>
+			</div>
+		</TrackListProvider>
 	);
 }

@@ -12,8 +12,8 @@ import { Tabs } from "@/components/tabs/tabs.component";
 import { Button } from "@/components/button/button.component";
 import { SearchResults } from "@/components/search-results/search-results.component";
 import { useUrlParam } from "@/hook/url-param.hook";
-import { List } from "@/components/list/list.component";
-import { ListTrack } from "@/components/list-track/list-track.component";
+import { TrackList } from "@/components/track-list/track-list.component";
+import { useTrackListContext } from "@/context/tracklist.context";
 
 interface Props {
 	albumId: string;
@@ -47,6 +47,7 @@ interface ViaIdentityProps {
 
 function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 	const sources = useGetAlbumEphemeralContentByIdentity();
+	const { setTrackList } = useTrackListContext();
 
 	useEffect(() => {
 		sources.mutate({
@@ -57,6 +58,14 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 	}, [pluginId, identifierId, identity]);
 
 	const data = sources.data;
+
+	useEffect(() => {
+		if (data && data.status == 200) {
+			setTrackList(data.data.tracks);
+		} else {
+			setTrackList([]);
+		}
+	}, [data]);
 
 	if (!data) {
 		return (
@@ -70,18 +79,15 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 		return null;
 	}
 
-	const { tracks } = data.data;
+	const { tracks, source } = data.data;
 
 	return (
-		<div className={styles.results}>
-			<List>
-				{tracks.map((track) => (
-					<ListTrack
-						track={track}
-						key={`${track.pluginId} ${track.libraryId} ${track.id}`}
-					/>
-				))}
-			</List>
+		<div>
+			<span className={styles.originMessage}>Tracklist from {source.name}</span>
+			<TrackList
+				tracks={tracks}
+				trackNumbers={tracks.map((_t, index) => index + 1)}
+			/>
 		</div>
 	);
 }
@@ -100,6 +106,7 @@ function ViaUuid({ uuid }: ViaUuid) {
 		return null;
 	}, [sourcesQuery.data]);
 	const contentQuery = useGetAlbumEphemeralContent();
+	const { setTrackList } = useTrackListContext();
 
 	const [sourceId, setSourceId] = useUrlParam("source", {
 		replace: true,
@@ -133,6 +140,20 @@ function ViaUuid({ uuid }: ViaUuid) {
 		}
 	}, [activeSource, uuid]);
 
+	const content =
+		(contentQuery.data &&
+			contentQuery.data.status == 200 &&
+			contentQuery.data.data) ||
+		null;
+
+	useEffect(() => {
+		if (content) {
+			setTrackList(content.tracks);
+		} else {
+			setTrackList([]);
+		}
+	}, [content]);
+
 	if (sourcesQuery.isPending || contentQuery.isPending) {
 		return (
 			<div className={styles.loading}>
@@ -140,12 +161,6 @@ function ViaUuid({ uuid }: ViaUuid) {
 			</div>
 		);
 	}
-
-	const content =
-		(contentQuery.data &&
-			contentQuery.data.status == 200 &&
-			contentQuery.data.data) ||
-		null;
 
 	if (!sources || !content) {
 		return null;

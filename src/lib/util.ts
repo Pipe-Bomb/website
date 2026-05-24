@@ -14,3 +14,20 @@ export function formatTime(seconds: number) {
 	}
 	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
+
+export function shuffle<T>(array: T[]): T[] {
+	const output = [...array];
+	let currentIndex = output.length;
+
+	while (currentIndex != 0) {
+		let randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
+
+		[output[currentIndex], output[randomIndex]] = [
+			output[randomIndex],
+			output[currentIndex],
+		];
+	}
+
+	return output;
+}

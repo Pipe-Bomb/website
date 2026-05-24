@@ -1,4 +1,3 @@
-import { ListTrack } from "@/components/list-track/list-track.component";
 import { getAttribute } from "@/lib/attribute.util";
 import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
@@ -6,7 +5,6 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
-import { Grid } from "@/components/grid/grid.component";
 import { getArtistExternalUrls } from "@/api";
 import { getArtistById } from "@/lib/api.util";
 import { ArtistEphemeralContentTabs } from "@/components/ephemeral-content-tabs/artist-ephemeral-content-tabs.component";
@@ -128,7 +126,9 @@ export default async function Page({ params }: Props) {
 					</div>
 				)}
 			</div>
-			<ArtistEphemeralContentTabs artistId={artistId} />
+			<RootPadding>
+				<ArtistEphemeralContentTabs artistId={artistId} />
+			</RootPadding>
 		</div>
 	);
 }

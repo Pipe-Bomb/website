@@ -1,6 +1,8 @@
 "use client";
 
 import {
+	Album,
+	EphemeralTrack,
 	useGetArtistEphemeralContent,
 	useGetArtistEphemeralContentByIdentity,
 	useGetArtistEphemeralSources,
@@ -10,8 +12,10 @@ import { useEffect, useMemo } from "react";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { Tabs } from "@/components/tabs/tabs.component";
 import { Button } from "@/components/button/button.component";
-import { SearchResults } from "@/components/search-results/search-results.component";
 import { useUrlParam } from "@/hook/url-param.hook";
+import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
+import { GridAlbum } from "@/components/grid-album/grid-album.component";
+import { TrackList } from "@/components/track-list/track-list.component";
 
 interface Props {
 	artistId: string;
@@ -68,7 +72,7 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 		return null;
 	}
 
-	const { source, tracks } = data.data;
+	const { source, tracks, albums } = data.data;
 
 	return (
 		<div className={styles.container}>
@@ -77,7 +81,7 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 				<Button style="primary">{source.name}</Button>
 			</Tabs>
 			<div className={styles.results}>
-				<SearchResults tracks={tracks} artists={[]} albums={[]} />
+				<Content tracks={tracks} albums={albums} />
 			</div>
 		</div>
 	);
@@ -167,9 +171,40 @@ function ViaUuid({ uuid }: ViaUuid) {
 					<Spinner position="expand" />
 				</div>
 			) : content ? (
-				<SearchResults tracks={content.tracks} artists={[]} albums={[]} />
+				<Content tracks={content.tracks} albums={content.albums} />
 			) : (
 				<h1>No Content</h1>
+			)}
+		</div>
+	);
+}
+
+interface ContentProps {
+	tracks: EphemeralTrack[];
+	albums: Album[];
+}
+
+function Content({ tracks, albums }: ContentProps) {
+	return (
+		<div>
+			{!!albums.length && (
+				<HorizontalScroller heading="Albums">
+					{albums.map((album, index) => {
+						let key: string | number = index;
+						const identity = album.identities?.[0];
+						if (identity) {
+							key = `${identity.pluginId} ${identity.identityId} ${identity.value}`;
+						}
+
+						return <GridAlbum album={album} key={key} />;
+					})}
+				</HorizontalScroller>
+			)}
+			{!!tracks.length && (
+				<TrackList
+					tracks={tracks}
+					trackNumbers={tracks.map((_t, index) => index + 1)}
+				/>
 			)}
 		</div>
 	);
