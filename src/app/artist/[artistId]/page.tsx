@@ -80,7 +80,7 @@ export default async function Page({ params }: Props) {
 				<div className={styles.top}>
 					{thumbnail && (
 						<div className={styles.thumbnailContainer}>
-							<ResourceImage resource={thumbnail} />
+							<ResourceImage resource={thumbnail} width={300} height={300} />
 						</div>
 					)}
 
@@ -126,9 +126,7 @@ export default async function Page({ params }: Props) {
 					</div>
 				)}
 			</div>
-			<RootPadding>
-				<ArtistEphemeralContentTabs artistId={artistId} />
-			</RootPadding>
+			<ArtistEphemeralContentTabs artistId={artistId} />
 		</div>
 	);
 }

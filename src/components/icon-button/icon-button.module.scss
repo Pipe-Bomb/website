@@ -70,7 +70,8 @@
 		}
 	}
 
-	&:active:not(:disabled)::before {
+	&.styleBackground:active:not(:disabled)::before,
+	&.styleSimple:active:not(:disabled)::before {
 		// todo: make this cooler
 		background: var(--button-primary-active);
 		inset: -3px;

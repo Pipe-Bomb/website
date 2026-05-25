@@ -16,6 +16,7 @@ import { useUrlParam } from "@/hook/url-param.hook";
 import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
 import { TrackList } from "@/components/track-list/track-list.component";
+import { RootPadding } from "@/components/root-padding/root-padding.component";
 
 interface Props {
 	artistId: string;
@@ -76,10 +77,13 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 
 	return (
 		<div className={styles.container}>
-			<h2 className={styles.heading}>From Other Sources</h2>
-			<Tabs className={styles.tabs}>
-				<Button style="primary">{source.name}</Button>
-			</Tabs>
+			<RootPadding>
+				<h2 className={styles.heading}>From Other Sources</h2>
+				<Tabs className={styles.tabs}>
+					<Button style="primary">{source.name}</Button>
+				</Tabs>
+			</RootPadding>
+
 			<div className={styles.results}>
 				<Content tracks={tracks} albums={albums} />
 			</div>
@@ -94,7 +98,6 @@ interface ViaUuid {
 function ViaUuid({ uuid }: ViaUuid) {
 	const sourcesQuery = useGetArtistEphemeralSources(uuid);
 	const sources = useMemo(() => {
-		console.log(sourcesQuery.data);
 		if (sourcesQuery.data && sourcesQuery.data.status == 200) {
 			return sourcesQuery.data.data;
 		}
@@ -154,18 +157,21 @@ function ViaUuid({ uuid }: ViaUuid) {
 
 	return (
 		<div className={styles.container}>
-			<h2 className={styles.heading}>From Other Sources</h2>
-			<Tabs className={styles.tabs}>
-				{sources.map((source) => (
-					<Button
-						key={`${source.pluginId} ${source.id}`}
-						style={activeSource == source ? "primary" : "secondary"}
-						onClick={() => setSourceId(`${source.pluginId}~${source.id}`)}
-					>
-						{source.name}
-					</Button>
-				))}
-			</Tabs>
+			<RootPadding>
+				<h2 className={styles.heading}>From Other Sources</h2>
+				<Tabs className={styles.tabs}>
+					{sources.map((source) => (
+						<Button
+							key={`${source.pluginId} ${source.id}`}
+							style={activeSource == source ? "primary" : "secondary"}
+							onClick={() => setSourceId(`${source.pluginId}~${source.id}`)}
+						>
+							{source.name}
+						</Button>
+					))}
+				</Tabs>
+			</RootPadding>
+
 			{contentQuery.isPending ? (
 				<div className={styles.loading}>
 					<Spinner position="expand" />
@@ -186,7 +192,7 @@ interface ContentProps {
 
 function Content({ tracks, albums }: ContentProps) {
 	return (
-		<div>
+		<div className={styles.content}>
 			{!!albums.length && (
 				<HorizontalScroller heading="Albums">
 					{albums.map((album, index) => {
@@ -201,10 +207,13 @@ function Content({ tracks, albums }: ContentProps) {
 				</HorizontalScroller>
 			)}
 			{!!tracks.length && (
-				<TrackList
-					tracks={tracks}
-					trackNumbers={tracks.map((_t, index) => index + 1)}
-				/>
+				<RootPadding>
+					<h3 className={styles.sectionTitle}>Tracks</h3>
+					<TrackList
+						tracks={tracks}
+						trackNumbers={tracks.map((_t, index) => index + 1)}
+					/>
+				</RootPadding>
 			)}
 		</div>
 	);

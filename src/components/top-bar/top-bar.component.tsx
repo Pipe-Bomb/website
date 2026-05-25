@@ -6,7 +6,6 @@ import { IconUserCircle } from "@tabler/icons-react";
 import { TextInput } from "@/components/text-input/text-input.component";
 import { useUrlParam } from "@/hook/url-param.hook";
 import { usePathname, useRouter } from "next/navigation";
-import { IconButton } from "@/components/icon-button/icon-button";
 import Link from "next/link";
 
 export function TopBar() {
@@ -21,7 +20,6 @@ export function TopBar() {
 
 	const changeQuery = (newQuery: string) => {
 		if (pathname != "/search" && newQuery.trim() != "") {
-			console.log("PUSHING ROUTER");
 			router.push(`/search?query=${newQuery}`);
 		}
 

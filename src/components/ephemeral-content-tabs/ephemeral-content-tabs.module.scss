@@ -8,6 +8,17 @@
 	.tabs {
 		margin: 16px 0;
 	}
+
+	.sectionTitle {
+		font-size: 1.5rem;
+		margin-bottom: 16px;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
 }
 
 .loading {

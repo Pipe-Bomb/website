@@ -47,7 +47,6 @@ export function RootConfigNode({ config, pluginId }: Props) {
 	}, [defaultValues]);
 
 	const save = () => {
-		console.log(values);
 		if (isSaving) {
 			return;
 		}
@@ -58,7 +57,6 @@ export function RootConfigNode({ config, pluginId }: Props) {
 					return;
 				}
 				const config = response.data;
-				console.log(config);
 				queryClient.setQueryData(
 					getGetPluginConfigQueryKey(pluginId),
 					response,

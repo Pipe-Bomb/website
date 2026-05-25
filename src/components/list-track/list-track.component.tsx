@@ -4,6 +4,7 @@ import { AttributeMap, EphemeralTrack, Track } from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
+	IconExternalLinkFilled,
 	IconPlayerPauseFilled,
 	IconPlayerPlayFilled,
 } from "@tabler/icons-react";
@@ -196,7 +197,12 @@ function BufferColumn({ column, attributes }: BufferColumnProps) {
 
 	return (
 		<Link href={attribute.url} target="_blank">
-			Link
+			<IconButton
+				icon={IconExternalLinkFilled}
+				iconSource="tabler"
+				size="sm"
+				style="ghost"
+			/>
 		</Link>
 	);
 }

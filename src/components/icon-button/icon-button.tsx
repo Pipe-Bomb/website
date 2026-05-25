@@ -2,7 +2,7 @@ import styles from "./icon-button.module.scss";
 import { ComponentType, SVGProps, useMemo } from "react";
 import { cc } from "@/lib/util";
 
-type ButtonStyle = "simple" | "background";
+type ButtonStyle = "simple" | "background" | "ghost";
 type ButtonVariant = "primary" | "secondary" | "tertiary";
 type ButtonSize = "sm" | "md" | "lg" | "xl";
 
@@ -22,6 +22,7 @@ type Props = {
 const STYLE_CLASSES: Record<ButtonStyle, string> = {
 	simple: "styleSimple",
 	background: "styleBackground",
+	ghost: "styleHost",
 };
 
 export function IconButton({

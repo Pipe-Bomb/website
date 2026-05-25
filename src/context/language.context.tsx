@@ -22,7 +22,8 @@ export function useTranslation() {
 	if (!context)
 		throw new Error("useTranslation must be used within LanguageProvider");
 
-	const t = (key: string) => context.keys[key] || key;
+	const t = (key: string, fallback?: string) =>
+		context.keys[key] || fallback || key;
 
 	return { t, langId: context.id };
 }

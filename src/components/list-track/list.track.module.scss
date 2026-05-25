@@ -96,6 +96,10 @@
 		text-overflow: ellipsis;
 		white-space: pre;
 		color: var(--fg-secondary);
+
+		svg {
+			color: var(--fg-secondary);
+		}
 	}
 
 	&:hover,

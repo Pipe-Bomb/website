@@ -99,7 +99,6 @@ interface ViaUuid {
 function ViaUuid({ uuid }: ViaUuid) {
 	const sourcesQuery = useGetAlbumEphemeralSources(uuid);
 	const sources = useMemo(() => {
-		console.log(sourcesQuery.data);
 		if (sourcesQuery.data && sourcesQuery.data.status == 200) {
 			return sourcesQuery.data.data;
 		}

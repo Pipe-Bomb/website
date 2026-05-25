@@ -31,3 +31,13 @@ export function shuffle<T>(array: T[]): T[] {
 
 	return output;
 }
+
+export function compare<T extends string | number>(a: T, b: T) {
+	if (a < b) {
+		return -1;
+	}
+	if (a > b) {
+		return 1;
+	}
+	return 0;
+}
