@@ -1,10 +1,11 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import styles from "./horizontal-scroller.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useResizeDetector } from "react-resize-detector";
+import { useIsMounted } from "@/hook/mounted.hook";
 
 interface Props {
 	children: ReactNode;
@@ -15,12 +16,7 @@ export function HorizontalScroller({ children, heading }: Props) {
 	const { ref, width } = useResizeDetector();
 	const { ref: innerRef, width: innerWidth } = useResizeDetector();
 	const [scrollAmount, setScrollAmount] = useState(0);
-
-	const [hasMounted, setHasMounted] = useState(false);
-
-	useEffect(() => {
-		setHasMounted(true);
-	}, []);
+	const isMounted = useIsMounted();
 
 	const [canScrollLeft, canScrollRight] = useMemo<[boolean, boolean]>(() => {
 		if (!innerWidth || !width || innerWidth <= width) {
@@ -28,7 +24,7 @@ export function HorizontalScroller({ children, heading }: Props) {
 		}
 
 		return [scrollAmount > 0, scrollAmount < innerWidth - width];
-	}, [width, innerWidth, scrollAmount, hasMounted]);
+	}, [width, innerWidth, scrollAmount, isMounted]);
 
 	const scroll = (amount: number) => {
 		const div = ref.current;
@@ -46,7 +42,7 @@ export function HorizontalScroller({ children, heading }: Props) {
 		<div className={styles.container}>
 			<div className={styles.top}>
 				<h3 className={styles.heading}>{heading}</h3>
-				{hasMounted && (
+				{isMounted && (
 					<>
 						<IconButton
 							icon={IconChevronLeft}

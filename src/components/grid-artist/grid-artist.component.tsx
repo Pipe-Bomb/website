@@ -1,7 +1,6 @@
 import { useAttribute } from "@/hook/attribute.hook";
 import { Artist } from "@api";
 import styles from "./grid-artist.module.scss";
-import Link from "next/link";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { useRightClick } from "@/hook/right-click.hook";
 import { ArtistInfoModal } from "@/components/artist-info-modal/artist-info-modal.component";
@@ -41,7 +40,12 @@ export function GridArtist({ artist }: Props) {
 		<>
 			<OptionalLink className={styles.container} href={link} {...rightClick}>
 				<div className={styles.imageContainer}>
-					<ResourceImage resource={thumbnail} className={styles.image} />
+					<ResourceImage
+						resource={thumbnail}
+						className={styles.image}
+						width={160}
+						height={160}
+					/>
 				</div>
 				<span className={styles.name}>{name ?? "Unknown Artist"}</span>
 			</OptionalLink>

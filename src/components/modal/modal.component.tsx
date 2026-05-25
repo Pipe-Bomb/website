@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { cc } from "@/lib/util";
 import styles from "./modal.module.scss";
 import { useModals } from "@/context/modal.context";
+import { useIsMounted } from "@/hook/mounted.hook";
 
 export default function Modal({
 	children,
@@ -19,16 +20,11 @@ export default function Modal({
 }) {
 	const { register, unregister } = useModals();
 	const id = useId();
-	const [mounted, setMounted] = useState(false);
+	const isMounted = useIsMounted();
 	const [shouldRender, setShouldRender] = useState(open);
 	const closeRef = useRef(onClose);
 
 	closeRef.current = onClose;
-
-	// Handle Next.js Hydration & Mounting
-	useEffect(() => {
-		setMounted(true);
-	}, []);
 
 	useEffect(() => {
 		if (open) {
@@ -41,7 +37,7 @@ export default function Modal({
 		}
 	}, [open, id, register, unregister]);
 
-	if (!mounted || !shouldRender) return null;
+	if (!isMounted || !shouldRender) return null;
 
 	return createPortal(
 		<div className={cc(styles.container, className, !open && styles.closing)}>

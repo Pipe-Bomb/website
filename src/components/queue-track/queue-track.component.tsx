@@ -59,6 +59,8 @@ export function QueueTrack({ track, queueIndex }: Props) {
 					resource={cover}
 					className={styles.cover}
 					fallbackSrc="/no_album_art.jpg"
+					width={42}
+					height={42}
 				/>
 				<div className={styles.playButton}>
 					<IconButton

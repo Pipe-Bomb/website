@@ -46,6 +46,8 @@ export function GridAlbum({ album }: Props) {
 					resource={front}
 					className={styles.image}
 					fallbackSrc="/no_album_art.jpg"
+					width={180}
+					height={180}
 				/>
 			</OptionalLink>
 			<OptionalLink href={link} className={styles.name}>

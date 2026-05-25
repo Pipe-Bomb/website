@@ -22,6 +22,7 @@ import {
 import localFont from "next/font/local";
 import { cc } from "@/lib/util";
 import { TopBar } from "@/components/top-bar/top-bar.component";
+import { ScrollParentProvider } from "@/context/scroll-parent.context";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -82,10 +83,12 @@ export default async function RootLayout({
 											<TopBar />
 											<div className={styles.body}>
 												{user && <Navbar />}
-
-												<div className={styles.contentPlacement}>
+												<ScrollParentProvider
+													className={styles.contentPlacement}
+												>
 													<div className={styles.content}>{children}</div>
-												</div>
+												</ScrollParentProvider>
+
 												{user && <SideBar />}
 											</div>
 											{user && <Player />}
