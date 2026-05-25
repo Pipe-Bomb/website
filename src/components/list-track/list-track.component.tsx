@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeMap, BufferAttribute, EphemeralTrack, Track } from "@api";
+import { AttributeMap, EphemeralTrack, Track } from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
@@ -103,7 +103,10 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 						</div>
 					</div>
 					{!noArt && (
-						<div className={styles.imageContainer}>
+						<Link
+							className={styles.imageContainer}
+							href={`/track/${track.pluginId}/${track.libraryId}/${track.id}`}
+						>
 							<ResourceImage
 								resource={image}
 								className={styles.cover}
@@ -111,7 +114,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 								width={42}
 								height={42}
 							/>
-						</div>
+						</Link>
 					)}
 
 					<div className={styles.info}>

@@ -23,7 +23,11 @@ export function SearchResults({ tracks, artists, albums }: Props) {
 	}, [tracks, artists, albums]);
 
 	if (!tracks.length && !artists.length && !albums.length) {
-		return <h1>No results</h1>;
+		return (
+			<RootPadding className={styles.noResults}>
+				<h1>No results</h1>
+			</RootPadding>
+		);
 	}
 
 	return (

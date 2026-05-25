@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./search.module.scss";
 import {
 	EphemeralSearchDto,
@@ -50,12 +50,10 @@ export function EphemeralSearch({ query, sourceId, pluginId }: Props) {
 	const results = search.data.data;
 
 	return (
-		<div>
-			<SearchResults
-				tracks={results.tracks}
-				artists={results.artists}
-				albums={results.albums}
-			/>
-		</div>
+		<SearchResults
+			tracks={results.tracks}
+			artists={results.artists}
+			albums={results.albums}
+		/>
 	);
 }

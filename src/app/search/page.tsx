@@ -45,7 +45,7 @@ export default function Page() {
 	};
 
 	return (
-		<div>
+		<div className={styles.container}>
 			{ephemeralSources?.status == 200 && (
 				<RootPadding className={styles.ephemeralSources} vertical>
 					{ephemeralSources.data.map((source) => (

@@ -8,3 +8,11 @@
 		margin-bottom: 16px;
 	}
 }
+
+.noResults {
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}

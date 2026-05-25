@@ -5,7 +5,7 @@ import { Album, EphemeralTrack, Track } from "@api";
 import styles from "./album-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
 import { useTrackListContext } from "@/context/tracklist.context";
 import { shuffle } from "@/lib/util";

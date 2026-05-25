@@ -38,6 +38,10 @@ export function HorizontalScroller({ children, heading }: Props) {
 		});
 	};
 
+	if (!children || (Array.isArray(children) && !children.length)) {
+		return null;
+	}
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.top}>

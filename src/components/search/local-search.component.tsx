@@ -44,12 +44,10 @@ export function LocalSearch({ query }: Props) {
 	const results = search.data.data;
 
 	return (
-		<div>
-			<SearchResults
-				tracks={results.tracks}
-				artists={results.artists}
-				albums={results.albums}
-			/>
-		</div>
+		<SearchResults
+			tracks={results.tracks}
+			artists={results.artists}
+			albums={results.albums}
+		/>
 	);
 }
