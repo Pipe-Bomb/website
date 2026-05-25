@@ -32,7 +32,7 @@ export async function generateMetadata({
 
 		const artist = artistResponse.data;
 
-		const name = getAttribute(artist.attributes, "name", "string");
+		const name = getAttribute(artist.attributes, "name", "string", true);
 		// const image =
 		// 	getAttribute(artist.attributes, "background", "buffer") ??
 		// 	getAttribute(artist.attributes, "thumb", "buffer");
@@ -59,11 +59,11 @@ export default async function Page({ params }: Props) {
 	const artistUrlsResponse =
 		(!!artist.uuid && (await getArtistExternalUrls(artist.uuid))) || null;
 
-	const name = getAttribute(artist.attributes, "name", "string");
+	const name = getAttribute(artist.attributes, "name", "string", true);
 	const thumbnail = getAttribute(artist.attributes, "thumb", "buffer");
 	const background = getAttribute(artist.attributes, "background", "buffer");
 	const logo = getAttribute(artist.attributes, "logo", "buffer");
-	const genres = getAttribute(artist.attributes, "genre", "string", true);
+	const genres = getAttribute(artist.attributes, "genre", "string", true, true);
 
 	return (
 		<div className={styles.container}>

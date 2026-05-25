@@ -12,9 +12,11 @@ import {
 	useState,
 } from "react";
 
-export interface AttributeColumn {
+export interface AttributeColumn<
+	T extends AttributeUnion["type"] = AttributeUnion["type"],
+> {
 	attribute: string;
-	attributeType: AttributeUnion["type"];
+	attributeType: T;
 	width: number;
 }
 

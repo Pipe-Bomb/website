@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeMap, EphemeralTrack, Track } from "@api";
+import { AttributeMap, BufferAttribute, EphemeralTrack, Track } from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
@@ -17,6 +17,8 @@ import { usePlayerStore } from "@/store/player.store";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { cc } from "@/lib/util";
 import { AttributeColumn } from "@/context/track-columns.context";
+import { useRawAttribute } from "@/hook/raw-attribute.hook";
+import { AttributeUnion } from "@/lib/attribute.util";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -50,7 +52,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 	const album = useAttribute(track.attributes, "album", "string");
-	const image = useAttribute(track.attributes, "front", "buffer");
+	const image = useRawAttribute(track.attributes, "front", "buffer");
 
 	const rightClick = useRightClick(() =>
 		[
@@ -144,7 +146,21 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 						}}
 						key={index}
 					>
-						<ColumnValue column={column} attributes={track.attributes} />
+						{column.attributeType == "buffer" ? (
+							<BufferColumn
+								column={column as AttributeColumn<"buffer">}
+								attributes={track.attributes}
+							/>
+						) : (
+							<ValueColumn
+								column={
+									column as AttributeColumn<
+										Exclude<AttributeUnion["type"], "buffer">
+									>
+								}
+								attributes={track.attributes}
+							/>
+						)}
 					</div>
 				))}
 			</div>
@@ -159,25 +175,40 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 	);
 }
 
-interface ColumnValueProps {
-	column: AttributeColumn;
+interface BufferColumnProps {
+	column: AttributeColumn<"buffer">;
 	attributes: AttributeMap | null;
 }
 
-function ColumnValue({ column, attributes }: ColumnValueProps) {
-	const attribute = useAttribute(
+function BufferColumn({ column, attributes }: BufferColumnProps) {
+	const attribute = useRawAttribute(
 		attributes,
 		column.attribute,
 		column.attributeType,
 	);
 
-	if (attribute && typeof attribute == "object") {
-		return (
-			<Link href={attribute.url} target="_blank">
-				Link
-			</Link>
-		);
+	if (!attribute) {
+		return null;
 	}
+
+	return (
+		<Link href={attribute.url} target="_blank">
+			Link
+		</Link>
+	);
+}
+
+interface ValueColumnProps {
+	column: AttributeColumn<Exclude<AttributeUnion["type"], "buffer">>;
+	attributes: AttributeMap | null;
+}
+
+function ValueColumn({ column, attributes }: ValueColumnProps) {
+	const attribute = useAttribute(
+		attributes,
+		column.attribute,
+		column.attributeType,
+	);
 
 	return attribute;
 }

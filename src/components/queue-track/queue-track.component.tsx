@@ -15,6 +15,7 @@ import {
 import { useRightClick } from "@/hook/right-click.hook";
 import { useCallback } from "react";
 import { ContextMenuElement } from "@/context/context-menu.context";
+import { useRawAttribute } from "@/hook/raw-attribute.hook";
 
 interface Props {
 	track: Track;
@@ -25,7 +26,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 	const { currentIndex, isPlaying, toggle, playIndex, setIsPlaying, remove } =
 		usePlayerStore();
 
-	const cover = useAttribute(track.attributes, "front", "buffer");
+	const cover = useRawAttribute(track.attributes, "front", "buffer");
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 

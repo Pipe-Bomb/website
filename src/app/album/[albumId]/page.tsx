@@ -28,7 +28,7 @@ export default async function Page({ params }: Props) {
 
 	const album = albumResponse.data;
 	const title =
-		getAttribute(album.attributes, "title", "string") ?? "Unknown Album";
+		getAttribute(album.attributes, "title", "string", true) ?? "Unknown Album";
 	const front = getAttribute(album.attributes, "front", "buffer");
 
 	const albumUrlsResponse =

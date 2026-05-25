@@ -26,7 +26,7 @@ export default async function Page({ params }: Props) {
 	const track = trackResponse.data;
 
 	const title =
-		getAttribute(track.attributes, "title", "string") ?? track.title;
+		getAttribute(track.attributes, "title", "string", true) ?? track.title;
 	const front = getAttribute(track.attributes, "front", "buffer");
 
 	const trackUrlsResponse = await getTrackExternalUrls(

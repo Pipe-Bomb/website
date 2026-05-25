@@ -6,37 +6,35 @@ import {
 import { AttributeMap } from "@api";
 import { useMemo } from "react";
 
-type FormattableType = Exclude<AttributeUnion["type"], "buffer">;
-
-export function useAttribute<T extends FormattableType>(
+export function useRawAttribute<T extends AttributeUnion["type"]>(
 	attributes: AttributeMap | null,
 	key: string,
 	type: T,
 	multiple?: false,
 ): AttributeValueByType<T> | null;
 
-export function useAttribute<T extends FormattableType>(
+export function useRawAttribute<T extends AttributeUnion["type"]>(
 	attributes: AttributeMap | null,
 	key: string,
 	type: T,
 	multiple: true,
 ): AttributeValueByType<T>[] | null;
 
-export function useAttribute(
+export function useRawAttribute(
 	attributes: AttributeMap | null,
 	key: string,
 	type?: null,
 	multiple?: boolean,
 ): AttributeUnion | null;
 
-export function useAttribute<T extends FormattableType>(
+export function useRawAttribute<T extends AttributeUnion["type"]>(
 	attributes: AttributeMap | null,
 	key: string,
 	type?: T | null,
 	multiple?: boolean,
 ): any {
 	return useMemo(
-		() => getAttribute(attributes, key, type as any, true, multiple as any),
+		() => getAttribute(attributes, key, type as any, false, multiple as any),
 		[attributes, key, type, multiple],
 	);
 }

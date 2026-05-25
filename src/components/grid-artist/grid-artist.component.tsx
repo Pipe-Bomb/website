@@ -6,6 +6,7 @@ import { useRightClick } from "@/hook/right-click.hook";
 import { ArtistInfoModal } from "@/components/artist-info-modal/artist-info-modal.component";
 import { useMemo, useState } from "react";
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
+import { useRawAttribute } from "@/hook/raw-attribute.hook";
 
 interface Props {
 	artist: Artist;
@@ -26,7 +27,7 @@ export function GridArtist({ artist }: Props) {
 	}, [artist]);
 
 	const name = useAttribute(artist.attributes, "name", "string");
-	const thumbnail = useAttribute(artist.attributes, "thumb", "buffer");
+	const thumbnail = useRawAttribute(artist.attributes, "thumb", "buffer");
 
 	const rightClick = useRightClick(() => [
 		{

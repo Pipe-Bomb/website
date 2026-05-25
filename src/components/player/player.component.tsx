@@ -18,6 +18,7 @@ import { useAttribute } from "@/hook/attribute.hook";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { useSidebarStore } from "@/store/sidebar.store";
+import { useRawAttribute } from "@/hook/raw-attribute.hook";
 
 export function Player() {
 	const { open: isSidebarOpen, toggle: toggleSidebar } = useSidebarStore();
@@ -104,7 +105,7 @@ interface NowPlayingProps {
 function NowPlaying({ track }: NowPlayingProps) {
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
-	const cover = useAttribute(track.attributes, "front", "buffer");
+	const cover = useRawAttribute(track.attributes, "front", "buffer");
 
 	return (
 		<div className={styles.nowPlaying}>

@@ -9,6 +9,7 @@ import { useRightClick } from "@/hook/right-click.hook";
 import { useMemo, useState } from "react";
 import { AlbumArtists } from "@/components/album-artists/album-artists.component";
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
+import { useRawAttribute } from "@/hook/raw-attribute.hook";
 
 interface Props {
 	album: Album;
@@ -29,7 +30,7 @@ export function GridAlbum({ album }: Props) {
 	}, [album]);
 
 	const title = useAttribute(album.attributes, "title", "string");
-	const front = useAttribute(album.attributes, "front", "buffer");
+	const front = useRawAttribute(album.attributes, "front", "buffer");
 
 	const rightClick = useRightClick(() => [
 		{
