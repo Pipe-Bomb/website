@@ -1,6 +1,6 @@
 "use client";
 
-import Modal from "@/components/modal/modal.component";
+import { Modal } from "@/components/modal/modal.component";
 import { Artist } from "@api";
 import styles from "./artist-info-modal.module.scss";
 import { useGetArtist } from "@api";

@@ -8,7 +8,7 @@ import { Spinner } from "@/components/spinner/spinner.component";
 
 type Props = {
 	style?: "primary" | "secondary" | "ghost";
-	onClick?: () => void;
+	onClick?: (() => void) | null;
 	disabled?: boolean;
 	loading?: boolean;
 } & (
@@ -30,7 +30,7 @@ export function Button({ style, onClick, disabled, loading, ...props }: Props) {
 				styles[style ?? "primary"],
 				loading && styles.loading,
 			)}
-			onClick={onClick}
+			onClick={onClick ?? undefined}
 			disabled={disabled}
 		>
 			<span className={styles.content}>

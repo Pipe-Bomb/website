@@ -16,6 +16,16 @@
 
 	.search {
 		flex-grow: 1;
+		display: flex;
+		gap: 8px;
+
+		.searchBox {
+			flex-grow: 1;
+		}
+
+		.searchIcon {
+			color: var(--fg-secondary);
+		}
 	}
 
 	.userSection {

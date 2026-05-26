@@ -1,3 +1,43 @@
+.container {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+
+	.requirementsContainer {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+		padding: 0 16px;
+		margin-bottom: 16px;
+
+		.existingRequirements {
+			display: flex;
+			gap: 16px;
+
+			.requirement {
+				display: flex;
+				background: var(--button-secondary-bg);
+				color: var(--button-secondary-fg);
+				border-radius: 8px;
+				padding: 4px 12px;
+				align-items: center;
+				gap: 8px;
+
+				.requirementMain {
+					display: flex;
+					flex-direction: column;
+
+					.requirementMedia {
+						color: var(--fg-tertiary);
+						font-size: 0.8rem;
+						font-weight: 500;
+					}
+				}
+			}
+		}
+	}
+}
+
 .searchLoading {
 	flex-grow: 1;
 }

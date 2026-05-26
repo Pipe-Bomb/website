@@ -1,0 +1,15 @@
+.checkbox {
+	width: 24px;
+	height: 24px;
+	background: var(--bg-elevated);
+	display: block;
+	border: 2px solid var(--border-strong);
+	border-radius: 8px;
+	cursor: pointer;
+	position: relative;
+
+	&.checked {
+		// background: blue;
+		background: var(--accent-primary);
+	}
+}

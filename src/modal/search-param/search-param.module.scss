@@ -1,0 +1,34 @@
+.container {
+	min-height: 400px;
+	display: flex;
+	gap: 32px;
+
+	.dropdowns {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		align-items: flex-start;
+	}
+
+	.optionsSection {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 250px;
+	}
+}
+
+.option {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 8px;
+
+	.optionName {
+	}
+}
+
+.searchButton {
+	margin-top: 32px;
+}

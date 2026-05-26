@@ -1,4 +1,4 @@
-import Modal from "@/components/modal/modal.component";
+import { Modal } from "@/components/modal/modal.component";
 import { Track } from "@api";
 import styles from "./track-info-modal.module.scss";
 import { useGetTrack, useGetTrackIdentities } from "@api";

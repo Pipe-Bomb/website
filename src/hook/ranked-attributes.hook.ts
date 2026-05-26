@@ -5,7 +5,7 @@ import {
 } from "@/api";
 import { useMemo } from "react";
 
-export function useRankedTrackAttributes() {
+export function useRankedAttributes(media: "track" | "artist" | "album") {
 	const allAttributesQuery = useGetAllAttributes({
 		query: {
 			enabled: true,
@@ -20,10 +20,10 @@ export function useRankedTrackAttributes() {
 
 	return useMemo(() => {
 		if (!allAttributesQuery.data || !sourcesQuery.data) {
-			return [];
+			return null;
 		}
 
-		const allAttributes = allAttributesQuery.data.data.track;
+		const allAttributes = allAttributesQuery.data.data[media];
 		const sources = sourcesQuery.data.data;
 		const sourcePriorities = sources.map(
 			(source) => `${source.pluginId}:${source.sourceId}`,
@@ -46,5 +46,5 @@ export function useRankedTrackAttributes() {
 		}
 
 		return Array.from(attributeMap.values()).map(({ attribute }) => attribute);
-	}, [allAttributesQuery.data, sourcesQuery.data]);
+	}, [allAttributesQuery.data, sourcesQuery.data, media]);
 }

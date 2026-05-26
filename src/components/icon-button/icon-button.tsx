@@ -17,6 +17,7 @@ type Props = {
 	size?: ButtonSize;
 	disabled?: boolean;
 	iconSource: "lucide" | "tabler";
+	iconClassName?: string;
 };
 
 const STYLE_CLASSES: Record<ButtonStyle, string> = {
@@ -34,6 +35,7 @@ export function IconButton({
 	size,
 	iconSource,
 	disabled,
+	iconClassName,
 }: Props) {
 	const IconComponent = icon;
 	const styleClass = useMemo(
@@ -56,7 +58,7 @@ export function IconButton({
 			disabled={disabled}
 		>
 			<IconComponent
-				className={cc(styles.icon, styles[iconSource])}
+				className={cc(styles.icon, styles[iconSource], iconClassName)}
 				strokeWidth={2.5}
 			/>
 		</button>

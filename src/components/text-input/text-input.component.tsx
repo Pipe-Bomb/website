@@ -9,6 +9,7 @@ interface Props {
 	placeholder?: string;
 	onEnter?: () => void;
 	autoFocus?: boolean;
+	disabled?: boolean;
 }
 
 export function TextInput({
@@ -18,6 +19,7 @@ export function TextInput({
 	placeholder,
 	onEnter,
 	autoFocus,
+	disabled,
 }: Props) {
 	return (
 		<span>
@@ -33,6 +35,7 @@ export function TextInput({
 						onEnter?.();
 					}
 				}}
+				disabled={disabled}
 			/>
 		</span>
 	);

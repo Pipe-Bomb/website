@@ -2,11 +2,16 @@
 
 import { useAuth } from "@/context/auth.context";
 import styles from "./top-bar.module.scss";
-import { IconUserCircle } from "@tabler/icons-react";
+import {
+	IconSearch,
+	IconSearchFilled,
+	IconUserCircle,
+} from "@tabler/icons-react";
 import { TextInput } from "@/components/text-input/text-input.component";
 import { useUrlParam } from "@/hook/url-param.hook";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { IconButton } from "@/components/icon-button/icon-button";
 
 export function TopBar() {
 	const user = useAuth();
@@ -34,10 +39,19 @@ export function TopBar() {
 				</Link>
 			</div>
 			<div className={styles.search}>
-				<TextInput
-					value={query ?? ""}
-					onChange={changeQuery}
-					placeholder="Search..."
+				<div className={styles.searchBox}>
+					<TextInput
+						value={query ?? ""}
+						onChange={changeQuery}
+						placeholder="Search..."
+					/>
+				</div>
+
+				<IconButton
+					icon={IconSearch}
+					iconSource="tabler"
+					onClick={() => router.push("/search")}
+					iconClassName={styles.searchIcon}
 				/>
 			</div>
 			{user && (

@@ -15,4 +15,12 @@
 		outline: none;
 		border-color: var(--input-focus-border);
 	}
+
+	&:disabled {
+		color: var(--fg-muted);
+
+		&::placeholder {
+			color: var(--fg-muted);
+		}
+	}
 }

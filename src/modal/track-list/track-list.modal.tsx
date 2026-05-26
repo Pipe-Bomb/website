@@ -1,14 +1,14 @@
 "use client";
 
 import { useGetAllAttributes, useGetAllAttributeSources } from "@/api";
-import Modal from "@/components/modal/modal.component";
+import { Modal } from "@/components/modal/modal.component";
 import styles from "./track-list.module.scss";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { useMemo } from "react";
 import { cc, compare } from "@/lib/util";
 import { useTranslation } from "@/context/language.context";
 import { useTrackColumns } from "@/context/track-columns.context";
-import { useRankedTrackAttributes } from "@/hook/ranked-track-attributes.hook";
+import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
 
 interface Props {
 	open: boolean;
@@ -27,9 +27,9 @@ function Inner() {
 	const { t } = useTranslation();
 	const { columns, setColumns } = useTrackColumns();
 
-	const unorderedAttributes = useRankedTrackAttributes();
+	const unorderedAttributes = useRankedAttributes("track");
 	const rankedAttributes = useMemo(() => {
-		return unorderedAttributes
+		return (unorderedAttributes ?? [])
 			.map((attribute) => ({
 				attribute,
 				name: t(

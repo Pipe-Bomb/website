@@ -13,8 +13,8 @@ import {
 import { useScrollParentContext } from "@/context/scroll-parent.context";
 import { useRightClick } from "@/hook/right-click.hook";
 import { TrackListModal } from "@/modal/track-list/track-list.modal";
-import { useRankedTrackAttributes } from "@/hook/ranked-track-attributes.hook";
 import { useTranslation } from "@/context/language.context";
+import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
 
 interface Props {
 	tracks: (Track | EphemeralTrack)[];
@@ -31,7 +31,7 @@ export function TrackList({ tracks, trackNumbers, noArt }: Props) {
 	const { ref, width } = useResizeDetector();
 	const { scrollParent } = useScrollParentContext();
 	const [columnModalOpen, setColumnModalOpen] = useState(false);
-	const rankedAttributes = useRankedTrackAttributes();
+	const rankedAttributes = useRankedAttributes("track");
 	const rightClick = useRightClick(() => [
 		{
 			key: "options",
@@ -86,7 +86,7 @@ export function TrackList({ tracks, trackNumbers, noArt }: Props) {
 	const namedColumns = useMemo(() => {
 		return boundColumns.map((column) => ({
 			column,
-			attribute: rankedAttributes.find(
+			attribute: (rankedAttributes ?? []).find(
 				(attribute) =>
 					attribute.key == column.attribute &&
 					attribute.type == column.attributeType,
