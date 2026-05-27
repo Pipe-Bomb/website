@@ -104,7 +104,12 @@ export default async function Page({ params }: Props) {
 
 				<RootPadding className={styles.split}>
 					<div className={styles.main}>
-						{artist.tracks && <TrackList tracks={artist.tracks} />}
+						{artist.tracks && (
+							<TrackList
+								tracks={artist.tracks}
+								trackNumbers={artist.tracks.map((_t, i) => i + 1)}
+							/>
+						)}
 					</div>
 
 					<div className={styles.sideBar}>

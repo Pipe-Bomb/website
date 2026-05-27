@@ -1,7 +1,17 @@
 "use client";
 
 import { useAttribute } from "@/hook/attribute.hook";
-import { addTracksToPlaylist, Album, Playlist } from "@api";
+import {
+	addTracksToPlaylist,
+	addTracksToPlaylistResponse,
+	Album,
+	EphemeralTrack,
+	getAlbum,
+	getAlbumByIdentity,
+	getAlbumEphemeralContentByIdentity,
+	Playlist,
+	Track,
+} from "@api";
 import styles from "./grid-album.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { useRightClick } from "@/hook/right-click.hook";
@@ -52,38 +62,49 @@ export function GridAlbum({ album }: Props) {
 		if (isAddingToPlaylist) {
 			return;
 		}
-		let albumId: string;
-		if (album.uuid) {
-			albumId = album.uuid;
-		} else if (album.identities && album.identities.length > 0) {
-			const identity = album.identities[0];
-			albumId = `${identity.pluginId}~${identity.identityId}~${identity.value}`;
-		} else {
-			return;
-		}
 		setIsAddingToPlaylist(true);
 
-		getAlbumById(albumId)
-			.then((response) => {
-				if (response.status == 200) {
-					const tracklist = response.data.tracks;
-					if (tracklist?.length) {
-						return addTracksToPlaylist(playlist.uuid, {
-							tracks: tracklist.map((track) => ({
-								pluginId: track.pluginId,
-								libraryId: track.libraryId,
-								trackId: track.id,
-							})),
-						});
-					}
-				}
-			})
-			.then((response) => {
-				setIsAddingToPlaylist(false);
-				if (response?.status == 200) {
-					setPlaylistOpen(false);
+		const add = (tracks: (Track | EphemeralTrack)[]) =>
+			addTracksToPlaylist(playlist.uuid, {
+				tracks: tracks.map((track) => ({
+					pluginId: track.pluginId,
+					libraryId: track.libraryId,
+					trackId: track.id,
+				})),
+			});
+
+		let promise: Promise<addTracksToPlaylistResponse | undefined>;
+
+		if (album.uuid) {
+			promise = getAlbum(album.uuid).then((response) => {
+				if (response.status == 200 && response.data.tracks) {
+					return add(response.data.tracks);
 				}
 			});
+		} else if (album.identities?.length) {
+			const identity = album.identities[0];
+			promise = getAlbumEphemeralContentByIdentity(
+				identity.pluginId,
+				identity.identityId,
+				identity.value,
+			).then((response) => {
+				if (response.status == 200) {
+					return add(response.data.tracks);
+				}
+			});
+		} else {
+			setIsAddingToPlaylist(false);
+			return;
+		}
+
+		promise
+			.then((response) => {
+				if (response && response.status == 200) {
+					setPlaylistOpen(false);
+				}
+			})
+			.catch(console.error)
+			.finally(() => setIsAddingToPlaylist(false));
 	};
 
 	return (

@@ -7,6 +7,7 @@ import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import Link from "next/link";
 import { PlaylistButtons } from "@/components/playlist-buttons/playlist-buttons.component";
+import { PlaylistUpdateProgress } from "@/components/playlist-update-progress/playlist-update-progress.component";
 
 interface Props {
 	params: Promise<{ playlistUuid: string }>;
@@ -56,6 +57,10 @@ export default async function Page({ params }: Props) {
 					<div className={styles.topButtons}>
 						<PlaylistButtons playlist={playlist} />
 					</div>
+					<PlaylistUpdateProgress
+						playlist={playlist}
+						className={styles.updateProgress}
+					/>
 				</div>
 			</div>
 			{playlist.tracks && (

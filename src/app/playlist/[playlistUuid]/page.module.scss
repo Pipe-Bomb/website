@@ -16,6 +16,7 @@
 		flex-direction: column;
 		justify-content: center;
 		gap: 4px;
+		flex-grow: 1;
 
 		.title {
 			font-size: 3rem;
@@ -29,6 +30,10 @@
 
 		.topButtons {
 			padding-top: 12px;
+		}
+
+		.updateProgress {
+			margin-top: 8px;
 		}
 	}
 }
