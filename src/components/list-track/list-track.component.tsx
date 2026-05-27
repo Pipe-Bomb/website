@@ -1,6 +1,13 @@
 "use client";
 
-import { AttributeMap, EphemeralTrack, Track } from "@api";
+import {
+	addTracksToPlaylist,
+	AttributeMap,
+	EphemeralTrack,
+	NewPlaylistTrackDto,
+	Playlist,
+	Track,
+} from "@api";
 import styles from "./list.track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
@@ -20,6 +27,7 @@ import { cc } from "@/lib/util";
 import { AttributeColumn } from "@/context/track-columns.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { AttributeUnion } from "@/lib/attribute.util";
+import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -30,6 +38,8 @@ interface Props {
 
 export function ListTrack({ track, number, columns, noArt }: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
+	const [playlistOpen, setPlaylistOpen] = useState(false);
+
 	const {
 		addToEnd,
 		playNext,
@@ -67,13 +77,35 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 				key: "add-to-queue",
 				onClick: () => addToEnd([track]),
 			},
-			"identifiers" in track && {
-				languageKey: "contextmenu.track.view-info",
-				key: "view-info",
-				onClick: () => setInfoOpen(true),
+			{
+				languageKey: "contextmenu.track.add-to-playlist",
+				key: "add-to-playlist",
+				onClick: () => setPlaylistOpen(true),
 			},
+			// "identifiers" in track && {
+			// 	languageKey: "contextmenu.track.view-info",
+			// 	key: "view-info",
+			// 	onClick: () => setInfoOpen(true),
+			// },
 		].filter((e) => !!e),
 	);
+
+	const addToPlaylist = (playlist: Playlist) => {
+		addTracksToPlaylist(playlist.uuid, {
+			tracks: [
+				{
+					pluginId: track.pluginId,
+					libraryId: track.libraryId,
+					trackId: track.id,
+				},
+			],
+		})
+			.then((response) => {
+				// todo: update playlist query key
+			})
+			.catch(console.error)
+			.finally(() => setPlaylistOpen(false));
+	};
 
 	return (
 		<>
@@ -175,6 +207,11 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 					onClose={() => setInfoOpen(false)}
 				/>
 			)}
+			<PlaylistSelectModal
+				open={playlistOpen}
+				onClose={() => setPlaylistOpen(false)}
+				onSelect={addToPlaylist}
+			/>
 		</>
 	);
 }

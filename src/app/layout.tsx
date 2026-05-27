@@ -23,6 +23,7 @@ import localFont from "next/font/local";
 import { cc } from "@/lib/util";
 import { TopBar } from "@/components/top-bar/top-bar.component";
 import { ScrollParentProvider } from "@/context/scroll-parent.context";
+import { getAuthHeaders } from "@/lib/server.util";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -107,18 +108,14 @@ export default async function RootLayout({
 }
 
 async function getAuthenticatedUser() {
-	const cookiesStore = await cookies();
-	const token = cookiesStore.get("auth_token")?.value;
-
-	if (!token) {
+	const headers = await getAuthHeaders();
+	if (!headers) {
 		return null;
 	}
 
 	try {
 		const response = await getSelf({
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
+			headers,
 			cache: "no-store",
 		});
 		if (response.status == 200) {

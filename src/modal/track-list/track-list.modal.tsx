@@ -66,9 +66,6 @@ function Inner() {
 	}
 
 	const attributesResponse = allAttributesQuery.data;
-	const attributes = attributesResponse.data.track;
-
-	const sources = sourcesQuery.data.data;
 
 	return (
 		<div>

@@ -10,11 +10,15 @@ interface Props {
 	active?: boolean;
 }
 
-export function NavbarLink({ href, name, active, icon }: Props) {
+export function NavbarLink({ href, name, active, icon, ...props }: Props) {
 	const IconComponent = icon;
 
 	return (
-		<Link href={href} className={cc(styles.link, active && styles.active)}>
+		<Link
+			href={href}
+			className={cc(styles.link, active && styles.active)}
+			{...props}
+		>
 			{!!IconComponent && <IconComponent className={styles.icon} />}
 			{name}
 		</Link>
