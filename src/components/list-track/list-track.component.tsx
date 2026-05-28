@@ -99,6 +99,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 					trackId: track.id,
 				},
 			],
+			albums: null,
 		})
 			.then((response) => {
 				// todo: update playlist query key

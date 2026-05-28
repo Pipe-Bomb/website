@@ -5,12 +5,7 @@ import {
 	addTracksToPlaylist,
 	addTracksToPlaylistResponse,
 	Album,
-	EphemeralTrack,
-	getAlbum,
-	getAlbumByIdentity,
-	getAlbumEphemeralContentByIdentity,
 	Playlist,
-	Track,
 } from "@api";
 import styles from "./grid-album.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
@@ -20,7 +15,6 @@ import { AlbumArtists } from "@/components/album-artists/album-artists.component
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
-import { getAlbumById } from "@/lib/api.util";
 
 interface Props {
 	album: Album;
@@ -63,34 +57,32 @@ export function GridAlbum({ album }: Props) {
 			return;
 		}
 		setIsAddingToPlaylist(true);
-
-		const add = (tracks: (Track | EphemeralTrack)[]) =>
-			addTracksToPlaylist(playlist.uuid, {
-				tracks: tracks.map((track) => ({
-					pluginId: track.pluginId,
-					libraryId: track.libraryId,
-					trackId: track.id,
-				})),
-			});
-
 		let promise: Promise<addTracksToPlaylistResponse | undefined>;
 
 		if (album.uuid) {
-			promise = getAlbum(album.uuid).then((response) => {
-				if (response.status == 200 && response.data.tracks) {
-					return add(response.data.tracks);
-				}
+			promise = addTracksToPlaylist(playlist.uuid, {
+				tracks: null,
+				albums: [
+					{
+						uuid: album.uuid,
+						pluginId: null,
+						identityId: null,
+						identity: null,
+					},
+				],
 			});
 		} else if (album.identities?.length) {
 			const identity = album.identities[0];
-			promise = getAlbumEphemeralContentByIdentity(
-				identity.pluginId,
-				identity.identityId,
-				identity.value,
-			).then((response) => {
-				if (response.status == 200) {
-					return add(response.data.tracks);
-				}
+			promise = addTracksToPlaylist(playlist.uuid, {
+				tracks: null,
+				albums: [
+					{
+						uuid: album.uuid,
+						pluginId: identity.pluginId,
+						identityId: identity.identityId,
+						identity: identity.value,
+					},
+				],
 			});
 		} else {
 			setIsAddingToPlaylist(false);
