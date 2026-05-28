@@ -56,7 +56,11 @@ export function PlaylistUpdateProgress({ playlist, className }: Props) {
 	return (
 		<div className={cc(styles.container, className)}>
 			{data.data.map((session) => (
-				<ProgressBar percent={session.percent} key={session.uuid} />
+				<ProgressBar
+					percent={session.percent}
+					loading={session.percent === null}
+					key={session.uuid}
+				/>
 			))}
 		</div>
 	);
