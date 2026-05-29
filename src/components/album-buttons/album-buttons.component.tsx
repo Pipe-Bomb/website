@@ -9,6 +9,7 @@ import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
 import { useTrackListContext } from "@/context/tracklist.context";
 import { useIsMounted } from "@/hook/mounted.hook";
 import { useQueueActions } from "@/hook/queue-actions.hook";
+import { shuffle } from "@/lib/util";
 
 interface Props {
 	album: Album;
@@ -43,7 +44,7 @@ export function AlbumButtons({ album }: Props) {
 						size="md"
 						icon={ShuffleIcon}
 						iconSource="lucide"
-						// onClick={shuffleAlbum}
+						onClick={() => playEntireList(shuffle(tracklist), 0)}
 						disabled={!tracklist.length}
 					/>
 					<IconButton
