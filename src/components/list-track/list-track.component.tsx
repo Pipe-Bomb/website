@@ -4,11 +4,10 @@ import {
 	addTracksToPlaylist,
 	AttributeMap,
 	EphemeralTrack,
-	NewPlaylistTrackDto,
 	Playlist,
 	Track,
 } from "@api";
-import styles from "./list.track.module.scss";
+import styles from "./list-track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
 	IconExternalLinkFilled,
@@ -28,6 +27,8 @@ import { AttributeColumn } from "@/context/track-columns.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { AttributeUnion } from "@/lib/attribute.util";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
+import { serializeTrackKey } from "@/lib/track-batcher.util";
+import { useQueueActions } from "@/hook/queue-actions.hook";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -41,22 +42,19 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 	const [playlistOpen, setPlaylistOpen] = useState(false);
 
 	const {
-		addToEnd,
-		playNext,
-		playNow,
+		// addToEnd,
+		// playNext,
+		// playNow,
 		queue,
 		currentIndex,
 		isPlaying,
 		toggle,
 	} = usePlayerStore();
+	const { playNow, playNext, addToEnd } = useQueueActions();
 	const nowPlaying = queue[currentIndex];
 
 	const isPlayingThis = useMemo(
-		() =>
-			nowPlaying &&
-			nowPlaying.pluginId == track.pluginId &&
-			nowPlaying.libraryId == track.libraryId &&
-			nowPlaying.id == track.id,
+		() => nowPlaying == serializeTrackKey(track),
 		[nowPlaying, track],
 	);
 
@@ -96,7 +94,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 				{
 					pluginId: track.pluginId,
 					libraryId: track.libraryId,
-					trackId: track.id,
+					trackId: track.trackId,
 				},
 			],
 			albums: null,
@@ -139,7 +137,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 					{!noArt && (
 						<Link
 							className={styles.imageContainer}
-							href={`/track/${track.pluginId}/${track.libraryId}/${track.id}`}
+							href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
 						>
 							<ResourceImage
 								resource={image}
@@ -154,7 +152,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 					<div className={styles.info}>
 						<span className={styles.title}>
 							<Link
-								href={`/track/${track.pluginId}/${track.libraryId}/${track.id}`}
+								href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
 							>
 								{title}
 							</Link>

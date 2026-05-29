@@ -4,9 +4,8 @@ import { cc } from "@/lib/util";
 import styles from "./sidebar.module.scss";
 import { useSidebarStore } from "@/store/sidebar.store";
 import { usePlayerStore } from "@/store/player.store";
-import { QueueTrack } from "@/components/queue-track/queue-track.component";
-import { SortableList } from "@/components/sortable-list/sortable-list.component";
-import { Track } from "@api";
+import { QueueList } from "@/components/queue-list/queue-list.component";
+import { ScrollParentProvider } from "@/context/scroll-parent.context";
 
 export function SideBar() {
 	const { open } = useSidebarStore();
@@ -15,18 +14,9 @@ export function SideBar() {
 	return (
 		<div className={cc(styles.positioner, open && styles.open)}>
 			<div className={styles.container}>
-				<div className={styles.queue}>
-					<SortableList
-						items={queue.map(
-							(entry, index) => [entry, index] as [Track, number],
-						)}
-						renderItem={([track, index]) => (
-							<QueueTrack track={track} queueIndex={index} />
-						)}
-						getItemKey={([_track, index]) => `${index}`}
-						onOrder={() => {}}
-					/>
-				</div>
+				<ScrollParentProvider className={styles.queue}>
+					<QueueList />
+				</ScrollParentProvider>
 			</div>
 		</div>
 	);

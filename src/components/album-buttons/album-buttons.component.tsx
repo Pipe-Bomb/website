@@ -1,45 +1,31 @@
 "use client";
 
-import { usePlayerStore } from "@/store/player.store";
-import { Album, EphemeralTrack, Track } from "@api";
+import { Album } from "@api";
 import styles from "./album-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
 import { useTrackListContext } from "@/context/tracklist.context";
-import { shuffle } from "@/lib/util";
 import { useIsMounted } from "@/hook/mounted.hook";
+import { useQueueActions } from "@/hook/queue-actions.hook";
 
 interface Props {
 	album: Album;
 }
 
 export function AlbumButtons({ album }: Props) {
-	const { playTrack, addToEnd, insert, currentIndex } = usePlayerStore();
+	// const { playTrack, addToEnd, insert, currentIndex } = usePlayerStore();
+	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const { trackList: backupTrackList } = useTrackListContext();
 	const isMounted = useIsMounted();
 
-	const [playAlbum, shuffleAlbum, playAlbumNext, queueAlbum] = useMemo(() => {
-		let trackList: (Track | EphemeralTrack)[] = album.tracks ?? [];
-		if (!trackList.length) {
-			trackList = backupTrackList;
+	const tracklist = useMemo(() => {
+		if (album.tracks?.length) {
+			return album.tracks;
 		}
-
-		if (!trackList.length) {
-			return [null, null, null, null];
-		}
-
-		return [
-			() => playTrack(trackList[0], 0, trackList),
-			() => {
-				const shuffled = shuffle(trackList);
-				playTrack(shuffled[0], 0, shuffled);
-			},
-			() => insert(trackList, currentIndex),
-			() => addToEnd(trackList),
-		];
-	}, [album, backupTrackList]);
+		return backupTrackList;
+	}, [album.tracks, backupTrackList]);
 
 	return (
 		<div className={styles.container}>
@@ -50,26 +36,29 @@ export function AlbumButtons({ album }: Props) {
 						style="background"
 						icon={IconPlayerPlayFilled}
 						iconSource="tabler"
-						onClick={playAlbum}
-						disabled={!playAlbum}
+						onClick={() => playEntireList(tracklist, 0)}
+						disabled={!tracklist.length}
 					/>
 					<IconButton
 						size="md"
 						icon={ShuffleIcon}
 						iconSource="lucide"
-						onClick={shuffleAlbum}
+						// onClick={shuffleAlbum}
+						disabled={!tracklist.length}
 					/>
 					<IconButton
 						size="md"
 						icon={ListStartIcon}
 						iconSource="lucide"
-						onClick={playAlbumNext}
+						onClick={() => playListNext(tracklist)}
+						disabled={!tracklist.length}
 					/>
 					<IconButton
 						size="md"
 						icon={ListEndIcon}
 						iconSource="lucide"
-						onClick={queueAlbum}
+						onClick={() => addToEnd(tracklist)}
+						disabled={!tracklist.length}
 					/>
 				</>
 			)}

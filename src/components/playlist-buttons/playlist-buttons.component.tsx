@@ -1,41 +1,48 @@
 "use client";
 
-import { usePlayerStore } from "@/store/player.store";
-import { Playlist } from "@api";
+import { getAllPlaylistTrackIds, Playlist } from "@api";
 import styles from "./playlist-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
-import { shuffle } from "@/lib/util";
 import { useIsMounted } from "@/hook/mounted.hook";
+import { useQueueActions } from "@/hook/queue-actions.hook";
+import { shuffle } from "@/lib/util";
 
 interface Props {
 	playlist: Playlist;
 }
 
 export function PlaylistButtons({ playlist }: Props) {
-	const { playTrack, addToEnd, insert, currentIndex } = usePlayerStore();
+	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const isMounted = useIsMounted();
+	const [isLoadingTracklist, setIsLoadingTracklist] = useState(false);
 
-	const [playPlaylist, shufflePlaylist, playPlaylistNext, queuePlaylist] =
-		useMemo(() => {
-			const trackList = playlist.tracks?.map(({ track }) => track) ?? [];
+	const tracklist = useMemo(() => {
+		return playlist.tracks?.map(({ track }) => track) ?? null;
+	}, [playlist.tracks]);
 
-			if (!trackList.length) {
-				return [null, null, null, null];
+	const getFullTracklist = useCallback(async () => {
+		if (
+			tracklist &&
+			playlist.trackCount !== null &&
+			tracklist.length >= playlist.trackCount
+		) {
+			return tracklist;
+		}
+		setIsLoadingTracklist(true);
+
+		try {
+			const response = await getAllPlaylistTrackIds(playlist.uuid);
+			if (response.status != 200) {
+				throw new Error(`Status code ${response.status}`);
 			}
-
-			return [
-				() => playTrack(trackList[0], 0, trackList),
-				() => {
-					const shuffled = shuffle(trackList);
-					playTrack(shuffled[0], 0, shuffled);
-				},
-				() => insert(trackList, currentIndex),
-				() => addToEnd(trackList),
-			];
-		}, [playlist]);
+			return response.data.map(({ track }) => track);
+		} finally {
+			setIsLoadingTracklist(false);
+		}
+	}, [playlist, playlist.trackCount]);
 
 	return (
 		<div className={styles.container}>
@@ -46,26 +53,44 @@ export function PlaylistButtons({ playlist }: Props) {
 						style="background"
 						icon={IconPlayerPlayFilled}
 						iconSource="tabler"
-						onClick={playPlaylist}
-						disabled={!playPlaylist}
+						onClick={() =>
+							getFullTracklist().then((tracklist) =>
+								playEntireList(tracklist ?? [], 0),
+							)
+						}
+						disabled={!tracklist}
+						loading={isLoadingTracklist}
 					/>
 					<IconButton
 						size="md"
 						icon={ShuffleIcon}
 						iconSource="lucide"
-						onClick={shufflePlaylist}
+						onClick={() =>
+							getFullTracklist().then((tracklist) =>
+								playEntireList(shuffle(tracklist), 0),
+							)
+						}
+						disabled={!tracklist}
 					/>
 					<IconButton
 						size="md"
 						icon={ListStartIcon}
 						iconSource="lucide"
-						onClick={playPlaylistNext}
+						onClick={() =>
+							getFullTracklist().then((tracklist) =>
+								playListNext(tracklist ?? []),
+							)
+						}
+						disabled={!tracklist}
 					/>
 					<IconButton
 						size="md"
 						icon={ListEndIcon}
 						iconSource="lucide"
-						onClick={queuePlaylist}
+						onClick={() =>
+							getFullTracklist().then((tracklist) => addToEnd(tracklist ?? []))
+						}
+						disabled={!tracklist}
 					/>
 				</>
 			)}

@@ -19,6 +19,7 @@ import { ResourceImage } from "@/components/resource-image/resource-image.compon
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { useSidebarStore } from "@/store/sidebar.store";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
+import { useTrack } from "@/hook/track.hook";
 
 export function Player() {
 	const { open: isSidebarOpen, toggle: toggleSidebar } = useSidebarStore();
@@ -35,12 +36,14 @@ export function Player() {
 		setIsPlaying,
 		isBuffering,
 	} = usePlayerStore();
-	const nowPlaying: Track | EphemeralTrack | null = queue[currentIndex];
+	const currentTrackResult = useTrack(queue[currentIndex]);
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.left}>
-				{nowPlaying && <NowPlaying track={nowPlaying} />}
+				{currentTrackResult.data && (
+					<NowPlaying track={currentTrackResult.data} />
+				)}
 			</div>
 			<div className={styles.center}>
 				<div className={styles.centerButtons}>

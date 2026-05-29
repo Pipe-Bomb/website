@@ -1,6 +1,6 @@
 "use client";
 
-import { Track } from "@api";
+import { EphemeralTrack, Track } from "@api";
 import styles from "./queue-track.module.scss";
 import { useAttribute } from "@/hook/attribute.hook";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
@@ -18,13 +18,14 @@ import { ContextMenuElement } from "@/context/context-menu.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 
 interface Props {
-	track: Track;
+	track: Track | EphemeralTrack;
 	queueIndex: number;
 }
 
 export function QueueTrack({ track, queueIndex }: Props) {
-	const { currentIndex, isPlaying, toggle, playIndex, setIsPlaying, remove } =
+	const { remove, currentIndex, isPlaying, toggle, playIndex, setIsPlaying } =
 		usePlayerStore();
+	const active = currentIndex == queueIndex;
 
 	const cover = useRawAttribute(track.attributes, "front", "buffer");
 	const title =
@@ -33,7 +34,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 	const contextMenu = useCallback<() => ContextMenuElement[]>(() => {
 		const menu: ContextMenuElement[] = [];
 
-		if (currentIndex != queueIndex) {
+		if (active) {
 			menu.push({
 				languageKey: "contextmenu.queue.remove",
 				key: "remove",
@@ -42,7 +43,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 		}
 
 		return menu;
-	}, [currentIndex, queueIndex]);
+	}, [active, queueIndex]);
 
 	const rightClick = useRightClick(contextMenu);
 
@@ -50,7 +51,7 @@ export function QueueTrack({ track, queueIndex }: Props) {
 		<div
 			className={cc(
 				styles.container,
-				currentIndex == queueIndex && styles.active,
+				active && styles.active,
 				currentIndex > queueIndex && styles.history,
 			)}
 			{...rightClick}

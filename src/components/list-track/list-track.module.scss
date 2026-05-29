@@ -48,14 +48,15 @@
 			align-items: center;
 			overflow: hidden;
 			flex-shrink: 0;
+			background: var(--bg-elevated);
+			border-radius: 4px;
+			overflow: hidden;
 
 			.cover {
 				position: absolute;
 				z-index: -1;
 				inset: 0;
 				flex-shrink: 0;
-				border-radius: 4px;
-				overflow: hidden;
 			}
 		}
 

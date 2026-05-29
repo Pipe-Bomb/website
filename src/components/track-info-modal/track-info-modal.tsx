@@ -30,7 +30,7 @@ function Inner({ track }: InnerProps) {
 	const fullTrackResponse = useGetTrack(
 		track.pluginId,
 		track.libraryId,
-		track.id,
+		track.trackId,
 		{
 			query: {
 				enabled: true,
@@ -41,7 +41,7 @@ function Inner({ track }: InnerProps) {
 	const identitiesResponse = useGetTrackIdentities(
 		track.pluginId,
 		track.libraryId,
-		track.id,
+		track.trackId,
 		{
 			query: {
 				enabled: true,

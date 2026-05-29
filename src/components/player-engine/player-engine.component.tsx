@@ -41,9 +41,7 @@ export default function AudioEngine() {
 		setIsBuffering(true);
 
 		createTrackAudioSession(
-			currentTrack.pluginId,
-			currentTrack.libraryId,
-			currentTrack.id,
+			...(currentTrack.split(":") as [string, string, string]),
 		)
 			.then(({ data: session }) => {
 				if (cancelled || !audio || !session) return;
