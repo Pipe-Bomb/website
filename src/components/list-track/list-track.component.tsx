@@ -29,6 +29,7 @@ import { AttributeUnion } from "@/lib/attribute.util";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
 import { serializeTrackKey } from "@/lib/track-batcher.util";
 import { useQueueActions } from "@/hook/queue-actions.hook";
+import { useNotificationStore } from "@/store/notification.store";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -40,6 +41,7 @@ interface Props {
 export function ListTrack({ track, number, columns, noArt }: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
 	const [playlistOpen, setPlaylistOpen] = useState(false);
+	const { createNotification } = useNotificationStore();
 
 	const {
 		// addToEnd,
@@ -101,8 +103,12 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 		})
 			.then((response) => {
 				// todo: update playlist query key
+				createNotification("Started importing track to playlist");
 			})
-			.catch(console.error)
+			.catch((e) => {
+				console.error(e);
+				createNotification("Failed to add track to playlist");
+			})
 			.finally(() => setPlaylistOpen(false));
 	};
 

@@ -15,6 +15,7 @@ import { AlbumArtists } from "@/components/album-artists/album-artists.component
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
+import { useNotificationStore } from "@/store/notification.store";
 
 interface Props {
 	album: Album;
@@ -24,6 +25,7 @@ export function GridAlbum({ album }: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
 	const [playlistOpen, setPlaylistOpen] = useState(false);
 	const [isAddingToPlaylist, setIsAddingToPlaylist] = useState(false);
+	const { createNotification } = useNotificationStore();
 
 	const link = useMemo(() => {
 		if (album.uuid) {
@@ -93,9 +95,13 @@ export function GridAlbum({ album }: Props) {
 			.then((response) => {
 				if (response && response.status == 200) {
 					setPlaylistOpen(false);
+					createNotification("Started importing tracks to playlist...");
 				}
 			})
-			.catch(console.error)
+			.catch((e) => {
+				console.error(e);
+				createNotification("Failed to add tracks to playlist");
+			})
 			.finally(() => setIsAddingToPlaylist(false));
 	};
 

@@ -1,13 +1,19 @@
 "use client";
 
 import { usePlayerStore } from "@/store/player.store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import { createTrackAudioSession } from "@api";
+import { useNotificationStore } from "@/store/notification.store";
+import { Events } from "hls.js";
 
 export default function AudioEngine() {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const hlsRef = useRef<Hls | null>(null);
+	const { createNotification, removeNotification } = useNotificationStore();
+	const [failedNotificationId, setFailedNotificationId] = useState<
+		string | null
+	>(null);
 
 	const {
 		queue,
@@ -23,20 +29,30 @@ export default function AudioEngine() {
 
 	const currentTrack = queue[currentIndex];
 
-	// Load track (stream or HLS)
+	useEffect(() => {
+		if (failedNotificationId) {
+			return () => {
+				removeNotification(failedNotificationId);
+			};
+		}
+	}, [failedNotificationId]);
+
+	useEffect(() => {
+		setFailedNotificationId(null);
+	}, [currentTrack]);
+
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio || !currentTrack) return;
 
 		let cancelled = false;
 
-		// cleanup previous playback engine
 		if (hlsRef.current) {
 			hlsRef.current.destroy();
 			hlsRef.current = null;
 		}
 
-		audio.src = ""; // reset
+		audio.src = "";
 
 		setIsBuffering(true);
 
@@ -55,7 +71,6 @@ export default function AudioEngine() {
 				if (session.type === "hls") {
 					const url = `${session.baseUrl}/hls/playlist.m3u8`;
 
-					// Safari has native HLS support
 					if (audio.canPlayType("application/vnd.apple.mpegurl")) {
 						audio.src = url;
 						audio.load();
@@ -63,7 +78,6 @@ export default function AudioEngine() {
 						return;
 					}
 
-					// hls.js path
 					if (Hls.isSupported()) {
 						const hls = new Hls();
 						hlsRef.current = hls;
@@ -77,18 +91,40 @@ export default function AudioEngine() {
 							}
 						});
 					} else {
-						console.error("HLS not supported in this browser");
+						const notificationId = createNotification(
+							`Failed to play track because browser doesn't support HLS`,
+							{
+								timeout: null,
+							},
+						);
+						setFailedNotificationId(notificationId);
 					}
 				}
 			})
-			.catch(console.error);
+			.catch((e) => {
+				if (typeof e?.body?.message == "string") {
+					const notificationId = createNotification(e.body.message, {
+						timeout: null,
+					});
+					setFailedNotificationId(notificationId);
+				} else {
+					const notificationId = createNotification(
+						`Something went wrong when attempting to play track`,
+						{
+							timeout: null,
+						},
+					);
+					setFailedNotificationId(notificationId);
+				}
+
+				console.error(e);
+			});
 
 		return () => {
 			cancelled = true;
 		};
 	}, [currentTrack]);
 
-	// Play/pause sync
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -102,7 +138,6 @@ export default function AudioEngine() {
 		}
 	}, [isPlaying, currentTrack]);
 
-	// Seek handling
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (audio && seekTo !== null) {

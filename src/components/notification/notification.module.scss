@@ -1,0 +1,64 @@
+.size {
+	display: grid;
+	grid-template-rows: 1fr;
+	animation: #{open} ease 0.3s;
+	animation-fill-mode: forwards;
+
+	&.closing {
+		animation: #{close} ease 0.3s;
+		grid-template-rows: 0fr;
+	}
+
+	.container {
+		overflow: hidden;
+
+		.content {
+			background: var(--bg-inverse);
+			color: var(--fg-inverse);
+			padding: 4px 8px 8px 8px;
+			margin-top: 4px;
+			border-radius: 4px;
+			margin-top: 8px;
+			position: relative;
+			overflow: hidden;
+			width: 240px;
+
+			.progressBar {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 4px;
+				background: var(--accent-primary);
+				animation: #{progress} linear;
+			}
+		}
+	}
+}
+
+@keyframes #{open} {
+	0% {
+		grid-template-rows: 0fr;
+	}
+	100% {
+		grid-template-rows: 1fr;
+	}
+}
+
+@keyframes #{close} {
+	0% {
+		grid-template-rows: 1fr;
+	}
+	100% {
+		grid-template-rows: 0fr;
+	}
+}
+
+@keyframes #{progress} {
+	0% {
+		width: 0;
+	}
+	100% {
+		width: 100%;
+	}
+}

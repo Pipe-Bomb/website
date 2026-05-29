@@ -41,3 +41,15 @@ export function compare<T extends string | number>(a: T, b: T) {
 	}
 	return 0;
 }
+
+export function randomString(length: number) {
+	let result = "";
+	const characters =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+
+	return result;
+}

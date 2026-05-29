@@ -7,6 +7,7 @@ import { useTranslation } from "@/context/language.context";
 import { Button } from "@/components/button/button.component";
 import { createUser, loginUser } from "@api";
 import { useRouter } from "next/navigation";
+import { useNotificationStore } from "@/store/notification.store";
 
 export function LoginComponent() {
 	const [username, setUsername] = useState("");
@@ -15,6 +16,7 @@ export function LoginComponent() {
 	const [isLoggingIn, setIsLoggingIn] = useState(false);
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { createNotification } = useNotificationStore();
 
 	const login = () => {
 		if (!username || !password) {
@@ -24,23 +26,27 @@ export function LoginComponent() {
 		setIsLoggingIn(true);
 
 		if (mode == "login") {
-			console.log("Logging in...");
-
 			loginUser({ username, password })
 				.then(() => router.refresh())
 				.catch((e) => {
 					console.error(e);
+					if (e.status == 401) {
+						createNotification("Incorrect username or password");
+					} else if (typeof e.body?.message == "string") {
+						createNotification(e.body.message);
+					} else {
+						createNotification("Something went wrong when logging in");
+					}
 				})
 				.finally(() => setIsLoggingIn(false));
 		} else {
-			console.log("Creating account...");
-
 			createUser({
 				username,
 				password,
 			})
 				.then(() => router.refresh())
 				.catch((e) => {
+					createNotification("Failed to create account");
 					console.error(e);
 				})
 				.finally(() => setIsLoggingIn(false));

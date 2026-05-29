@@ -24,6 +24,7 @@ import { cc } from "@/lib/util";
 import { TopBar } from "@/components/top-bar/top-bar.component";
 import { ScrollParentProvider } from "@/context/scroll-parent.context";
 import { getAuthHeaders } from "@/lib/server.util";
+import { NotificationList } from "@/components/notification-list/notification-list.component";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -96,6 +97,7 @@ export default async function RootLayout({
 											<AudioEngine />
 										</div>
 										<ModalBackground />
+										<NotificationList />
 									</ReactQueryProvider>
 								</ModalProvider>
 							</TrackColumnsProvider>
