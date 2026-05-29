@@ -1,3 +1,5 @@
+"use client";
+
 import { EphemeralTrack, Track } from "@/api";
 import { ListTrack } from "@/components/list-track/list-track.component";
 import { BaseTrackList } from "@/components/track-list/base-track-list.component";

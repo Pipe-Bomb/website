@@ -1,3 +1,5 @@
+"use client";
+
 import { QueueTrack } from "@/components/queue-track/queue-track.component";
 import { useScrollParentContext } from "@/context/scroll-parent.context";
 import { useTrack } from "@/hook/track.hook";
