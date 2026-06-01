@@ -67,7 +67,7 @@ function Inner({ onCreate }: InnerProps) {
 				value={title}
 				onChange={setTitle}
 				placeholder="Playlist Title"
-				autoFocus // todo: figure out why not working
+				autoFocus
 				onEnter={create}
 				disabled={isCreating}
 			/>

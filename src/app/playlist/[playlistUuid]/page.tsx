@@ -1,14 +1,12 @@
 import { RootPadding } from "@/components/root-padding/root-padding.component";
-import { TrackList } from "@/components/track-list/track-list.component";
 import { getAttribute } from "@/lib/attribute.util";
 import { getAuthHeaders } from "@/lib/server.util";
-import { getPlaylist, getPlaylistTracks } from "@api";
+import { getPlaylist } from "@api";
 import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import Link from "next/link";
 import { PlaylistButtons } from "@/components/playlist-buttons/playlist-buttons.component";
 import { PlaylistUpdateProgress } from "@/components/playlist-update-progress/playlist-update-progress.component";
-import { LazyTrackList } from "@/components/track-list/lazy-track-list.component";
 import { PlaylistTrackList } from "@/components/playlist-track-list/playlist-track-list.component";
 
 interface Props {

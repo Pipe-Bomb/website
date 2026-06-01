@@ -1,5 +1,5 @@
 import styles from "./icon-button.module.scss";
-import { ComponentType, SVGProps, useMemo } from "react";
+import { ComponentType, MouseEvent, SVGProps, useMemo } from "react";
 import { cc } from "@/lib/util";
 
 type ButtonStyle = "simple" | "background" | "ghost";
@@ -11,7 +11,7 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 type Props = {
 	icon: IconComponent;
 	style?: ButtonStyle;
-	onClick?: (() => void) | null;
+	onClick?: ((e: MouseEvent<HTMLElement>) => void) | null;
 	loading?: boolean;
 	variant?: ButtonVariant;
 	size?: ButtonSize;

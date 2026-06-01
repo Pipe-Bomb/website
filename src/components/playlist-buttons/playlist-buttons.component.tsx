@@ -3,12 +3,13 @@
 import { getAllPlaylistTrackIds, Playlist } from "@api";
 import styles from "./playlist-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
+import { IconDots, IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useCallback, useMemo, useState } from "react";
 import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
 import { useIsMounted } from "@/hook/mounted.hook";
 import { useQueueActions } from "@/hook/queue-actions.hook";
 import { shuffle } from "@/lib/util";
+import { useButtonMenu } from "@/hook/button-menu.hook";
 
 interface Props {
 	playlist: Playlist;
@@ -44,56 +45,79 @@ export function PlaylistButtons({ playlist }: Props) {
 		}
 	}, [playlist, playlist.trackCount]);
 
+	const { onClick } = useButtonMenu(() => [
+		{
+			key: "rename",
+			languageKey: "contextmenu.playlist.rename",
+			onClick: () => {},
+		},
+		{
+			key: "change-thumb",
+			languageKey: "contextmenu.playlist-change-thumbnail",
+			onClick: () => {},
+		},
+	]);
+
 	return (
-		<div className={styles.container}>
-			{isMounted && (
-				<>
-					<IconButton
-						size="xl"
-						style="background"
-						icon={IconPlayerPlayFilled}
-						iconSource="tabler"
-						onClick={() =>
-							getFullTracklist().then((tracklist) =>
-								playEntireList(tracklist ?? [], 0),
-							)
-						}
-						disabled={!tracklist}
-						loading={isLoadingTracklist}
-					/>
-					<IconButton
-						size="md"
-						icon={ShuffleIcon}
-						iconSource="lucide"
-						onClick={() =>
-							getFullTracklist().then((tracklist) =>
-								playEntireList(shuffle(tracklist), 0),
-							)
-						}
-						disabled={!tracklist}
-					/>
-					<IconButton
-						size="md"
-						icon={ListStartIcon}
-						iconSource="lucide"
-						onClick={() =>
-							getFullTracklist().then((tracklist) =>
-								playListNext(tracklist ?? []),
-							)
-						}
-						disabled={!tracklist}
-					/>
-					<IconButton
-						size="md"
-						icon={ListEndIcon}
-						iconSource="lucide"
-						onClick={() =>
-							getFullTracklist().then((tracklist) => addToEnd(tracklist ?? []))
-						}
-						disabled={!tracklist}
-					/>
-				</>
-			)}
-		</div>
+		<>
+			<div className={styles.container}>
+				{isMounted && (
+					<>
+						<IconButton
+							size="xl"
+							style="background"
+							icon={IconPlayerPlayFilled}
+							iconSource="tabler"
+							onClick={() =>
+								getFullTracklist().then((tracklist) =>
+									playEntireList(tracklist ?? [], 0),
+								)
+							}
+							disabled={!tracklist}
+							loading={isLoadingTracklist}
+						/>
+						<IconButton
+							size="md"
+							icon={ShuffleIcon}
+							iconSource="lucide"
+							onClick={() =>
+								getFullTracklist().then((tracklist) =>
+									playEntireList(shuffle(tracklist), 0),
+								)
+							}
+							disabled={!tracklist}
+						/>
+						<IconButton
+							size="md"
+							icon={ListStartIcon}
+							iconSource="lucide"
+							onClick={() =>
+								getFullTracklist().then((tracklist) =>
+									playListNext(tracklist ?? []),
+								)
+							}
+							disabled={!tracklist}
+						/>
+						<IconButton
+							size="md"
+							icon={ListEndIcon}
+							iconSource="lucide"
+							onClick={() =>
+								getFullTracklist().then((tracklist) =>
+									addToEnd(tracklist ?? []),
+								)
+							}
+							disabled={!tracklist}
+						/>
+						<IconButton
+							size="md"
+							icon={IconDots}
+							iconSource="tabler"
+							onClick={onClick}
+						/>
+					</>
+				)}
+			</div>
+		</>
 	);
 }
