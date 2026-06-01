@@ -19,7 +19,7 @@ export default async function Page({ params }: Props) {
 
 	const trackResponse = await getTrack(pluginId, libraryId, trackId);
 
-	if (trackResponse.status != 200) {
+	if (trackResponse.status != 200 || !trackResponse.data) {
 		return <h1>Something went wrong</h1>;
 	}
 

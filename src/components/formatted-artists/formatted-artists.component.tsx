@@ -16,7 +16,7 @@ export function FormattedArtists({ artists, fallback }: Props) {
 		return (
 			<>
 				{artists.map(({ artist, joinPhrase }, index) => (
-					<Fragment key={artist.uuid}>
+					<Fragment key={artist.uuid ?? index}>
 						<ArtistLink artist={artist} />
 						{index < artists!.length - 1 && (
 							<span className={styles.artistJoin}>{joinPhrase ?? ", "}</span>
