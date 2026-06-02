@@ -1,12 +1,13 @@
 "use client";
 
 import { usePlayerStore } from "@/store/player.store";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import { createTrackAudioSession } from "@api";
 import { useNotificationStore } from "@/store/notification.store";
-import { Events } from "hls.js";
 import { useKeyboardShortcuts } from "@/hook/keyboard-shortcuts.hook";
+import { useTrack } from "@/hook/track.hook";
+import { getAttribute } from "@/lib/attribute.util";
 
 export default function AudioEngine() {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -63,6 +64,53 @@ export default function AudioEngine() {
 	}, []);
 
 	const currentTrack = queue[currentIndex];
+	const trackResult = useTrack(currentTrack);
+
+	useEffect(() => {
+		if (!("mediaSession" in navigator) || !trackResult.data) {
+			return;
+		}
+
+		const track = trackResult.data;
+		const title = getAttribute(track.attributes, "title", "string", true);
+		let artistString = "";
+
+		if (track.artists?.length) {
+			for (const [index, artist] of track.artists.entries()) {
+				const name = getAttribute(
+					artist.artist.attributes,
+					"name",
+					"string",
+					true,
+				);
+				if (name) {
+					artistString += name;
+					if (artist.joinPhrase) {
+						artistString += artist.joinPhrase;
+					} else if (index < track.artists.length - 1) {
+						artistString += ", ";
+					}
+				}
+			}
+		}
+		if (!artistString) {
+			const attribute = getAttribute(
+				track.attributes,
+				"artist",
+				"string",
+				true,
+				true,
+			);
+			if (attribute?.length) {
+				artistString = attribute.join(", ");
+			}
+		}
+
+		navigator.mediaSession.metadata = new MediaMetadata({
+			title: title ?? track.title,
+			artist: artistString || "Unknown Artist",
+		});
+	}, [trackResult.data]);
 
 	useEffect(() => {
 		if (failedNotificationId) {

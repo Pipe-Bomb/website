@@ -1,18 +1,18 @@
 .container {
-	padding: 8px;
 	min-height: 100svh;
 	display: flex;
-	align-items: stretch;
+	// align-items: stretch;
+	align-items: flex-start;
+	gap: 8px;
+	background: var(--bg-base);
 
 	.sideBar {
-		position: fixed;
-		top: 8px;
-		left: 8px;
-		bottom: 8px;
-		width: 200px;
-		// background: var(--bg-elevated);
+		padding: 8px;
+		width: 220px;
 		background: var(--bg-surface);
 		border-radius: 8px;
+		position: sticky;
+		top: 0;
 
 		.tabs {
 			display: flex;
@@ -26,9 +26,11 @@
 
 	.content {
 		flex-grow: 1;
-		margin-left: 208px;
 		display: flex;
 		flex-direction: column;
 		position: relative;
+		background: var(--bg-surface);
+		padding: 16px;
+		border-radius: 16px;
 	}
 }
