@@ -55,11 +55,13 @@ export default async function RootLayout({
 	const trackColumnsCookie = cookieStore.get("track_columns");
 	let initialTrackColumns: AttributeColumn[] = [
 		{
+			type: "basic",
 			attribute: "genre",
 			attributeType: "string",
 			width: 100,
 		},
 		{
+			type: "basic",
 			attribute: "duration",
 			attributeType: "decimal",
 			width: 100,
