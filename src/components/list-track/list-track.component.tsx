@@ -23,17 +23,21 @@ import { ResourceImage } from "@/components/resource-image/resource-image.compon
 import { usePlayerStore } from "@/store/player.store";
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { cc } from "@/lib/util";
-import { AttributeColumn } from "@/context/track-columns.context";
+import {
+	BasicAttributeColumn,
+	SpecialAttributeColumnValue,
+} from "@/context/track-columns.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { AttributeUnion } from "@/lib/attribute.util";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
 import { serializeTrackKey } from "@/lib/track-batcher.util";
 import { useQueueActions } from "@/hook/queue-actions.hook";
 import { useNotificationStore } from "@/store/notification.store";
+import { OptionalLink } from "@/components/optional-link/optional-link.component";
 
 interface Props {
 	track: Track | EphemeralTrack;
-	columns?: AttributeColumn[];
+	columns?: (BasicAttributeColumn | SpecialAttributeColumnValue)[];
 	number?: number;
 	noArt?: boolean;
 }
@@ -43,15 +47,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 	const [playlistOpen, setPlaylistOpen] = useState(false);
 	const { createNotification } = useNotificationStore();
 
-	const {
-		// addToEnd,
-		// playNext,
-		// playNow,
-		queue,
-		currentIndex,
-		isPlaying,
-		toggle,
-	} = usePlayerStore();
+	const { queue, currentIndex, isPlaying, toggle } = usePlayerStore();
 	const { playNow, playNext, addToEnd } = useQueueActions();
 	const nowPlaying = queue[currentIndex];
 
@@ -62,7 +58,6 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
-	const album = useAttribute(track.attributes, "album", "string");
 	const image = useRawAttribute(track.attributes, "front", "buffer");
 
 	const rightClick = useRightClick(() =>
@@ -82,11 +77,6 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 				key: "add-to-playlist",
 				onClick: () => setPlaylistOpen(true),
 			},
-			// "identifiers" in track && {
-			// 	languageKey: "contextmenu.track.view-info",
-			// 	key: "view-info",
-			// 	onClick: () => setInfoOpen(true),
-			// },
 		].filter((e) => !!e),
 	);
 
@@ -187,15 +177,22 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 						}}
 						key={index}
 					>
-						{column.attributeType == "buffer" ? (
+						{column.type == "special" ? (
+							<OptionalLink
+								href={column.url}
+								className={cc(!!column.url && styles.columnLink)}
+							>
+								{column.formatted}
+							</OptionalLink>
+						) : column.attributeType == "buffer" ? (
 							<BufferColumn
-								column={column as AttributeColumn<"buffer">}
+								column={column as BasicAttributeColumn<"buffer">}
 								attributes={track.attributes}
 							/>
 						) : (
 							<ValueColumn
 								column={
-									column as AttributeColumn<
+									column as BasicAttributeColumn<
 										Exclude<AttributeUnion["type"], "buffer">
 									>
 								}
@@ -222,7 +219,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 }
 
 interface BufferColumnProps {
-	column: AttributeColumn<"buffer">;
+	column: BasicAttributeColumn<"buffer">;
 	attributes: AttributeMap | null;
 }
 
@@ -250,7 +247,7 @@ function BufferColumn({ column, attributes }: BufferColumnProps) {
 }
 
 interface ValueColumnProps {
-	column: AttributeColumn<Exclude<AttributeUnion["type"], "buffer">>;
+	column: BasicAttributeColumn<Exclude<AttributeUnion["type"], "buffer">>;
 	attributes: AttributeMap | null;
 }
 

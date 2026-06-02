@@ -10,6 +10,8 @@ import Link from "next/link";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { useKeyboardShortcuts } from "@/hook/keyboard-shortcuts.hook";
 import { useState } from "react";
+import { useButtonMenu } from "@/hook/button-menu.hook";
+import { logoutUser } from "@api";
 
 export function TopBar() {
 	const user = useAuth();
@@ -43,6 +45,18 @@ export function TopBar() {
 		setQuery(newQuery);
 	};
 
+	const { onClick } = useButtonMenu(() => [
+		{
+			key: "logout",
+			languageKey: "contextmenu.top.logout",
+			onClick: () => {
+				logoutUser().then((response) => {
+					router.refresh();
+				});
+			},
+		},
+	]);
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.buttons}>
@@ -68,10 +82,10 @@ export function TopBar() {
 				/>
 			</div>
 			{user && (
-				<div className={styles.userSection}>
+				<button className={styles.userSection} onClick={onClick}>
 					<IconUserCircle className={styles.userIcon} />
 					<span className={styles.username}>{user.username}</span>
-				</div>
+				</button>
 			)}
 		</div>
 	);

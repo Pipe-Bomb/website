@@ -53,7 +53,7 @@ export function PlaylistButtons({ playlist }: Props) {
 		},
 		{
 			key: "change-thumb",
-			languageKey: "contextmenu.playlist-change-thumbnail",
+			languageKey: "contextmenu.playlist.change-thumbnail",
 			onClick: () => {},
 		},
 	]);

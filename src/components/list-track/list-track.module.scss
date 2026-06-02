@@ -101,6 +101,10 @@
 		svg {
 			color: var(--fg-secondary);
 		}
+
+		.columnLink {
+			text-decoration: underline;
+		}
 	}
 
 	&:hover,

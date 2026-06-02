@@ -12,13 +12,34 @@ import {
 	useState,
 } from "react";
 
-export interface AttributeColumn<
+export interface BasicAttributeColumn<
 	T extends AttributeUnion["type"] = AttributeUnion["type"],
 > {
+	type: "basic";
 	attribute: string;
 	attributeType: T;
 	width: number;
 }
+
+export interface SpecialAttributeColumn {
+	type: "special";
+	id: string;
+	width: number;
+}
+
+export interface SpecialAttributeColumnFormatter<
+	T,
+> extends SpecialAttributeColumn {
+	formatter: (entry: T, index: number) => string;
+	url?: (entry: T, index: number) => string | null;
+}
+
+export interface SpecialAttributeColumnValue extends SpecialAttributeColumn {
+	formatted: string;
+	url: string | null;
+}
+
+export type AttributeColumn = BasicAttributeColumn | SpecialAttributeColumn;
 
 interface Props {
 	children: ReactNode;

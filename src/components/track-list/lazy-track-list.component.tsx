@@ -3,24 +3,29 @@
 import { EphemeralTrack, Track } from "@/api";
 import { ListTrackSkeleton } from "@/components/list-track/list-track-skeleton.component";
 import { ListTrack } from "@/components/list-track/list-track.component";
-import { BaseTrackList } from "@/components/track-list/base-track-list.component";
-import { AttributeColumn } from "@/context/track-columns.context";
+import {
+	BaseTrackList,
+	BaseTrackListSpecialColumn,
+} from "@/components/track-list/base-track-list.component";
+import {
+	BasicAttributeColumn,
+	SpecialAttributeColumnFormatter,
+} from "@/context/track-columns.context";
 import { useQuery } from "@tanstack/react-query";
 
-interface Props {
+interface Props<T> {
 	totalCount: number;
 	queryKey: unknown[];
-	fetchChunk: (
-		offset: number,
-		limit: number,
-	) => Promise<(Track | EphemeralTrack)[]>;
+	fetchChunk: (offset: number, limit: number) => Promise<T[]>;
 	chunkSize?: number;
 	trackNumbers?: number[];
 	noArt?: boolean;
-	initialTracks?: (Track | EphemeralTrack)[];
+	initialTracks?: T[];
+	specialColumns?: BaseTrackListSpecialColumn<T>[];
+	toTrack: (entry: T, index: number) => Track | EphemeralTrack;
 }
 
-export function LazyTrackList({
+export function LazyTrackList<T>({
 	totalCount,
 	queryKey,
 	fetchChunk,
@@ -28,12 +33,15 @@ export function LazyTrackList({
 	trackNumbers,
 	noArt,
 	initialTracks,
-}: Props) {
+	specialColumns,
+	toTrack,
+}: Props<T>) {
 	return (
 		<BaseTrackList
 			totalCount={totalCount}
+			specialColumns={specialColumns}
 			itemContent={(index, columns) => (
-				<Row
+				<Row<T>
 					index={index}
 					columns={columns}
 					queryKey={queryKey}
@@ -42,27 +50,26 @@ export function LazyTrackList({
 					trackNumber={trackNumbers?.[index]}
 					noArt={noArt}
 					initialTracks={initialTracks}
+					toTrack={toTrack}
 				/>
 			)}
 		/>
 	);
 }
 
-interface RowProps {
+interface RowProps<T> {
 	index: number;
-	columns: AttributeColumn[];
+	columns: (BasicAttributeColumn | SpecialAttributeColumnFormatter<T>)[];
 	queryKey: unknown[];
-	fetchChunk: (
-		offset: number,
-		limit: number,
-	) => Promise<(Track | EphemeralTrack)[]>;
+	fetchChunk: (offset: number, limit: number) => Promise<T[]>;
 	chunkSize: number;
 	trackNumber?: number;
 	noArt?: boolean;
-	initialTracks?: (Track | EphemeralTrack)[];
+	initialTracks?: T[];
+	toTrack: (entry: T, index: number) => Track | EphemeralTrack;
 }
 
-function Row({
+function Row<T>({
 	index,
 	columns,
 	queryKey,
@@ -71,7 +78,8 @@ function Row({
 	trackNumber,
 	noArt,
 	initialTracks,
-}: RowProps) {
+	toTrack,
+}: RowProps<T>) {
 	const chunkIndex = Math.floor(index / chunkSize);
 	const localIndex = index % chunkSize;
 
@@ -94,8 +102,19 @@ function Row({
 
 	return (
 		<ListTrack
-			track={track}
-			columns={columns}
+			track={toTrack(track, index)}
+			columns={columns.map((column) => {
+				if (column.type == "special") {
+					return {
+						type: "special",
+						id: column.id,
+						width: column.width,
+						formatted: column.formatter(track, index),
+						url: column.url?.(track, index) ?? null,
+					};
+				}
+				return column;
+			})}
 			number={trackNumber}
 			noArt={noArt}
 		/>

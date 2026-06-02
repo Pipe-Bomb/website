@@ -110,6 +110,24 @@ export default function AudioEngine() {
 			title: title ?? track.title,
 			artist: artistString || "Unknown Artist",
 		});
+
+		navigator.mediaSession.setActionHandler("play", () => setIsPlaying(true));
+		navigator.mediaSession.setActionHandler("pause", () => setIsPlaying(false));
+		navigator.mediaSession.setActionHandler("seekto", (details) => {
+			if (details.seekTime !== undefined) {
+				seek(details.seekTime);
+			}
+		});
+		navigator.mediaSession.setActionHandler("seekbackward", (details) => {
+			const offset = details.seekOffset ?? 10;
+			seek((current) => current - offset);
+		});
+		navigator.mediaSession.setActionHandler("seekforward", (details) => {
+			const offset = details.seekOffset ?? 10;
+			seek((current) => current + offset);
+		});
+		navigator.mediaSession.setActionHandler("nexttrack", () => next());
+		navigator.mediaSession.setActionHandler("previoustrack", () => prev());
 	}, [trackResult.data]);
 
 	useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetAllAttributes, useGetAllAttributeSources } from "@/api";
+import { useGetAllAttributeSources } from "@/api";
 import { Modal } from "@/components/modal/modal.component";
 import styles from "./track-list.module.scss";
 import { Spinner } from "@/components/spinner/spinner.component";
@@ -10,20 +10,28 @@ import { useTranslation } from "@/context/language.context";
 import { useTrackColumns } from "@/context/track-columns.context";
 import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
 
-interface Props {
+interface Props extends InnerProps {
 	open: boolean;
 	onClose?: () => void;
 }
 
-export function TrackListModal({ open, onClose }: Props) {
+export function TrackListModal({ open, onClose, specialColumns }: Props) {
 	return (
 		<Modal open={open} onClose={onClose}>
-			<Inner />
+			<Inner specialColumns={specialColumns} />
 		</Modal>
 	);
 }
 
-function Inner() {
+export interface TrackListSpecialColumn {
+	id: string;
+}
+
+interface InnerProps {
+	specialColumns?: TrackListSpecialColumn[];
+}
+
+function Inner({ specialColumns }: InnerProps) {
 	const { t } = useTranslation();
 	const { columns, setColumns } = useTrackColumns();
 
@@ -40,24 +48,13 @@ function Inner() {
 			.sort((a, b) => compare(a.name, b.name));
 	}, [unorderedAttributes, t]);
 
-	const allAttributesQuery = useGetAllAttributes({
-		query: {
-			enabled: true,
-		},
-	});
-
 	const sourcesQuery = useGetAllAttributeSources({
 		query: {
 			enabled: true,
 		},
 	});
 
-	if (
-		allAttributesQuery.isPending ||
-		!allAttributesQuery.data ||
-		sourcesQuery.isPending ||
-		!sourcesQuery.data
-	) {
+	if (sourcesQuery.isPending || !sourcesQuery.data) {
 		return (
 			<div className={styles.loading}>
 				<Spinner position="expand" />
@@ -65,15 +62,56 @@ function Inner() {
 		);
 	}
 
-	const attributesResponse = allAttributesQuery.data;
-
 	return (
 		<div>
 			<h1>Columns</h1>
+			{!!specialColumns?.length && (
+				<div className={styles.list}>
+					{specialColumns.map((column) => {
+						const active = columns.some(
+							(c) => c.type == "special" && c.id == column.id,
+						);
+
+						return (
+							<button
+								key={column.id}
+								className={cc(
+									styles.attributeContainer,
+									active && styles.active,
+								)}
+								onClick={() => {
+									if (active) {
+										setColumns(
+											columns.filter(
+												(c) => c.type != "special" || c.id != column.id,
+											),
+										);
+									} else {
+										setColumns([
+											{
+												type: "special",
+												id: column.id,
+												width: 150,
+											},
+											...columns,
+										]);
+									}
+								}}
+							>
+								<span className={styles.attributeName}>
+									{t(`attribute.${column.id}.name`)}
+								</span>
+								<span className={styles.attributeIndicator} />
+							</button>
+						);
+					})}
+				</div>
+			)}
 			<div className={styles.list}>
 				{rankedAttributes.map(({ attribute, name }) => {
 					const active = columns.some(
 						(column) =>
+							column.type == "basic" &&
 							column.attribute == attribute.key &&
 							column.attributeType == attribute.type,
 					);
@@ -81,16 +119,13 @@ function Inner() {
 					return (
 						<button
 							key={attribute.key}
-							className={cc(
-								styles.attributeContainer,
-
-								active && styles.active,
-							)}
+							className={cc(styles.attributeContainer, active && styles.active)}
 							onClick={() => {
 								if (active) {
 									setColumns(
 										columns.filter(
 											(column) =>
+												column.type != "basic" ||
 												column.attribute != attribute.key ||
 												column.attributeType != attribute.type,
 										),
@@ -98,6 +133,7 @@ function Inner() {
 								} else {
 									setColumns([
 										{
+											type: "basic",
 											attribute: attribute.key,
 											attributeType: attribute.type,
 											width: 150,

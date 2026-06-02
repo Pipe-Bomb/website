@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { getPlaylistTracks, PlaylistTrack } from "@/api";
 import { LazyTrackList } from "@/components/track-list/lazy-track-list.component";
-import { ListTrackSkeleton } from "@/components/list-track/list-track-skeleton.component";
+import { useTranslation } from "@/context/language.context";
 
 interface Props {
 	playlistUuid: string;
@@ -16,6 +16,7 @@ export function PlaylistTrackList({
 	totalCount,
 	initialTracks,
 }: Props) {
+	const { t } = useTranslation();
 	const queryKey = useMemo(
 		() => ["playlist", playlistUuid, "tracks"],
 		[playlistUuid],
@@ -40,7 +41,7 @@ export function PlaylistTrackList({
 			throw new Error(`Status code ${response.status}`);
 		}
 
-		return response.data.map(({ track }) => track);
+		return response.data;
 	};
 
 	return (
@@ -49,8 +50,34 @@ export function PlaylistTrackList({
 			queryKey={queryKey}
 			fetchChunk={fetchChunk}
 			chunkSize={50}
-			initialTracks={initialTracks?.map(({ track }) => track)}
+			initialTracks={initialTracks}
 			trackNumbers={trackNumbers}
+			specialColumns={[
+				{
+					id: "playlist_track_date_added",
+					formatter: (entry) => new Date(entry.dateAdded).toDateString(),
+				},
+				{
+					id: "playlist_track_added_by",
+					formatter: (entry) => {
+						if (entry.addedBySystem) {
+							return t("attribute.playlist_track_added_by.system");
+						}
+						if (entry.addedBy) {
+							return entry.addedBy.username;
+						}
+						return "";
+					},
+					url: (entry) => {
+						if (entry.addedBy) {
+							console.log(`/user/${entry.addedBy.uuid}`);
+							return `/user/${entry.addedBy.uuid}`;
+						}
+						return null;
+					},
+				},
+			]}
+			toTrack={(entry) => entry.track}
 		/>
 	);
 }

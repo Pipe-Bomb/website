@@ -3,7 +3,8 @@
 import { useTranslation } from "@/context/language.context";
 import { useScrollParentContext } from "@/context/scroll-parent.context";
 import {
-	AttributeColumn,
+	BasicAttributeColumn,
+	SpecialAttributeColumnFormatter,
 	useTrackColumns,
 } from "@/context/track-columns.context";
 import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
@@ -13,16 +14,31 @@ import { useResizeDetector } from "react-resize-detector";
 import styles from "./track-list.module.scss";
 import { Virtuoso } from "react-virtuoso";
 import { TrackListModal } from "@/modal/track-list/track-list.modal";
+import { EphemeralTrack, Track } from "@api";
 
-interface BaseTrackListProps {
+export interface BaseTrackListSpecialColumn<T> {
+	id: string;
+	formatter: (entry: T, index: number) => string;
+	url?: (entry: T, index: number) => string | null;
+}
+
+interface BaseTrackListProps<T = Track | EphemeralTrack> {
 	totalCount: number;
-	itemContent: (index: number, columns: AttributeColumn[]) => ReactNode;
+	itemContent: (
+		index: number,
+		columns: (BasicAttributeColumn | SpecialAttributeColumnFormatter<T>)[],
+	) => ReactNode;
+	specialColumns?: BaseTrackListSpecialColumn<T>[];
 }
 
 const MAIN_MIN_WIDTH = 200;
 const COLUMN_MIN_WIDTH = 50;
 
-export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
+export function BaseTrackList<T>({
+	totalCount,
+	itemContent,
+	specialColumns,
+}: BaseTrackListProps<T>) {
 	const { t } = useTranslation();
 	const { columns, setColumns } = useTrackColumns();
 	const { ref, width } = useResizeDetector();
@@ -38,23 +54,49 @@ export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
 		},
 	]);
 
-	const boundColumns = useMemo<AttributeColumn[]>(() => {
+	const boundColumns = useMemo<
+		(BasicAttributeColumn | SpecialAttributeColumnFormatter<T>)[]
+	>(() => {
 		if (!width) return [];
 
-		const totalMinColumnsWidth = columns.length * COLUMN_MIN_WIDTH;
+		const newColumns: (
+			| BasicAttributeColumn
+			| SpecialAttributeColumnFormatter<T>
+		)[] = columns
+			.map((column) => {
+				if (column.type == "special") {
+					const formatter = specialColumns?.find((c) => c.id == column.id);
+					if (formatter) {
+						const special: SpecialAttributeColumnFormatter<T> = {
+							type: "special",
+							id: column.id,
+							width: column.width,
+							formatter: formatter.formatter,
+							url: formatter.url,
+						};
+						return special;
+					}
+					return null;
+				}
+
+				return column;
+			})
+			.filter((c) => !!c);
+
+		const totalMinColumnsWidth = newColumns.length * COLUMN_MIN_WIDTH;
 		const maxAvailableColumnSpace = width - MAIN_MIN_WIDTH;
 
 		if (maxAvailableColumnSpace < totalMinColumnsWidth) {
-			return columns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
+			return newColumns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
 		}
 
-		const totalRequestedWidth = columns.reduce(
+		const totalRequestedWidth = newColumns.reduce(
 			(sum, col) => sum + col.width,
 			0,
 		);
 
 		if (totalRequestedWidth <= maxAvailableColumnSpace) {
-			return columns;
+			return newColumns;
 		}
 
 		const flexibleSpaceAvailable =
@@ -63,10 +105,10 @@ export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
 			totalRequestedWidth - totalMinColumnsWidth;
 
 		if (totalFlexibleSpaceRequested <= 0) {
-			return columns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
+			return newColumns.map((col) => ({ ...col, width: COLUMN_MIN_WIDTH }));
 		}
 
-		return columns.map((column) => {
+		return newColumns.map((column) => {
 			const columnFlexibleRequested = column.width - COLUMN_MIN_WIDTH;
 			const scaledFlexibleSpace =
 				columnFlexibleRequested *
@@ -77,17 +119,25 @@ export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
 				width: COLUMN_MIN_WIDTH + scaledFlexibleSpace,
 			};
 		});
-	}, [columns, width]);
+	}, [columns, width, specialColumns]);
 
 	const namedColumns = useMemo(() => {
-		return boundColumns.map((column) => ({
-			column,
-			attribute: (rankedAttributes ?? []).find(
-				(attribute) =>
-					attribute.key == column.attribute &&
-					attribute.type == column.attributeType,
-			),
-		}));
+		return boundColumns.map((column) => {
+			if (column.type == "basic") {
+				return {
+					column,
+					attribute: (rankedAttributes ?? []).find(
+						(attribute) =>
+							attribute.key == column.attribute &&
+							attribute.type == column.attributeType,
+					),
+				};
+			}
+
+			return {
+				column,
+			};
+		});
 	}, [boundColumns, rankedAttributes]);
 
 	const startDrag = (e: MouseEvent, index: number) => {
@@ -144,12 +194,14 @@ export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
 							className={styles.columnHeading}
 						>
 							<span className={styles.columnName}>
-								{attribute
-									? t(
-											`plugin.${attribute.pluginId}.attribute.track.${attribute.sourceId}.${attribute.key}.name`,
-											attribute.key,
-										)
-									: column.attribute}
+								{column.type == "special"
+									? t(`attribute.${column.id}.name`, column.id)
+									: attribute
+										? t(
+												`plugin.${attribute.pluginId}.attribute.track.${attribute.sourceId}.${attribute.key}.name`,
+												attribute.key,
+											)
+										: column.attribute}
 							</span>
 							<span
 								className={styles.mover}
@@ -168,6 +220,7 @@ export function BaseTrackList({ totalCount, itemContent }: BaseTrackListProps) {
 			<TrackListModal
 				open={columnModalOpen}
 				onClose={() => setColumnModalOpen(false)}
+				specialColumns={specialColumns}
 			/>
 		</>
 	);
