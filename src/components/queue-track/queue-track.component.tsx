@@ -16,6 +16,7 @@ import { useRightClick } from "@/hook/right-click.hook";
 import { useCallback } from "react";
 import { ContextMenuElement } from "@/context/context-menu.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
+import Link from "next/link";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -86,7 +87,12 @@ export function QueueTrack({ track, queueIndex }: Props) {
 				</div>
 			</div>
 			<div className={styles.info}>
-				<span className={styles.title}>{title}</span>
+				<Link
+					className={styles.title}
+					href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+				>
+					{title}
+				</Link>
 				<span className={styles.artists}>
 					<TrackArtists track={track} />
 				</span>

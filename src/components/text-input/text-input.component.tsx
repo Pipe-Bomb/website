@@ -1,5 +1,6 @@
 "use client";
 
+import { Ref } from "react";
 import styles from "./text-input.module.scss";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 	onEnter?: () => void;
 	autoFocus?: boolean;
 	disabled?: boolean;
+	ref?: Ref<HTMLInputElement>;
 }
 
 export function TextInput({
@@ -20,6 +22,7 @@ export function TextInput({
 	onEnter,
 	autoFocus,
 	disabled,
+	ref,
 }: Props) {
 	return (
 		<span>
@@ -36,6 +39,7 @@ export function TextInput({
 					}
 				}}
 				disabled={disabled}
+				ref={ref}
 			/>
 		</span>
 	);

@@ -2,26 +2,38 @@
 
 import { useAuth } from "@/context/auth.context";
 import styles from "./top-bar.module.scss";
-import {
-	IconSearch,
-	IconSearchFilled,
-	IconUserCircle,
-} from "@tabler/icons-react";
+import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { TextInput } from "@/components/text-input/text-input.component";
 import { useUrlParam } from "@/hook/url-param.hook";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconButton } from "@/components/icon-button/icon-button";
+import { useKeyboardShortcuts } from "@/hook/keyboard-shortcuts.hook";
+import { useState } from "react";
 
 export function TopBar() {
 	const user = useAuth();
 	const router = useRouter();
 	const pathname = usePathname();
+	const [searchInput, setSearchInput] = useState<HTMLInputElement | null>(null);
 
 	const [query, setQuery] = useUrlParam("query", {
 		replace: true,
 		debounceMs: 300,
 	});
+
+	useKeyboardShortcuts(
+		(key, _shift, ctrl) => {
+			if (key == "k" && ctrl) {
+				if (searchInput) {
+					searchInput.focus();
+				}
+				return true;
+			}
+			return false;
+		},
+		[searchInput],
+	);
 
 	const changeQuery = (newQuery: string) => {
 		if (pathname != "/search" && newQuery.trim() != "") {
@@ -44,6 +56,7 @@ export function TopBar() {
 						value={query ?? ""}
 						onChange={changeQuery}
 						placeholder="Search..."
+						ref={setSearchInput}
 					/>
 				</div>
 

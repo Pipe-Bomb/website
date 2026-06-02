@@ -20,6 +20,7 @@ import { TrackArtists } from "@/components/track-artists/track-artists.component
 import { useSidebarStore } from "@/store/sidebar.store";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { useTrack } from "@/hook/track.hook";
+import Link from "next/link";
 
 export function Player() {
 	const { open: isSidebarOpen, toggle: toggleSidebar } = useSidebarStore();
@@ -112,13 +113,23 @@ function NowPlaying({ track }: NowPlayingProps) {
 
 	return (
 		<div className={styles.nowPlaying}>
-			<ResourceImage
-				resource={cover}
-				className={styles.nowPlayingCover}
-				fallbackSrc="/no_album_art.jpg"
-			/>
+			<Link
+				href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+			>
+				<ResourceImage
+					resource={cover}
+					className={styles.nowPlayingCover}
+					fallbackSrc="/no_album_art.jpg"
+				/>
+			</Link>
+
 			<div className={styles.nowPlayingInfo}>
-				<span className={styles.nowPlayingTitle}>{title}</span>
+				<Link
+					className={styles.nowPlayingTitle}
+					href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+				>
+					{title}
+				</Link>
 				<span className={styles.nowPlayingArtist}>
 					{"artists" in track ? (
 						<TrackArtists track={track} />

@@ -17,7 +17,9 @@ interface PlayerStore {
 
 	// Actions
 	updateProgress: (time: number, duration: number) => void;
-	seek: (time: number) => void;
+	seek: (
+		time: number | ((currentTime: number, duration: number) => number),
+	) => void;
 
 	playTrack: (
 		trackId: string,
@@ -50,7 +52,15 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	setIsBuffering: (isBuffering) => set({ isBuffering }),
 
 	updateProgress: (currentTime, duration) => set({ currentTime, duration }),
-	seek: (time) => set({ seekTo: time }),
+	seek: (time) => {
+		if (typeof time == "function") {
+			set(({ currentTime, duration }) => ({
+				seekTo: Math.min(Math.max(time(currentTime, duration), 0), duration),
+			}));
+		} else {
+			set({ seekTo: time });
+		}
+	},
 
 	playTrack: (track, indexInList, entireList) => {
 		if (entireList) {

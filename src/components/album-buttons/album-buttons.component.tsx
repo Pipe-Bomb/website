@@ -1,15 +1,23 @@
 "use client";
 
-import { Album } from "@api";
+import {
+	addTracksToPlaylist,
+	addTracksToPlaylistResponse,
+	Album,
+	Playlist,
+} from "@api";
 import styles from "./album-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { IconDots, IconPlayerPlayFilled } from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 import { ListEndIcon, ListStartIcon, ShuffleIcon } from "lucide-react";
 import { useTrackListContext } from "@/context/tracklist.context";
 import { useIsMounted } from "@/hook/mounted.hook";
 import { useQueueActions } from "@/hook/queue-actions.hook";
 import { shuffle } from "@/lib/util";
+import { useButtonMenu } from "@/hook/button-menu.hook";
+import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
+import { useNotificationStore } from "@/store/notification.store";
 
 interface Props {
 	album: Album;
@@ -20,6 +28,9 @@ export function AlbumButtons({ album }: Props) {
 	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const { trackList: backupTrackList } = useTrackListContext();
 	const isMounted = useIsMounted();
+	const [playlistOpen, setPlaylistOpen] = useState(false);
+	const [isAddingToPlaylist, setIsAddingToPlaylist] = useState(false);
+	const { createNotification } = useNotificationStore();
 
 	const tracklist = useMemo(() => {
 		if (album.tracks?.length) {
@@ -28,41 +39,113 @@ export function AlbumButtons({ album }: Props) {
 		return backupTrackList;
 	}, [album.tracks, backupTrackList]);
 
+	const { onClick } = useButtonMenu(() => [
+		{
+			languageKey: "contextmenu.album.add-to-playlist",
+			key: "add-to-playlist",
+			onClick: () => setPlaylistOpen(true),
+		},
+	]);
+
+	const addToPlaylist = (playlist: Playlist) => {
+		if (isAddingToPlaylist) {
+			return;
+		}
+		setIsAddingToPlaylist(true);
+		let promise: Promise<addTracksToPlaylistResponse | undefined>;
+
+		if (album.uuid) {
+			promise = addTracksToPlaylist(playlist.uuid, {
+				tracks: null,
+				albums: [
+					{
+						uuid: album.uuid,
+						pluginId: null,
+						identityId: null,
+						identity: null,
+					},
+				],
+			});
+		} else if (album.identities?.length) {
+			const identity = album.identities[0];
+			promise = addTracksToPlaylist(playlist.uuid, {
+				tracks: null,
+				albums: [
+					{
+						uuid: album.uuid,
+						pluginId: identity.pluginId,
+						identityId: identity.identityId,
+						identity: identity.value,
+					},
+				],
+			});
+		} else {
+			setIsAddingToPlaylist(false);
+			return;
+		}
+
+		promise
+			.then((response) => {
+				if (response && response.status == 200) {
+					setPlaylistOpen(false);
+					createNotification("Started importing tracks to playlist...");
+				}
+			})
+			.catch((e) => {
+				console.error(e);
+				createNotification("Failed to add tracks to playlist");
+			})
+			.finally(() => setIsAddingToPlaylist(false));
+	};
+
 	return (
-		<div className={styles.container}>
-			{isMounted && (
-				<>
-					<IconButton
-						size="xl"
-						style="background"
-						icon={IconPlayerPlayFilled}
-						iconSource="tabler"
-						onClick={() => playEntireList(tracklist, 0)}
-						disabled={!tracklist.length}
-					/>
-					<IconButton
-						size="md"
-						icon={ShuffleIcon}
-						iconSource="lucide"
-						onClick={() => playEntireList(shuffle(tracklist), 0)}
-						disabled={!tracklist.length}
-					/>
-					<IconButton
-						size="md"
-						icon={ListStartIcon}
-						iconSource="lucide"
-						onClick={() => playListNext(tracklist)}
-						disabled={!tracklist.length}
-					/>
-					<IconButton
-						size="md"
-						icon={ListEndIcon}
-						iconSource="lucide"
-						onClick={() => addToEnd(tracklist)}
-						disabled={!tracklist.length}
-					/>
-				</>
-			)}
-		</div>
+		<>
+			<div className={styles.container}>
+				{isMounted && (
+					<>
+						<IconButton
+							size="xl"
+							style="background"
+							icon={IconPlayerPlayFilled}
+							iconSource="tabler"
+							onClick={() => playEntireList(tracklist, 0)}
+							disabled={!tracklist.length}
+						/>
+						<IconButton
+							size="md"
+							icon={ShuffleIcon}
+							iconSource="lucide"
+							onClick={() => playEntireList(shuffle(tracklist), 0)}
+							disabled={!tracklist.length}
+						/>
+						<IconButton
+							size="md"
+							icon={ListStartIcon}
+							iconSource="lucide"
+							onClick={() => playListNext(tracklist)}
+							disabled={!tracklist.length}
+						/>
+						<IconButton
+							size="md"
+							icon={ListEndIcon}
+							iconSource="lucide"
+							onClick={() => addToEnd(tracklist)}
+							disabled={!tracklist.length}
+						/>
+						<IconButton
+							size="md"
+							icon={IconDots}
+							iconSource="tabler"
+							onClick={onClick}
+						/>
+					</>
+				)}
+			</div>
+			<PlaylistSelectModal
+				open={playlistOpen}
+				onClose={() => !isAddingToPlaylist && setPlaylistOpen(false)}
+				onSelect={addToPlaylist}
+			/>
+		</>
 	);
 }

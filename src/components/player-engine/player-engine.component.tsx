@@ -1,11 +1,12 @@
 "use client";
 
 import { usePlayerStore } from "@/store/player.store";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import { createTrackAudioSession } from "@api";
 import { useNotificationStore } from "@/store/notification.store";
 import { Events } from "hls.js";
+import { useKeyboardShortcuts } from "@/hook/keyboard-shortcuts.hook";
 
 export default function AudioEngine() {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -20,12 +21,46 @@ export default function AudioEngine() {
 		currentIndex,
 		isPlaying,
 		next,
+		prev,
+		seek,
 		seekTo,
 		updateProgress,
 		setIsPlaying,
+		toggle,
 
 		setIsBuffering,
 	} = usePlayerStore();
+
+	useKeyboardShortcuts((key, shift) => {
+		if (key === " ") {
+			toggle();
+			return true;
+		}
+		if (key == "ArrowRight") {
+			if (shift) {
+				next();
+			} else {
+				seek((current) => current + 10);
+			}
+			return true;
+		}
+		if (key == "ArrowLeft") {
+			if (shift) {
+				prev();
+			} else {
+				seek((current) => current - 10);
+			}
+			return true;
+		}
+
+		const numberIndex = "0123456789".indexOf(key);
+		if (key.length == 1 && numberIndex >= 0) {
+			seek((_current, duration) => (duration / 10) * numberIndex);
+			return true;
+		}
+
+		return false;
+	}, []);
 
 	const currentTrack = queue[currentIndex];
 
@@ -163,8 +198,10 @@ export default function AudioEngine() {
 		<audio
 			ref={audioRef}
 			onEnded={() => {
-				next();
-				setIsPlaying(true);
+				if (currentIndex < queue.length - 1) {
+					next();
+					setIsPlaying(true);
+				}
 			}}
 			onPlay={() => usePlayerStore.setState({ isPlaying: true })}
 			onPause={() => usePlayerStore.setState({ isPlaying: false })}
