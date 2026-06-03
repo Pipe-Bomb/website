@@ -386,7 +386,7 @@ function IntegerOptions({
 
 	useEffect(() => {
 		const setting: SearchAttributeDto = {
-			type: "decimal",
+			type: "integer",
 			entityType,
 			key: attribute.key,
 		};
@@ -401,7 +401,7 @@ function IntegerOptions({
 
 		let name: string;
 		if (value !== null) {
-			setting.decimal = value;
+			setting.integer = value;
 			name = `${attributeName} is ${value}`;
 		} else {
 			if (min !== null) {
