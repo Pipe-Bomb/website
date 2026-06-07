@@ -33,7 +33,7 @@ export async function generateMetadata({
 		const album = albumResponse.data;
 
 		const title = getAttribute(album.attributes, "title", "string", true);
-		const image = getAttribute(album.attributes, "thumb", "buffer");
+		const image = getAttribute(album.attributes, "front", "buffer");
 
 		let artistString = "";
 
