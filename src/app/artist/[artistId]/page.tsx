@@ -33,12 +33,17 @@ export async function generateMetadata({
 		const artist = artistResponse.data;
 
 		const name = getAttribute(artist.attributes, "name", "string", true);
-		// const image =
-		// 	getAttribute(artist.attributes, "background", "buffer") ??
-		// 	getAttribute(artist.attributes, "thumb", "buffer");
+		const image =
+			getAttribute(artist.attributes, "background", "buffer") ??
+			getAttribute(artist.attributes, "thumb", "buffer");
 
 		return {
 			title: `${name ?? "Unknown Artist"} - Pipe Bomb`,
+			openGraph: {
+				title: name ?? "Unknown Artist",
+				description: `Listen to ${name ?? "Unknown Artist"} on Pipe Bomb`,
+				images: image ? [image.url] : [],
+			},
 		};
 	} catch {}
 

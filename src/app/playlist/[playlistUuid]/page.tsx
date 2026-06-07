@@ -8,9 +8,42 @@ import Link from "next/link";
 import { PlaylistButtons } from "@/components/playlist-buttons/playlist-buttons.component";
 import { PlaylistUpdateProgress } from "@/components/playlist-update-progress/playlist-update-progress.component";
 import { PlaylistTrackList } from "@/components/playlist-track-list/playlist-track-list.component";
+import { Metadata } from "next";
 
 interface Props {
 	params: Promise<{ playlistUuid: string }>;
+}
+
+export async function generateMetadata({
+	params,
+}: Props): Promise<Metadata | null> {
+	const { playlistUuid } = await params;
+
+	try {
+		const playlistResponse = await getPlaylist(playlistUuid);
+
+		if (playlistResponse.status != 200) {
+			return null;
+		}
+
+		const playlist = playlistResponse.data;
+
+		const title = getAttribute(playlist.attributes, "title", "string", true);
+		const image = getAttribute(playlist.attributes, "thumb", "buffer");
+
+		return {
+			title: `${title ?? "Unnamed Playlist"} - Pipe Bomb`,
+			openGraph: {
+				title: title ?? "Unnamed Playlist",
+				description: `Listen to ${title ?? "Unnamed Playlist"} on Pipe Bomb`,
+				images: image ? [image.url] : [],
+			},
+		};
+	} catch (e) {
+		console.error(e);
+	}
+
+	return null;
 }
 
 export default async function Page({ params }: Props) {

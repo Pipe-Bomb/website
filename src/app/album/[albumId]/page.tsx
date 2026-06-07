@@ -10,11 +10,61 @@ import { getAlbumById } from "@/lib/api.util";
 import { AlbumEphemeralContentTabs } from "@/components/ephemeral-content-tabs/album-ephemeral-content-tabs.component";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { TrackListProvider } from "@/context/tracklist.context";
+import { Metadata } from "next";
 
 interface Props {
 	params: Promise<{
 		albumId: string;
 	}>;
+}
+
+export async function generateMetadata({
+	params,
+}: Props): Promise<Metadata | null> {
+	const { albumId } = await params;
+
+	try {
+		const albumResponse = await getAlbumById(albumId);
+
+		if (albumResponse.status != 200) {
+			return null;
+		}
+
+		const album = albumResponse.data;
+
+		const title = getAttribute(album.attributes, "title", "string", true);
+		const image = getAttribute(album.attributes, "thumb", "buffer");
+
+		let artistString = "";
+
+		if (album.artists?.length) {
+			for (const [index, artist] of album.artists.entries()) {
+				const name = getAttribute(
+					artist.artist.attributes,
+					"name",
+					"string",
+					true,
+				);
+				artistString += name || "Unknown Artist";
+				if (artist.joinPhrase) {
+					artistString += artist.joinPhrase;
+				} else if (index < album.artists.length - 1) {
+					artistString += ", ";
+				}
+			}
+		}
+
+		return {
+			title: `${title ?? "Unknown Album"} - Pipe Bomb`,
+			openGraph: {
+				title: title ?? "Unknown Album",
+				description: `Listen to ${title ?? "Unknown Album"}${artistString ? ` by ${artistString}` : ""} on Pipe Bomb`,
+				images: image ? [image.url] : [],
+			},
+		};
+	} catch {}
+
+	return null;
 }
 
 export default async function Page({ params }: Props) {

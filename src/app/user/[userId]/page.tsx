@@ -3,9 +3,38 @@ import styles from "./page.module.scss";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
 import { GridPlaylist } from "@/components/grid-playlist/grid-playlist.component";
+import { Metadata } from "next";
 
 interface Props {
 	params: Promise<{ userId: string }>;
+}
+
+export async function generateMetadata({
+	params,
+}: Props): Promise<Metadata | null> {
+	const { userId } = await params;
+
+	try {
+		const userResponse = await getUser(userId);
+
+		if (userResponse.status != 200) {
+			return null;
+		}
+
+		const user = userResponse.data;
+
+		return {
+			title: `${user.username} - Pipe Bomb`,
+			openGraph: {
+				title: user.username,
+				description: `View ${user.username}'s profile on Pipe Bomb`,
+			},
+		};
+	} catch (e) {
+		console.error(e);
+	}
+
+	return null;
 }
 
 export default async function Page({ params }: Props) {
