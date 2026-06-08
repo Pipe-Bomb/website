@@ -29,7 +29,7 @@ Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all na
 | Attribute | Type             | Multiple | Description                                                           |
 | :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
 | `title`   | `string`         | ❌       | Used as the main title for the track in lists and on track pages.     |
-| `artist`  | `string`         | ✅       | Used as the artist text when a track has no links to artist entities  |
+| `artist`  | `string`         | ✅       | Used as the artist text when a track has no links to artist entities.  |
 | `front`   | `buffer` (image) | ❌       | Used as the main cover art for the track in lists and on track pages. |
 
 ### Album
@@ -37,7 +37,7 @@ Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all na
 | Attribute | Type             | Multiple | Description                                                           |
 | :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
 | `title`   | `string`         | ❌       | Used as the main title for the album in lists and on album pages.     |
-| `artist`  | `string`         | ✅       | Used as the artist text when a album has no links to artist entities  |
+| `artist`  | `string`         | ✅       | Used as the artist text when a album has no links to artist entities.  |
 | `front`   | `buffer` (image) | ❌       | Used as the main cover art for the album in lists and on album pages. |
 
 ### Artist
