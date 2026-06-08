@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pipe Bomb Website
+
+The officially maintained frontend for [Pipe Bomb server](https://github.com/pipe-bomb/server), built on Next.js. This is by no means the only way to use Pipe Bomb, but it is a good one 😛.
 
 ## Getting Started
 
-First, run the development server:
+Pipe Bomb website is developed using Node.js 24. Clone the repository, then run:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If you experience a port conflict, run the website on a different port using the `PORT` environment variable:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+PORT=3001 npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The server address that Pipe Bomb website uses can also be configured using environment variables. `INTERNAL_API_URL` is used in server-side rendering and `NEXT_PUBLIC_API_URL` is used by the browser.
 
-## Learn More
+## Attributes
 
-To learn more about Next.js, take a look at the following resources:
+Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all naming decisions to plugin developers. That being said, Pipe Bomb website gives a few attributes special treatment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Track
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Attribute ID | Type             | Multiple | Description                                                           |
+| :----------- | ---------------- | -------- | --------------------------------------------------------------------- |
+| `title`      | `string`         | ❌       | Used as the main title for the track in lists and on track pages.     |
+| `artist`     | `string`         | ✅       | Used as the artist text when a track has no links to artist entities  |
+| `front`      | `buffer` (image) | ❌       | Used as the main cover art for the track in lists and on track pages. |
 
-## Deploy on Vercel
+### Album
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Attribute ID | Type             | Multiple | Description                                                           |
+| :----------- | ---------------- | -------- | --------------------------------------------------------------------- |
+| `title`      | `string`         | ❌       | Used as the main title for the album in lists and on album pages.     |
+| `artist`     | `string`         | ✅       | Used as the artist text when a album has no links to artist entities  |
+| `front`      | `buffer` (image) | ❌       | Used as the main cover art for the album in lists and on album pages. |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Artist
+
+| Attribute ID | Type             | Multiple | Description                                                                                                      |
+| :----------- | ---------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `name`       | `string`         | ❌       | Used as the main title for the artist on artist pages or in track or album credits.                              |
+| `thumb`      | `buffer` (image) | ❌       | Used as the front image for the artist on artist pages. Also used as the image for the artist in search results. |
+| `background` | `buffer` (image) | ❌       | Used as the background image for the artist on artist pages.                                                     |
+| `logo`       | `buffer` (image) | ❌       | Overlayed on top of the background image on artist pages.                                                        |
+
+## Credits & Contributing
+
+Pipe Bomb is conceptualised and developed by [eyezah](https://github.com/eyezahhhh), but contributions are welcome!
