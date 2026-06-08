@@ -1,4 +1,7 @@
-# Pipe Bomb Website
+<h1>
+    <img src="https://raw.githubusercontent.com/Pipe-Bomb/.github/refs/heads/master/assets/logos/Pipe%20Bomb%20no%20background%20w%20outline.png" width="40" />
+    Pipe Bomb Frontend
+</h1>
 
 The officially maintained frontend for [Pipe Bomb server](https://github.com/pipe-bomb/server), built on Next.js. This is by no means the only way to use Pipe Bomb, but it is a good one 😛.
 
@@ -29,7 +32,7 @@ Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all na
 | Attribute | Type             | Multiple | Description                                                           |
 | :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
 | `title`   | `string`         | ❌       | Used as the main title for the track in lists and on track pages.     |
-| `artist`  | `string`         | ✅       | Used as the artist text when a track has no links to artist entities.  |
+| `artist`  | `string`         | ✅       | Used as the artist text when a track has no links to artist entities. |
 | `front`   | `buffer` (image) | ❌       | Used as the main cover art for the track in lists and on track pages. |
 
 ### Album
@@ -37,7 +40,7 @@ Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all na
 | Attribute | Type             | Multiple | Description                                                           |
 | :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
 | `title`   | `string`         | ❌       | Used as the main title for the album in lists and on album pages.     |
-| `artist`  | `string`         | ✅       | Used as the artist text when a album has no links to artist entities.  |
+| `artist`  | `string`         | ✅       | Used as the artist text when a album has no links to artist entities. |
 | `front`   | `buffer` (image) | ❌       | Used as the main cover art for the album in lists and on album pages. |
 
 ### Artist
