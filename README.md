@@ -26,23 +26,23 @@ Pipe Bomb's attribute system is very dynamic and has no defaults, leaving all na
 
 ### Track
 
-| Attribute ID | Type             | Multiple | Description                                                           |
-| :----------- | ---------------- | -------- | --------------------------------------------------------------------- |
-| `title`      | `string`         | ❌       | Used as the main title for the track in lists and on track pages.     |
-| `artist`     | `string`         | ✅       | Used as the artist text when a track has no links to artist entities  |
-| `front`      | `buffer` (image) | ❌       | Used as the main cover art for the track in lists and on track pages. |
+| Attribute | Type             | Multiple | Description                                                           |
+| :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
+| `title`   | `string`         | ❌       | Used as the main title for the track in lists and on track pages.     |
+| `artist`  | `string`         | ✅       | Used as the artist text when a track has no links to artist entities  |
+| `front`   | `buffer` (image) | ❌       | Used as the main cover art for the track in lists and on track pages. |
 
 ### Album
 
-| Attribute ID | Type             | Multiple | Description                                                           |
-| :----------- | ---------------- | -------- | --------------------------------------------------------------------- |
-| `title`      | `string`         | ❌       | Used as the main title for the album in lists and on album pages.     |
-| `artist`     | `string`         | ✅       | Used as the artist text when a album has no links to artist entities  |
-| `front`      | `buffer` (image) | ❌       | Used as the main cover art for the album in lists and on album pages. |
+| Attribute | Type             | Multiple | Description                                                           |
+| :-------- | ---------------- | -------- | --------------------------------------------------------------------- |
+| `title`   | `string`         | ❌       | Used as the main title for the album in lists and on album pages.     |
+| `artist`  | `string`         | ✅       | Used as the artist text when a album has no links to artist entities  |
+| `front`   | `buffer` (image) | ❌       | Used as the main cover art for the album in lists and on album pages. |
 
 ### Artist
 
-| Attribute ID | Type             | Multiple | Description                                                                                                      |
+| Attribute    | Type             | Multiple | Description                                                                                                      |
 | :----------- | ---------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
 | `name`       | `string`         | ❌       | Used as the main title for the artist on artist pages or in track or album credits.                              |
 | `thumb`      | `buffer` (image) | ❌       | Used as the front image for the artist on artist pages. Also used as the image for the artist in search results. |
