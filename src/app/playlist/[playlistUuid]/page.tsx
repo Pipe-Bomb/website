@@ -20,7 +20,11 @@ export async function generateMetadata({
 	const { playlistUuid } = await params;
 
 	try {
-		const playlistResponse = await getPlaylist(playlistUuid);
+		const headers = await getAuthHeaders();
+
+		const playlistResponse = await getPlaylist(playlistUuid, {
+			headers: headers ?? undefined,
+		});
 
 		if (playlistResponse.status != 200) {
 			return null;

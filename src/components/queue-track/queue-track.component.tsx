@@ -17,6 +17,7 @@ import { useCallback } from "react";
 import { ContextMenuElement } from "@/context/context-menu.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import Link from "next/link";
+import { useTrackContextMenu } from "@/hook/track-context-menu.hook";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -32,71 +33,68 @@ export function QueueTrack({ track, queueIndex }: Props) {
 	const title =
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 
+	const { menuEntries, modal } = useTrackContextMenu(track, {
+		queueIndex,
+	});
+
 	const contextMenu = useCallback<() => ContextMenuElement[]>(() => {
-		const menu: ContextMenuElement[] = [];
-
-		if (active) {
-			menu.push({
-				languageKey: "contextmenu.queue.remove",
-				key: "remove",
-				onClick: () => remove(queueIndex),
-			});
-		}
-
-		return menu;
-	}, [active, queueIndex]);
+		return menuEntries();
+	}, [active, queueIndex, menuEntries]);
 
 	const rightClick = useRightClick(contextMenu);
 
 	return (
-		<div
-			className={cc(
-				styles.container,
-				active && styles.active,
-				currentIndex > queueIndex && styles.history,
-			)}
-			{...rightClick}
-		>
-			<div className={styles.imageContainer}>
-				<ResourceImage
-					resource={cover}
-					className={styles.cover}
-					fallbackSrc="/no_album_art.jpg"
-					width={42}
-					height={42}
-				/>
-				<div className={styles.playButton}>
-					<IconButton
-						iconSource="tabler"
-						icon={
-							currentIndex == queueIndex && isPlaying
-								? IconPlayerPauseFilled
-								: IconPlayerPlayFilled
-						}
-						style={currentIndex == queueIndex ? "simple" : "background"}
-						size="lg"
-						onClick={() => {
-							if (currentIndex == queueIndex) {
-								toggle();
-							} else {
-								playIndex(queueIndex);
-								setIsPlaying(true);
-							}
-						}}
+		<>
+			<div
+				className={cc(
+					styles.container,
+					active && styles.active,
+					currentIndex > queueIndex && styles.history,
+				)}
+				{...rightClick}
+			>
+				<div className={styles.imageContainer}>
+					<ResourceImage
+						resource={cover}
+						className={styles.cover}
+						fallbackSrc="/no_album_art.jpg"
+						width={42}
+						height={42}
 					/>
+					<div className={styles.playButton}>
+						<IconButton
+							iconSource="tabler"
+							icon={
+								currentIndex == queueIndex && isPlaying
+									? IconPlayerPauseFilled
+									: IconPlayerPlayFilled
+							}
+							style={currentIndex == queueIndex ? "simple" : "background"}
+							size="lg"
+							onClick={() => {
+								if (currentIndex == queueIndex) {
+									toggle();
+								} else {
+									playIndex(queueIndex);
+									setIsPlaying(true);
+								}
+							}}
+						/>
+					</div>
+				</div>
+				<div className={styles.info}>
+					<Link
+						className={styles.title}
+						href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+					>
+						{title}
+					</Link>
+					<span className={styles.artists}>
+						<TrackArtists track={track} />
+					</span>
 				</div>
 			</div>
-			<div className={styles.info}>
-				<Link
-					className={styles.title}
-					href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
-				>
-					{title}
-				</Link>
-				<span className={styles.artists}>
-					<TrackArtists track={track} />
-				</span>
-			</div>
-		</div>
+			{modal}
+		</>
 	);
 }

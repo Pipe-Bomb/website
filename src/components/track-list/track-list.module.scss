@@ -46,4 +46,5 @@
 
 .trackList {
 	margin-top: 8px;
+	min-height: 1px; /* 0 height makes some tracklists disappear if they're at the bottom of a page */
 }

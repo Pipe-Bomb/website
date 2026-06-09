@@ -34,6 +34,7 @@ import { serializeTrackKey } from "@/lib/track-batcher.util";
 import { useQueueActions } from "@/hook/queue-actions.hook";
 import { useNotificationStore } from "@/store/notification.store";
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
+import { useTrackContextMenu } from "@/hook/track-context-menu.hook";
 
 interface Props {
 	track: Track | EphemeralTrack;
@@ -44,11 +45,9 @@ interface Props {
 
 export function ListTrack({ track, number, columns, noArt }: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
-	const [playlistOpen, setPlaylistOpen] = useState(false);
-	const { createNotification } = useNotificationStore();
 
 	const { queue, currentIndex, isPlaying, toggle } = usePlayerStore();
-	const { playNow, playNext, addToEnd } = useQueueActions();
+	const { playNow } = useQueueActions();
 	const nowPlaying = queue[currentIndex];
 
 	const isPlayingThis = useMemo(
@@ -60,47 +59,8 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 	const image = useRawAttribute(track.attributes, "front", "buffer");
 
-	const rightClick = useRightClick(() =>
-		[
-			{
-				languageKey: "contextmenu.track.play-next",
-				key: "play-next",
-				onClick: () => playNext(track),
-			},
-			{
-				languageKey: "contextmenu.track.add-to-queue",
-				key: "add-to-queue",
-				onClick: () => addToEnd([track]),
-			},
-			{
-				languageKey: "contextmenu.track.add-to-playlist",
-				key: "add-to-playlist",
-				onClick: () => setPlaylistOpen(true),
-			},
-		].filter((e) => !!e),
-	);
-
-	const addToPlaylist = (playlist: Playlist) => {
-		addTracksToPlaylist(playlist.uuid, {
-			tracks: [
-				{
-					pluginId: track.pluginId,
-					libraryId: track.libraryId,
-					trackId: track.trackId,
-				},
-			],
-			albums: null,
-		})
-			.then((response) => {
-				// todo: update playlist query key
-				createNotification("Started importing track to playlist");
-			})
-			.catch((e) => {
-				console.error(e);
-				createNotification("Failed to add track to playlist");
-			})
-			.finally(() => setPlaylistOpen(false));
-	};
+	const { menuEntries, modal } = useTrackContextMenu(track);
+	const rightClick = useRightClick(menuEntries);
 
 	return (
 		<>
@@ -209,11 +169,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 					onClose={() => setInfoOpen(false)}
 				/>
 			)}
-			<PlaylistSelectModal
-				open={playlistOpen}
-				onClose={() => setPlaylistOpen(false)}
-				onSelect={addToPlaylist}
-			/>
+			{modal}
 		</>
 	);
 }

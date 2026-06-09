@@ -21,6 +21,10 @@ import { useSidebarStore } from "@/store/sidebar.store";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { useTrack } from "@/hook/track.hook";
 import Link from "next/link";
+import { useRightClick } from "@/hook/right-click.hook";
+import { useCallback } from "react";
+import { ContextMenuElement } from "@/context/context-menu.context";
+import { useTrackContextMenu } from "@/hook/track-context-menu.hook";
 
 export function Player() {
 	const { open: isSidebarOpen, toggle: toggleSidebar } = useSidebarStore();
@@ -111,33 +115,39 @@ function NowPlaying({ track }: NowPlayingProps) {
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 	const cover = useRawAttribute(track.attributes, "front", "buffer");
 
-	return (
-		<div className={styles.nowPlaying}>
-			<Link
-				href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
-			>
-				<ResourceImage
-					resource={cover}
-					className={styles.nowPlayingCover}
-					fallbackSrc="/no_album_art.jpg"
-				/>
-			</Link>
+	const { menuEntries, modal } = useTrackContextMenu(track);
+	const rightClick = useRightClick(menuEntries);
 
-			<div className={styles.nowPlayingInfo}>
+	return (
+		<>
+			<div className={styles.nowPlaying} {...rightClick}>
 				<Link
-					className={styles.nowPlayingTitle}
 					href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
 				>
-					{title}
+					<ResourceImage
+						resource={cover}
+						className={styles.nowPlayingCover}
+						fallbackSrc="/no_album_art.jpg"
+					/>
 				</Link>
-				<span className={styles.nowPlayingArtist}>
-					{"artists" in track ? (
-						<TrackArtists track={track} />
-					) : (
-						<span>Unknown Artist</span>
-					)}
-				</span>
+
+				<div className={styles.nowPlayingInfo}>
+					<Link
+						className={styles.nowPlayingTitle}
+						href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+					>
+						{title}
+					</Link>
+					<span className={styles.nowPlayingArtist}>
+						{"artists" in track ? (
+							<TrackArtists track={track} />
+						) : (
+							<span>Unknown Artist</span>
+						)}
+					</span>
+				</div>
 			</div>
-		</div>
+			{modal}
+		</>
 	);
 }

@@ -70,7 +70,6 @@ export function PlaylistTrackList({
 					},
 					url: (entry) => {
 						if (entry.addedBy) {
-							console.log(`/user/${entry.addedBy.uuid}`);
 							return `/user/${entry.addedBy.uuid}`;
 						}
 						return null;
