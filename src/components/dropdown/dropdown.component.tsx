@@ -24,6 +24,7 @@ interface Props {
 	open?: boolean;
 	onToggle?: (shouldOpen: boolean) => void;
 	onChange?: (entry: DropdownEntry) => void;
+	className?: string;
 }
 
 export function Dropdown({
@@ -32,6 +33,7 @@ export function Dropdown({
 	open,
 	onToggle,
 	onChange,
+	className,
 }: Props) {
 	const { t } = useTranslation();
 
@@ -40,7 +42,7 @@ export function Dropdown({
 	}, [entries, selected]);
 
 	return (
-		<span className={cc(styles.container, open && styles.open)}>
+		<span className={cc(styles.container, className, open && styles.open)}>
 			<div className={styles.flex}>
 				<button className={styles.top} onClick={() => onToggle?.(!open)}>
 					{activeEntry

@@ -1,11 +1,12 @@
 import {
+	AttributeEntity,
 	LoadedAttribute,
 	useGetAllAttributes,
 	useGetAllAttributeSources,
 } from "@/api";
 import { useMemo } from "react";
 
-export function useRankedAttributes(media: "track" | "artist" | "album") {
+export function useRankedAttributes(entityType: AttributeEntity) {
 	const allAttributesQuery = useGetAllAttributes({
 		query: {
 			enabled: true,
@@ -23,7 +24,7 @@ export function useRankedAttributes(media: "track" | "artist" | "album") {
 			return null;
 		}
 
-		const allAttributes = allAttributesQuery.data.data[media];
+		const allAttributes = allAttributesQuery.data.data[entityType];
 		const sources = sourcesQuery.data.data;
 		const sourcePriorities = sources.map(
 			(source) => `${source.pluginId}:${source.sourceId}`,
@@ -46,5 +47,5 @@ export function useRankedAttributes(media: "track" | "artist" | "album") {
 		}
 
 		return Array.from(attributeMap.values()).map(({ attribute }) => attribute);
-	}, [allAttributesQuery.data, sourcesQuery.data, media]);
+	}, [allAttributesQuery.data, sourcesQuery.data, entityType]);
 }

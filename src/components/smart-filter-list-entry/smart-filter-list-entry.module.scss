@@ -1,0 +1,14 @@
+.container {
+	border: 2px solid var(--border-strong);
+	border-radius: 8px;
+	padding: 8px;
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+
+	.description {
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+	}
+}
