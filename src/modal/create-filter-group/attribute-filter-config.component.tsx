@@ -14,33 +14,46 @@ import { SmartFilterDto } from "@/interface/smart-filter.dto";
 
 interface OptionsProps {
 	attribute: LoadedAttribute;
-	attributeName: string;
 	entityType: "track" | "artist" | "album";
 	onChange?: (attribute: SmartFilterDto | null) => void;
+	initialFilter: SmartFilterDto | null;
 }
 
 export function StringAttributeFilterConfig({
 	attribute,
-	attributeName,
 	onChange,
 	entityType,
+	initialFilter,
 }: OptionsProps) {
 	const [value, setValue] = useState("");
-	const [partial, setPartial] = useState(false);
-	const [exists, setExists] = useState(true);
+	const [partial, setPartial] = useState<boolean>(
+		initialFilter?.attributeType == "string" ? !!initialFilter.partial : false,
+	);
+	const [inverse, setInverse] = useState<boolean>(
+		(initialFilter?.attributeType == "string" && initialFilter.inverse) ??
+			false,
+	);
 
 	useEffect(() => {
 		setValue("");
 		setPartial(false);
-		setExists(true);
+		setInverse(false);
 	}, [attribute]);
+
+	useEffect(() => {
+		if (initialFilter?.attributeType == "string") {
+			setValue(initialFilter.value ?? "");
+			setPartial(!!initialFilter.partial);
+			setInverse(initialFilter.inverse);
+		}
+	}, [initialFilter]);
 
 	useEffect(() => {
 		const setting: StringSmartFilterDto = {
 			attributeType: "string",
 			attributeKey: attribute.key,
 			entityType,
-			inverse: false,
+			inverse,
 		};
 
 		if (value) {
@@ -49,7 +62,7 @@ export function StringAttributeFilterConfig({
 		}
 
 		onChange?.(setting);
-	}, [attribute, attributeName, value, partial, exists]);
+	}, [attribute, value, partial, inverse]);
 
 	return (
 		<>
@@ -66,8 +79,8 @@ export function StringAttributeFilterConfig({
 				<Checkbox checked={partial} onChange={setPartial} />
 			</div>
 			<div className={styles.option}>
-				<span className={styles.optionName}>Exists</span>
-				<Checkbox checked={!!value || exists} onChange={setExists} />
+				<span className={styles.optionName}>Inverse</span>
+				<Checkbox checked={inverse} onChange={setInverse} />
 			</div>
 		</>
 	);
@@ -75,24 +88,50 @@ export function StringAttributeFilterConfig({
 
 export function BooleanAttributeFilterConfig({
 	attribute,
-	attributeName,
 	onChange,
 	entityType,
+	initialFilter,
 }: OptionsProps) {
-	const [value, setValue] = useState<"any" | "true" | "false">("any");
-	const [exists, setExists] = useState(true);
+	const [value, setValue] = useState<"any" | "true" | "false">(
+		initialFilter?.attributeType == "boolean"
+			? typeof initialFilter.value == "boolean"
+				? initialFilter.value
+					? "true"
+					: "false"
+				: "any"
+			: "any",
+	);
+	const [inverse, setInverse] = useState<boolean>(
+		(initialFilter?.attributeType == "boolean" && initialFilter.inverse) ??
+			false,
+	);
 
 	useEffect(() => {
 		setValue("any");
-		setExists(true);
+		setInverse(false);
 	}, [attribute]);
+
+	useEffect(() => {
+		if (initialFilter?.attributeType == "boolean") {
+			if (typeof initialFilter.value == "boolean") {
+				if (initialFilter.value) {
+					setValue("true");
+				} else {
+					setValue("false");
+				}
+			} else {
+				setValue("any");
+			}
+			setInverse(initialFilter.inverse);
+		}
+	}, [initialFilter]);
 
 	useEffect(() => {
 		const setting: BooleanSmartFilterDto = {
 			attributeType: "boolean",
 			attributeKey: attribute.key,
 			entityType,
-			inverse: false,
+			inverse,
 		};
 
 		if (value != "any") {
@@ -100,7 +139,7 @@ export function BooleanAttributeFilterConfig({
 		}
 
 		onChange?.(setting);
-	}, [value, exists, entityType, attributeName]);
+	}, [value, inverse, entityType]);
 
 	return (
 		<>
@@ -126,8 +165,8 @@ export function BooleanAttributeFilterConfig({
 				/>
 			</div>
 			<div className={styles.option}>
-				<span className={styles.optionName}>Exists</span>
-				<Checkbox checked={value != "any" || exists} onChange={setExists} />
+				<span className={styles.optionName}>Inverse</span>
+				<Checkbox checked={inverse} onChange={setInverse} />
 			</div>
 		</>
 	);
@@ -135,14 +174,29 @@ export function BooleanAttributeFilterConfig({
 
 export function IntegerAttributeFilterConfig({
 	attribute,
-	attributeName,
 	onChange,
 	entityType,
+	initialFilter,
 }: OptionsProps) {
-	const [rawValue, setRawValue] = useState<string>("");
-	const [rawMin, setRawMin] = useState<string>("");
-	const [rawMax, setRawMax] = useState<string>("");
-	const [exists, setExists] = useState(true);
+	const [rawValue, setRawValue] = useState<string>(
+		initialFilter?.attributeType == "integer"
+			? (initialFilter.value?.toString() ?? "")
+			: "",
+	);
+	const [rawMin, setRawMin] = useState<string>(
+		initialFilter?.attributeType == "integer"
+			? (initialFilter.min?.toString() ?? "")
+			: "",
+	);
+	const [rawMax, setRawMax] = useState<string>(
+		initialFilter?.attributeType == "integer"
+			? (initialFilter.max?.toString() ?? "")
+			: "",
+	);
+	const [inverse, setInverse] = useState<boolean>(
+		(initialFilter?.attributeType == "integer" && initialFilter.inverse) ??
+			false,
+	);
 
 	const [value, min, max] = useMemo(() => {
 		const parse = (value: string) => {
@@ -178,7 +232,7 @@ export function IntegerAttributeFilterConfig({
 			attributeType: "integer",
 			entityType,
 			attributeKey: attribute.key,
-			inverse: false,
+			inverse,
 		};
 
 		if (value !== null) {
@@ -193,14 +247,36 @@ export function IntegerAttributeFilterConfig({
 		}
 
 		onChange?.(setting);
-	}, [value, min, max, exists, entityType, attributeName]);
+	}, [value, min, max, inverse, entityType]);
 
 	useEffect(() => {
 		setRawValue("");
 		setRawMin("");
 		setRawMax("");
-		setExists(true);
+		setInverse(false);
 	}, [attribute]);
+
+	useEffect(() => {
+		if (initialFilter?.attributeType == "integer") {
+			if (typeof initialFilter.value == "number") {
+				setRawValue(initialFilter.value.toString());
+			} else {
+				setRawValue("");
+			}
+			if (typeof initialFilter.min == "number") {
+				setRawMin(initialFilter.min.toString());
+			} else {
+				setRawMin("");
+			}
+			if (typeof initialFilter.max == "number") {
+				setRawMax(initialFilter.max.toString());
+			} else {
+				setRawMax("");
+			}
+
+			setInverse(initialFilter.inverse);
+		}
+	}, [initialFilter]);
 
 	return (
 		<>
@@ -231,11 +307,8 @@ export function IntegerAttributeFilterConfig({
 				/>
 			</div>
 			<div className={styles.option}>
-				<span className={styles.optionName}>Exists</span>
-				<Checkbox
-					checked={value !== null || min !== null || max !== null || exists}
-					onChange={setExists}
-				/>
+				<span className={styles.optionName}>Inverse</span>
+				<Checkbox checked={inverse} onChange={setInverse} />
 			</div>
 		</>
 	);
@@ -243,14 +316,29 @@ export function IntegerAttributeFilterConfig({
 
 export function DecimalAttributeFilterConfig({
 	attribute,
-	attributeName,
 	onChange,
 	entityType,
+	initialFilter,
 }: OptionsProps) {
-	const [rawValue, setRawValue] = useState<string>("");
-	const [rawMin, setRawMin] = useState<string>("");
-	const [rawMax, setRawMax] = useState<string>("");
-	const [exists, setExists] = useState(true);
+	const [rawValue, setRawValue] = useState<string>(
+		initialFilter?.attributeType == "decimal"
+			? (initialFilter.value?.toString() ?? "")
+			: "",
+	);
+	const [rawMin, setRawMin] = useState<string>(
+		initialFilter?.attributeType == "decimal"
+			? (initialFilter.min?.toString() ?? "")
+			: "",
+	);
+	const [rawMax, setRawMax] = useState<string>(
+		initialFilter?.attributeType == "decimal"
+			? (initialFilter.max?.toString() ?? "")
+			: "",
+	);
+	const [inverse, setInverse] = useState<boolean>(
+		(initialFilter?.attributeType == "decimal" && initialFilter.inverse) ??
+			false,
+	);
 
 	const [value, min, max] = useMemo(() => {
 		const parse = (value: string) => {
@@ -301,14 +389,36 @@ export function DecimalAttributeFilterConfig({
 		}
 
 		onChange?.(setting);
-	}, [value, min, max, exists, entityType, attributeName]);
+	}, [value, min, max, inverse, entityType]);
 
 	useEffect(() => {
 		setRawValue("");
 		setRawMin("");
 		setRawMax("");
-		setExists(true);
+		setInverse(false);
 	}, [attribute]);
+
+	useEffect(() => {
+		if (initialFilter?.attributeType == "integer") {
+			if (typeof initialFilter.value == "number") {
+				setRawValue(initialFilter.value.toString());
+			} else {
+				setRawValue("");
+			}
+			if (typeof initialFilter.min == "number") {
+				setRawMin(initialFilter.min.toString());
+			} else {
+				setRawMin("");
+			}
+			if (typeof initialFilter.max == "number") {
+				setRawMax(initialFilter.max.toString());
+			} else {
+				setRawMax("");
+			}
+
+			setInverse(initialFilter.inverse);
+		}
+	}, [initialFilter]);
 
 	return (
 		<>
@@ -339,11 +449,8 @@ export function DecimalAttributeFilterConfig({
 				/>
 			</div>
 			<div className={styles.option}>
-				<span className={styles.optionName}>Exists</span>
-				<Checkbox
-					checked={value !== null || min !== null || max !== null || exists}
-					onChange={setExists}
-				/>
+				<span className={styles.optionName}>Inverse</span>
+				<Checkbox checked={inverse} onChange={setInverse} />
 			</div>
 		</>
 	);
@@ -351,28 +458,39 @@ export function DecimalAttributeFilterConfig({
 
 export function BufferAttributeFilterConfig({
 	attribute,
-	attributeName,
 	onChange,
 	entityType,
+	initialFilter,
 }: OptionsProps) {
-	const [checked, setChecked] = useState(false);
+	const [inverse, setInverse] = useState<boolean>(
+		(initialFilter?.attributeType == "buffer" && initialFilter.inverse) ??
+			false,
+	);
+
 	useEffect(() => {
-		setChecked(false);
+		setInverse(false);
 	}, [attribute]);
+
+	useEffect(() => {
+		if (initialFilter?.attributeType == "buffer") {
+			setInverse(initialFilter.inverse);
+		}
+	}, [initialFilter]);
+
 	useEffect(() => {
 		onChange?.({
 			entityType,
 			attributeKey: attribute.key,
 			attributeType: "buffer",
-			inverse: !checked,
+			inverse,
 		});
-	}, [checked, entityType, attributeName]);
+	}, [inverse, entityType]);
 
 	return (
 		<>
 			<div className={styles.option}>
-				<span className={styles.optionName}>Exists</span>
-				<Checkbox checked={checked} onChange={setChecked} />
+				<span className={styles.optionName}>Inverse</span>
+				<Checkbox checked={inverse} onChange={setInverse} />
 			</div>
 		</>
 	);

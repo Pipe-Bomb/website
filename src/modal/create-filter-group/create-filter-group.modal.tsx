@@ -1,5 +1,4 @@
 import { Modal } from "@/components/modal/modal.component";
-import { useTranslation } from "@/context/language.context";
 import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
 import { AttributeEntity, SmartPlaylistFilterGroup } from "@api";
 import { useEffect, useMemo, useState } from "react";
@@ -13,7 +12,6 @@ import {
 	IntegerAttributeFilterConfig,
 	StringAttributeFilterConfig,
 } from "@/modal/create-filter-group/attribute-filter-config.component";
-import { Button } from "@/components/button/button.component";
 import { SmartFilterDto } from "@/interface/smart-filter.dto";
 import { useAttributeFilterDescription } from "@/hook/attribute-filter-description.hook";
 import { SmartFilterListEntry } from "@/components/smart-filter-list-entry/smart-filter-list-entry.component";
@@ -25,7 +23,15 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 
-interface Props extends InnerProps {
+interface PassthroughProps {
+	existingGroup?: SmartPlaylistFilterGroup | null;
+	onSave: (filters: SmartFilterDto[]) => void;
+	onDelete: () => void;
+	isSaving: boolean;
+	isDeleting: boolean;
+}
+
+interface Props extends PassthroughProps {
 	open: boolean;
 	onClose?: () => void;
 }
@@ -39,33 +45,60 @@ export function CreateFilterGroupModal({
 	isDeleting,
 	onDelete,
 }: Props) {
+	const [isEditing, setIsEditing] = useState(false);
+	const [editingFilter, setEditingFilter] = useState<SmartFilterDto | null>(
+		null,
+	);
+
+	useEffect(() => {
+		setIsEditing(false);
+		setEditingFilter(null);
+	}, [existingGroup]);
+
+	useEffect(() => {
+		if (!isEditing) {
+			setEditingFilter(null);
+		}
+	}, [isEditing]);
+
 	return (
-		<Modal open={open} onClose={onClose}>
+		<Modal
+			open={open}
+			onClose={onClose}
+			onBack={isEditing ? () => setIsEditing(false) : null}
+		>
 			<Inner
 				existingGroup={existingGroup}
 				onSave={onSave}
 				onDelete={onDelete}
 				isSaving={isSaving}
 				isDeleting={isDeleting}
+				isEditing={isEditing}
+				setIsEditing={setIsEditing}
+				editingFilter={editingFilter}
+				setEditingFilter={setEditingFilter}
 			/>
 		</Modal>
 	);
 }
 
-interface InnerProps {
-	existingGroup?: SmartPlaylistFilterGroup | null;
-	onSave: (filters: SmartFilterDto[]) => void;
-	onDelete: () => void;
-	isSaving: boolean;
-	isDeleting: boolean;
+interface InnerProps extends PassthroughProps {
+	isEditing: boolean;
+	setIsEditing: (editing: boolean) => void;
+	editingFilter: SmartFilterDto | null;
+	setEditingFilter: (filter: SmartFilterDto | null) => void;
 }
 
-function Inner({ existingGroup, onSave, isSaving, onDelete }: InnerProps) {
-	const [isEditing, setIsEditing] = useState(false);
-	const [editingFilter, setEditingFilter] = useState<SmartFilterDto | null>(
-		null,
-	);
-
+function Inner({
+	existingGroup,
+	onSave,
+	isSaving,
+	onDelete,
+	isEditing,
+	setIsEditing,
+	editingFilter,
+	setEditingFilter,
+}: InnerProps) {
 	const [filters, setFilters] = useState<SmartFilterDto[]>([]);
 
 	useEffect(() => {
@@ -102,18 +135,24 @@ function Inner({ existingGroup, onSave, isSaving, onDelete }: InnerProps) {
 		);
 	}, [existingGroup]);
 
-	useEffect(() => {
-		if (!isEditing) {
-			setEditingFilter(null);
-		}
-	}, [isEditing]);
-
 	if (isEditing) {
 		return (
 			<CreateFilter
 				filter={editingFilter}
 				onCreate={(dto) => {
-					setFilters((filters) => [...filters, dto]);
+					if (editingFilter) {
+						setFilters((filters) => {
+							const newFilters = [...filters];
+							for (const [index, filter] of newFilters.entries()) {
+								if (filter == editingFilter) {
+									newFilters[index] = dto;
+								}
+							}
+							return newFilters;
+						});
+					} else {
+						setFilters((filters) => [...filters, dto]);
+					}
 					setIsEditing(false);
 				}}
 				onRemove={() => {
@@ -124,7 +163,6 @@ function Inner({ existingGroup, onSave, isSaving, onDelete }: InnerProps) {
 						setIsEditing(false);
 					}
 				}}
-				onCancel={() => setIsEditing(false)}
 			/>
 		);
 	}
@@ -175,17 +213,9 @@ interface CreateFilterProps {
 	filter: SmartFilterDto | null;
 	onCreate: (dto: SmartFilterDto) => void;
 	onRemove: () => void;
-	onCancel: () => void;
 }
 
-function CreateFilter({
-	onCreate,
-	filter,
-	onRemove,
-	onCancel,
-}: CreateFilterProps) {
-	const { t } = useTranslation();
-
+function CreateFilter({ onCreate, filter, onRemove }: CreateFilterProps) {
 	const [entityTypeDropdownOpen, setEntityTypeDropdownOpen] = useState(false);
 	const [attributeDropdownOpen, setAttributeDropdownOpen] = useState(false);
 	useEffect(() => {
@@ -201,36 +231,53 @@ function CreateFilter({
 
 	const [selectedAttributeKey, setSelectedAttributeKey] = useState<
 		string | null
-	>(null);
+	>(filter?.attributeKey ?? null);
 
-	const [entityType, setEntityType] = useState<AttributeEntity>("track");
+	const [entityType, setEntityType] = useState<AttributeEntity>(
+		filter?.entityType ?? "track",
+	);
+
+	useEffect(() => {
+		if (filter) {
+			setEntityType(filter.entityType);
+			setSelectedAttributeKey(filter.attributeKey);
+		} else {
+			setEntityType("track");
+			setSelectedAttributeKey(null);
+		}
+		setEntityTypeDropdownOpen(false);
+		setAttributeDropdownOpen(false);
+	}, [filter]);
 
 	const rankedAttributes = useRankedAttributes(entityType);
-	const [selectedAttribute, selectedAttributeName] = useMemo(() => {
+	const selectedAttribute = useMemo(() => {
 		if (!selectedAttributeKey || !rankedAttributes) {
-			return [null, null];
+			return null;
 		}
 		const attribute = rankedAttributes.find(
 			(attribute) => attribute.key == selectedAttributeKey,
 		);
 		if (attribute) {
-			return [
-				attribute,
-				t(
-					`plugin.${attribute.pluginId}.attribute.${entityType}.${attribute.sourceId}.${attribute.key}.name`,
-					attribute.key,
-				),
-			];
+			return attribute;
 		}
-		return [null, null];
+		return null;
 	}, [selectedAttributeKey, rankedAttributes, entityType]);
 
 	const [filterDto, setFilterDto] = useState<SmartFilterDto | null>(null);
 	const description = useAttributeFilterDescription(filterDto);
 
 	useEffect(() => {
-		setFilterDto(null);
-	}, [selectedAttribute]);
+		if (
+			selectedAttribute &&
+			filter &&
+			selectedAttribute.key == filter.attributeKey &&
+			selectedAttribute.type == filter.attributeType
+		) {
+			setFilterDto(filter);
+		} else {
+			setFilterDto(null);
+		}
+	}, [selectedAttribute, filter]);
 
 	useEffect(() => {
 		setEntityTypeDropdownOpen(false);
@@ -280,46 +327,46 @@ function CreateFilter({
 					/>
 				</div>
 
-				{selectedAttribute && selectedAttributeName ? (
+				{selectedAttribute ? (
 					<div className={styles.optionsSection}>
 						{selectedAttribute.type == "string" && (
 							<StringAttributeFilterConfig
 								attribute={selectedAttribute}
-								attributeName={selectedAttributeName}
 								entityType={entityType}
 								onChange={setFilterDto}
+								initialFilter={filter}
 							/>
 						)}
 						{selectedAttribute.type == "boolean" && (
 							<BooleanAttributeFilterConfig
 								attribute={selectedAttribute}
-								attributeName={selectedAttributeName}
 								entityType={entityType}
 								onChange={setFilterDto}
+								initialFilter={filter}
 							/>
 						)}
 						{selectedAttribute.type == "integer" && (
 							<IntegerAttributeFilterConfig
 								attribute={selectedAttribute}
-								attributeName={selectedAttributeName}
 								entityType={entityType}
 								onChange={setFilterDto}
+								initialFilter={filter}
 							/>
 						)}
 						{selectedAttribute.type == "decimal" && (
 							<DecimalAttributeFilterConfig
 								attribute={selectedAttribute}
-								attributeName={selectedAttributeName}
 								entityType={entityType}
 								onChange={setFilterDto}
+								initialFilter={filter}
 							/>
 						)}
 						{selectedAttribute.type == "buffer" && (
 							<BufferAttributeFilterConfig
 								attribute={selectedAttribute}
-								attributeName={selectedAttributeName}
 								entityType={entityType}
 								onChange={setFilterDto}
+								initialFilter={filter}
 							/>
 						)}
 					</div>
@@ -339,11 +386,6 @@ function CreateFilter({
 							onClick={onRemove}
 						/>
 					)}
-					<IconButton
-						icon={IconCancel}
-						iconSource="tabler"
-						onClick={onCancel}
-					/>
 					<IconButton
 						icon={IconPlus}
 						iconSource="tabler"

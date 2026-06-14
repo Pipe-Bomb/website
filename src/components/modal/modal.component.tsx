@@ -7,16 +7,17 @@ import styles from "./modal.module.scss";
 import { useModals } from "@/context/modal.context";
 import { useIsMounted } from "@/hook/mounted.hook";
 import { IconButton } from "@/components/icon-button/icon-button";
-import { IconX } from "@tabler/icons-react";
+import { IconArrowLeft, IconX } from "@tabler/icons-react";
 
 interface Props {
 	children?: React.ReactNode;
 	open?: boolean;
 	onClose?: (method: "button" | "background" | "escape") => void;
+	onBack?: (() => void) | null;
 	className?: string;
 }
 
-export function Modal({ children, open, onClose, className }: Props) {
+export function Modal({ children, open, onClose, onBack, className }: Props) {
 	const { register, unregister } = useModals();
 	const id = useId();
 	const isMounted = useIsMounted();
@@ -31,15 +32,28 @@ export function Modal({ children, open, onClose, className }: Props) {
 			register(id, () => closeRef.current?.("background"));
 			return () => unregister(id);
 		} else {
-			const timer = setTimeout(() => setShouldRender(false), 1000);
+			const timer = setTimeout(() => setShouldRender(false), 200);
 			return () => clearTimeout(timer);
 		}
-	}, [open, id, register, unregister]);
+	}, [open, id]);
 
-	if (!isMounted || !shouldRender) return null;
+	if (!isMounted || !shouldRender) {
+		return null;
+	}
 
 	return createPortal(
 		<div className={cc(styles.container, className, !open && styles.closing)}>
+			{onBack && (
+				<span className={styles.back}>
+					<IconButton
+						icon={IconArrowLeft}
+						iconSource="tabler"
+						iconClassName={styles.backIcon}
+						style="ghost"
+						onClick={onBack}
+					/>
+				</span>
+			)}
 			<span className={styles.close}>
 				<IconButton
 					icon={IconX}
