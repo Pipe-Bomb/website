@@ -3,6 +3,7 @@
 import {
 	addPlaylistSmartFilterGroup,
 	addPlaylistSmartFilterGroupResponse,
+	deletePlaylistSmartFilterGroup,
 	SmartPlaylistFilterGroup,
 	updatePlaylistSmartFilterGroup,
 } from "@api";
@@ -14,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SmartFilterDto } from "@/interface/smart-filter.dto";
 import { Button } from "@/components/button/button.component";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
 	filterGroups: SmartPlaylistFilterGroup[];
@@ -21,8 +23,12 @@ interface Props {
 }
 
 export function PlaylistSmartFilters({ filterGroups, playlistUuid }: Props) {
+	const router = useRouter();
+	const pathname = usePathname();
+
 	const [isOpen, setIsOpen] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
 
 	const activeGroup = useMemo(() => {
@@ -39,7 +45,7 @@ export function PlaylistSmartFilters({ filterGroups, playlistUuid }: Props) {
 	}, [isOpen]);
 
 	const save = (groupId: string | null, filters: SmartFilterDto[]) => {
-		if (isSaving) {
+		if (isSaving || isDeleting) {
 			return;
 		}
 		setIsSaving(true);
@@ -57,9 +63,29 @@ export function PlaylistSmartFilters({ filterGroups, playlistUuid }: Props) {
 		callback
 			.then(() => {
 				setIsOpen(false);
+				if (pathname == `/playlist/${playlistUuid}`) {
+					router.refresh();
+				}
 			})
 			.catch(console.error)
 			.finally(() => setIsSaving(false));
+	};
+
+	const remove = (groupId: string) => {
+		if (isSaving || isDeleting) {
+			return;
+		}
+		setIsDeleting(true);
+
+		deletePlaylistSmartFilterGroup(playlistUuid, groupId)
+			.then(() => {
+				setIsOpen(false);
+				if (pathname == `/playlist/${playlistUuid}`) {
+					router.refresh();
+				}
+			})
+			.catch(console.error)
+			.finally(() => setIsDeleting(false));
 	};
 
 	return (
@@ -88,7 +114,9 @@ export function PlaylistSmartFilters({ filterGroups, playlistUuid }: Props) {
 				open={isOpen}
 				onClose={() => setIsOpen(false)}
 				isSaving={isSaving}
+				isDeleting={isDeleting}
 				onSave={(filters) => save(activeGroup?.uuid ?? null, filters)}
+				onDelete={() => activeGroup && remove(activeGroup.uuid)}
 			/>
 		</>
 	);

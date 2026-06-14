@@ -18,7 +18,12 @@ import { SmartFilterDto } from "@/interface/smart-filter.dto";
 import { useAttributeFilterDescription } from "@/hook/attribute-filter-description.hook";
 import { SmartFilterListEntry } from "@/components/smart-filter-list-entry/smart-filter-list-entry.component";
 import { IconButton } from "@/components/icon-button/icon-button";
-import { IconCancel, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+	IconCancel,
+	IconDeviceFloppy,
+	IconPlus,
+	IconTrash,
+} from "@tabler/icons-react";
 
 interface Props extends InnerProps {
 	open: boolean;
@@ -31,13 +36,17 @@ export function CreateFilterGroupModal({
 	existingGroup,
 	onSave,
 	isSaving,
+	isDeleting,
+	onDelete,
 }: Props) {
 	return (
 		<Modal open={open} onClose={onClose}>
 			<Inner
 				existingGroup={existingGroup}
 				onSave={onSave}
+				onDelete={onDelete}
 				isSaving={isSaving}
+				isDeleting={isDeleting}
 			/>
 		</Modal>
 	);
@@ -46,10 +55,12 @@ export function CreateFilterGroupModal({
 interface InnerProps {
 	existingGroup?: SmartPlaylistFilterGroup | null;
 	onSave: (filters: SmartFilterDto[]) => void;
+	onDelete: () => void;
 	isSaving: boolean;
+	isDeleting: boolean;
 }
 
-function Inner({ existingGroup, onSave, isSaving }: InnerProps) {
+function Inner({ existingGroup, onSave, isSaving, onDelete }: InnerProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingFilter, setEditingFilter] = useState<SmartFilterDto | null>(
 		null,
@@ -133,16 +144,28 @@ function Inner({ existingGroup, onSave, isSaving }: InnerProps) {
 				))}
 			</div>
 			<div className={styles.buttons}>
-				<Button
+				{existingGroup && (
+					<IconButton
+						icon={IconTrash}
+						iconSource="tabler"
+						onClick={onDelete}
+						disabled={isSaving}
+					/>
+				)}
+
+				<IconButton
+					icon={IconPlus}
+					iconSource="tabler"
 					onClick={() => setIsEditing(true)}
-					style="secondary"
 					disabled={isSaving}
-				>
-					Add Filter
-				</Button>
-				<Button onClick={() => onSave(filters)} loading={isSaving}>
-					Save
-				</Button>
+				/>
+				<IconButton
+					icon={IconDeviceFloppy}
+					iconSource="tabler"
+					onClick={() => onSave(filters)}
+					loading={isSaving}
+					style="background"
+				/>
 			</div>
 		</div>
 	);
