@@ -1,6 +1,10 @@
 "use client";
 
-import { getAllPlaylistTrackIds, Playlist } from "@api";
+import {
+	getAllPlaylistTrackIds,
+	Playlist,
+	runPlaylistSmartFilters,
+} from "@api";
 import styles from "./playlist-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import { IconDots, IconPlayerPlayFilled } from "@tabler/icons-react";
@@ -10,6 +14,7 @@ import { useIsMounted } from "@/hook/mounted.hook";
 import { useQueueActions } from "@/hook/queue-actions.hook";
 import { shuffle } from "@/lib/util";
 import { useButtonMenu } from "@/hook/button-menu.hook";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
 	playlist: Playlist;
@@ -19,6 +24,8 @@ export function PlaylistButtons({ playlist }: Props) {
 	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const isMounted = useIsMounted();
 	const [isLoadingTracklist, setIsLoadingTracklist] = useState(false);
+	const router = useRouter();
+	const pathname = usePathname();
 
 	const tracklist = useMemo(() => {
 		return playlist.tracks?.map(({ track }) => track) ?? null;
@@ -55,6 +62,19 @@ export function PlaylistButtons({ playlist }: Props) {
 			key: "change-thumb",
 			languageKey: "contextmenu.playlist.change-thumbnail",
 			onClick: () => {},
+		},
+		{
+			key: "scan-smart-filters",
+			languageKey: "contextmenu.playlist.scan-smart-filters",
+			onClick: () => {
+				runPlaylistSmartFilters(playlist.uuid)
+					.then(() => {
+						if (pathname == `/playlist/${playlist.uuid}`) {
+							router.refresh();
+						}
+					})
+					.catch(console.error);
+			},
 		},
 	]);
 

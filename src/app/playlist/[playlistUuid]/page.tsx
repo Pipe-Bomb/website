@@ -9,6 +9,7 @@ import { PlaylistButtons } from "@/components/playlist-buttons/playlist-buttons.
 import { PlaylistUpdateProgress } from "@/components/playlist-update-progress/playlist-update-progress.component";
 import { PlaylistTrackList } from "@/components/playlist-track-list/playlist-track-list.component";
 import { Metadata } from "next";
+import { PlaylistSmartFilters } from "@/components/playlist-smart-filters/playlist-smart-filters.component";
 
 interface Props {
 	params: Promise<{ playlistUuid: string }>;
@@ -100,6 +101,12 @@ export default async function Page({ params }: Props) {
 					/>
 				</div>
 			</div>
+			{!!playlist.filterGroups && (
+				<PlaylistSmartFilters
+					filterGroups={playlist.filterGroups}
+					playlistUuid={playlist.uuid}
+				/>
+			)}
 			{playlist.tracks && (
 				<RootPadding>
 					<PlaylistTrackList

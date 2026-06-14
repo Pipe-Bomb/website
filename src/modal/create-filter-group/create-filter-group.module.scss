@@ -1,0 +1,38 @@
+.filterEditContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.filterEditSplit {
+		display: flex;
+		gap: 16px;
+	}
+
+	.attributeDropdowns {
+		display: flex;
+		flex-direction: column;
+		min-width: 150px;
+	}
+
+	.bottom {
+		display: flex;
+		justify-content: space-between;
+
+		.buttons {
+			display: flex;
+			gap: 4px;
+		}
+	}
+}
+
+.overviewContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.buttons {
+		display: flex;
+		gap: 8px;
+		justify-content: center;
+	}
+}
