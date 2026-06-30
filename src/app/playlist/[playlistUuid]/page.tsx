@@ -113,6 +113,7 @@ export default async function Page({ params }: Props) {
 						initialTracks={playlist.tracks}
 						totalCount={playlist.trackCount ?? playlist.tracks.length}
 						playlistUuid={playlist.uuid}
+						dateModified={playlist.dateModified.toString()}
 					/>
 				</RootPadding>
 			)}

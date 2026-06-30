@@ -62,6 +62,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, Props>(
 						</button>
 					) : (
 						<Link
+							key={element.key}
 							href={element.href}
 							target={element.target}
 							className={styles.element}

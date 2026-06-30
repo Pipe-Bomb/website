@@ -2,6 +2,7 @@ import { Notification as INotification } from "@/store/notification.store";
 import styles from "./notification.module.scss";
 import { cc } from "@/lib/util";
 import { useMemo } from "react";
+import { Spinner } from "@/components/spinner/spinner.component";
 
 interface Props {
 	notification: INotification;
@@ -29,7 +30,13 @@ export function Notification({ notification }: Props) {
 		<div className={cc(styles.size, notification.isClosing && styles.closing)}>
 			<div className={styles.container}>
 				<div className={styles.content}>
-					<span className={styles.message}>{notification.message}</span>
+					<div className={styles.top}>
+						<span className={styles.message}>{notification.message}</span>
+						<div className={styles.loadingContainer}>
+							{notification.isLoading && <Spinner size="xs" color="accent" />}
+						</div>
+					</div>
+
 					{!!notification.timeoutDuration && !!notification.timeoutStart && (
 						<div className={styles.progressBar} style={animationStyles} />
 					)}

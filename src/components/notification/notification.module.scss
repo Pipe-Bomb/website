@@ -23,6 +23,18 @@
 			overflow: hidden;
 			width: 240px;
 
+			.top {
+				display: flex;
+				gap: 16px;
+				justify-content: space-between;
+
+				.loadingContainer {
+					width: 16px;
+					height: 16px;
+					margin-top: 4px;
+				}
+			}
+
 			.progressBar {
 				position: absolute;
 				bottom: 0;

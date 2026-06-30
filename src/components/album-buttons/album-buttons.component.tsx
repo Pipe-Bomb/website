@@ -1,10 +1,10 @@
 "use client";
 
 import {
-	addTracksToPlaylist,
-	addTracksToPlaylistResponse,
 	Album,
 	Playlist,
+	updatePlaylistTracks,
+	updatePlaylistTracksResponse,
 } from "@api";
 import styles from "./album-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
@@ -52,32 +52,38 @@ export function AlbumButtons({ album }: Props) {
 			return;
 		}
 		setIsAddingToPlaylist(true);
-		let promise: Promise<addTracksToPlaylistResponse | undefined>;
+		let promise: Promise<updatePlaylistTracksResponse | undefined>;
 
 		if (album.uuid) {
-			promise = addTracksToPlaylist(playlist.uuid, {
-				tracks: null,
-				albums: [
-					{
-						uuid: album.uuid,
-						pluginId: null,
-						identityId: null,
-						identity: null,
-					},
-				],
+			promise = updatePlaylistTracks(playlist.uuid, {
+				add: {
+					tracks: null,
+					albums: [
+						{
+							uuid: album.uuid,
+							pluginId: null,
+							identityId: null,
+							identity: null,
+						},
+					],
+				},
+				remove: null,
 			});
 		} else if (album.identities?.length) {
 			const identity = album.identities[0];
-			promise = addTracksToPlaylist(playlist.uuid, {
-				tracks: null,
-				albums: [
-					{
-						uuid: album.uuid,
-						pluginId: identity.pluginId,
-						identityId: identity.identityId,
-						identity: identity.value,
-					},
-				],
+			promise = updatePlaylistTracks(playlist.uuid, {
+				add: {
+					tracks: null,
+					albums: [
+						{
+							uuid: album.uuid,
+							pluginId: identity.pluginId,
+							identityId: identity.identityId,
+							identity: identity.value,
+						},
+					],
+				},
+				remove: null,
 			});
 		} else {
 			setIsAddingToPlaylist(false);

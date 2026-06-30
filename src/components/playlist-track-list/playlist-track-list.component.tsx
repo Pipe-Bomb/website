@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { getPlaylistTracks, PlaylistTrack } from "@/api";
 import { LazyTrackList } from "@/components/track-list/lazy-track-list.component";
 import { useTranslation } from "@/context/language.context";
@@ -9,17 +9,19 @@ interface Props {
 	playlistUuid: string;
 	totalCount: number;
 	initialTracks?: PlaylistTrack[];
+	dateModified: string;
 }
 
 export function PlaylistTrackList({
 	playlistUuid,
 	totalCount,
 	initialTracks,
+	dateModified,
 }: Props) {
 	const { t } = useTranslation();
 	const queryKey = useMemo(
-		() => ["playlist", playlistUuid, "tracks"],
-		[playlistUuid],
+		() => ["playlist", playlistUuid, "tracks", dateModified],
+		[playlistUuid, dateModified],
 	);
 
 	const trackNumbers = useMemo(() => {
@@ -77,6 +79,7 @@ export function PlaylistTrackList({
 				},
 			]}
 			toTrack={(entry) => entry.track}
+			inPlaylist={playlistUuid}
 		/>
 	);
 }

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-	addTracksToPlaylist,
-	AttributeMap,
-	EphemeralTrack,
-	Playlist,
-	Track,
-} from "@api";
+import { AttributeMap, EphemeralTrack, Track } from "@api";
 import styles from "./list-track.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
 import {
@@ -29,10 +23,8 @@ import {
 } from "@/context/track-columns.context";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { AttributeUnion } from "@/lib/attribute.util";
-import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
 import { serializeTrackKey } from "@/lib/track-batcher.util";
 import { useQueueActions } from "@/hook/queue-actions.hook";
-import { useNotificationStore } from "@/store/notification.store";
 import { OptionalLink } from "@/components/optional-link/optional-link.component";
 import { useTrackContextMenu } from "@/hook/track-context-menu.hook";
 
@@ -41,9 +33,16 @@ interface Props {
 	columns?: (BasicAttributeColumn | SpecialAttributeColumnValue)[];
 	number?: number;
 	noArt?: boolean;
+	inPlaylist?: string;
 }
 
-export function ListTrack({ track, number, columns, noArt }: Props) {
+export function ListTrack({
+	track,
+	number,
+	columns,
+	noArt,
+	inPlaylist,
+}: Props) {
 	const [infoOpen, setInfoOpen] = useState(false);
 
 	const { queue, currentIndex, isPlaying, toggle } = usePlayerStore();
@@ -59,7 +58,7 @@ export function ListTrack({ track, number, columns, noArt }: Props) {
 		useAttribute(track.attributes, "title", "string") ?? track.title;
 	const image = useRawAttribute(track.attributes, "front", "buffer");
 
-	const { menuEntries, modal } = useTrackContextMenu(track);
+	const { menuEntries, modal } = useTrackContextMenu(track, { inPlaylist });
 	const rightClick = useRightClick(menuEntries);
 
 	return (

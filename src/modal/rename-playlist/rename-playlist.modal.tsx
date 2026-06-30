@@ -2,35 +2,57 @@
 
 import { Modal } from "@/components/modal/modal.component";
 import { useRawAttribute } from "@/hook/raw-attribute.hook";
-import { Playlist } from "@api";
-import { useRouter } from "next/navigation";
+import { Playlist, updatePlaylistAttributes } from "@api";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "./rename-playlist.module.scss";
 import { TextInput } from "@/components/text-input/text-input.component";
 import { Button } from "@/components/button/button.component";
+import { useNotificationStore } from "@/store/notification.store";
 
-interface Props extends InnerProps {
+interface Props extends SharedProps {
 	open: boolean;
-	onClose?: () => void;
 }
 
 export function RenamePlaylistModal({ open, onClose, playlist }: Props) {
+	const [isRenaming, setIsRenaming] = useState(false);
+
 	return (
-		<Modal open={open} onClose={onClose}>
-			<Inner playlist={playlist} />
+		<Modal
+			open={open}
+			onClose={() => {
+				if (!isRenaming) {
+					onClose?.();
+				}
+			}}
+		>
+			<Inner
+				playlist={playlist}
+				isRenaming={isRenaming}
+				setIsRenaming={setIsRenaming}
+				onClose={onClose}
+			/>
 		</Modal>
 	);
 }
 
-interface InnerProps {
-	playlist: Playlist;
+interface InnerProps extends SharedProps {
+	isRenaming: boolean;
+	setIsRenaming: (isRenaming: boolean) => void;
 }
 
-function Inner({ playlist }: InnerProps) {
+interface SharedProps {
+	playlist: Playlist;
+	onClose?: () => void;
+}
+
+function Inner({ playlist, onClose, isRenaming, setIsRenaming }: InnerProps) {
 	const router = useRouter();
-	const [isRenaming, setIsRenaming] = useState(false);
+	const pathname = usePathname();
+
 	const initialName = useRawAttribute(playlist.attributes, "title", "string");
 	const [title, setTitle] = useState(initialName ?? "");
+	const { createNotification } = useNotificationStore();
 
 	const rename = () => {
 		if (isRenaming || !title.trim()) {
@@ -38,6 +60,29 @@ function Inner({ playlist }: InnerProps) {
 		}
 
 		setIsRenaming(true);
+		updatePlaylistAttributes(playlist.uuid, {
+			attributes: [
+				{
+					type: "string",
+					key: "title",
+					value: title,
+				},
+			],
+		})
+			.then(() => {
+				if (pathname == `/playlist/${playlist.uuid}`) {
+					router.refresh();
+				}
+				createNotification("Renamed playlist");
+				onClose?.();
+			})
+			.catch((e) => {
+				console.error(e);
+				createNotification("Failed to rename playlist");
+			})
+			.finally(() => {
+				setIsRenaming(false);
+			});
 	};
 
 	return (

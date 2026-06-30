@@ -7,7 +7,7 @@ type SpinnerPosition = "absolute" | "normal" | "expand";
 interface Props {
 	position?: SpinnerPosition;
 	color?: "accent" | "dark";
-	size?: "sm" | "md" | "lg";
+	size?: "xs" | "sm" | "md" | "lg";
 }
 
 const POSITION_CLASSES: Record<SpinnerPosition, string> = {

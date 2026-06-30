@@ -5,17 +5,20 @@ import { useQueueActions } from "@/hook/queue-actions.hook";
 import { PlaylistSelectModal } from "@/modal/playlist-select/playlist-select.modal";
 import { useNotificationStore } from "@/store/notification.store";
 import { usePlayerStore } from "@/store/player.store";
-import { addTracksToPlaylist, EphemeralTrack, Playlist, Track } from "@api";
+import { updatePlaylistTracks, EphemeralTrack, Playlist, Track } from "@api";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 export function useTrackContextMenu(
 	track: Track | EphemeralTrack | null,
-	options: { queueIndex?: number } = {},
+	options: { queueIndex?: number; inPlaylist?: string } = {},
 ) {
-	const { playNow, playNext, addToEnd, move } = useQueueActions();
+	const { playNext, addToEnd, move } = useQueueActions();
 	const { currentIndex, remove } = usePlayerStore();
 	const [playlistOpen, setPlaylistOpen] = useState(false);
 	const { createNotification } = useNotificationStore();
+	const router = useRouter();
+	const pathname = usePathname();
 
 	const menuEntries = useCallback<() => ContextMenuElement[]>(() => {
 		if (!track) {
@@ -60,6 +63,39 @@ export function useTrackContextMenu(
 			});
 		}
 
+		if (options.inPlaylist) {
+			const playlistId = options.inPlaylist;
+			entries.push({
+				languageKey: "contextmenu.track.remove-from-playlist",
+				key: "remove-from-playlist",
+				onClick: () => {
+					updatePlaylistTracks(playlistId, {
+						add: null,
+						remove: [
+							{
+								pluginId: track.pluginId,
+								libraryId: track.libraryId,
+								trackId: track.trackId,
+							},
+						],
+					})
+						.then((response) => {
+							if (response && response.status == 200) {
+								setPlaylistOpen(false);
+								createNotification("Removed track from playlist");
+								if (pathname == `/playlist/${playlistId}`) {
+									router.refresh();
+								}
+							}
+						})
+						.catch((e) => {
+							console.error(e);
+							createNotification("Failed to from track from playlist");
+						});
+				},
+			});
+		}
+
 		entries.push(
 			{
 				languageKey: "contextmenu.track.add-to-playlist",
@@ -81,15 +117,18 @@ export function useTrackContextMenu(
 			return;
 		}
 
-		addTracksToPlaylist(playlist.uuid, {
-			tracks: [
-				{
-					pluginId: track.pluginId,
-					libraryId: track.libraryId,
-					trackId: track.trackId,
-				},
-			],
-			albums: null,
+		updatePlaylistTracks(playlist.uuid, {
+			add: {
+				tracks: [
+					{
+						pluginId: track.pluginId,
+						libraryId: track.libraryId,
+						trackId: track.trackId,
+					},
+				],
+				albums: null,
+			},
+			remove: null,
 		})
 			.then((response) => {
 				// todo: update playlist query key

@@ -23,6 +23,7 @@ interface Props<T> {
 	initialTracks?: T[];
 	specialColumns?: BaseTrackListSpecialColumn<T>[];
 	toTrack: (entry: T, index: number) => Track | EphemeralTrack;
+	inPlaylist?: string;
 }
 
 export function LazyTrackList<T>({
@@ -35,6 +36,7 @@ export function LazyTrackList<T>({
 	initialTracks,
 	specialColumns,
 	toTrack,
+	inPlaylist,
 }: Props<T>) {
 	return (
 		<BaseTrackList
@@ -51,6 +53,7 @@ export function LazyTrackList<T>({
 					noArt={noArt}
 					initialTracks={initialTracks}
 					toTrack={toTrack}
+					inPlaylist={inPlaylist}
 				/>
 			)}
 		/>
@@ -67,6 +70,7 @@ interface RowProps<T> {
 	noArt?: boolean;
 	initialTracks?: T[];
 	toTrack: (entry: T, index: number) => Track | EphemeralTrack;
+	inPlaylist?: string;
 }
 
 function Row<T>({
@@ -79,6 +83,7 @@ function Row<T>({
 	noArt,
 	initialTracks,
 	toTrack,
+	inPlaylist,
 }: RowProps<T>) {
 	const chunkIndex = Math.floor(index / chunkSize);
 	const localIndex = index % chunkSize;
@@ -117,6 +122,7 @@ function Row<T>({
 			})}
 			number={trackNumber}
 			noArt={noArt}
+			inPlaylist={inPlaylist}
 		/>
 	);
 }

@@ -4,6 +4,8 @@ import {
 	getAllPlaylistTrackIds,
 	Playlist,
 	runPlaylistSmartFilters,
+	updatePlaylistAttributes,
+	uploadAttributeBuffer,
 } from "@api";
 import styles from "./playlist-buttons.module.scss";
 import { IconButton } from "@/components/icon-button/icon-button";
@@ -15,6 +17,10 @@ import { useQueueActions } from "@/hook/queue-actions.hook";
 import { shuffle } from "@/lib/util";
 import { useButtonMenu } from "@/hook/button-menu.hook";
 import { usePathname, useRouter } from "next/navigation";
+import { RenamePlaylistModal } from "@/modal/rename-playlist/rename-playlist.modal";
+import { openFilePicker } from "@/lib/file-upload.util";
+import path from "path";
+import { useNotificationStore } from "@/store/notification.store";
 
 interface Props {
 	playlist: Playlist;
@@ -26,6 +32,9 @@ export function PlaylistButtons({ playlist }: Props) {
 	const [isLoadingTracklist, setIsLoadingTracklist] = useState(false);
 	const router = useRouter();
 	const pathname = usePathname();
+	const [isRenameOpen, setIsRenameOpen] = useState(false);
+	const { createNotification, updateNotification, resetNotificationTimeout } =
+		useNotificationStore();
 
 	const tracklist = useMemo(() => {
 		return playlist.tracks?.map(({ track }) => track) ?? null;
@@ -56,12 +65,82 @@ export function PlaylistButtons({ playlist }: Props) {
 		{
 			key: "rename",
 			languageKey: "contextmenu.playlist.rename",
-			onClick: () => {},
+			onClick: () => setIsRenameOpen(true),
 		},
 		{
 			key: "change-thumb",
 			languageKey: "contextmenu.playlist.change-thumbnail",
-			onClick: () => {},
+			onClick: () => {
+				openFilePicker("image/*,.png,.jpg,.jpeg,.webp,.gif").then(
+					async (file) => {
+						if (!file) {
+							return;
+						}
+
+						const extension = path.extname(file.name).substring(1);
+						if (!extension) {
+							createNotification("Failed to upload image");
+							return;
+						}
+
+						const notifId = createNotification("Requesting to upload image", {
+							isLoading: true,
+							timeout: null,
+						});
+
+						try {
+							const response = await updatePlaylistAttributes(playlist.uuid, {
+								attributes: [
+									{
+										type: "buffer",
+										key: "thumb",
+										extension,
+									},
+								],
+							});
+
+							if (response.status != 200) {
+								throw new Error(`Unsupported status code ${response.status}`);
+							}
+
+							const session = response.data.find(
+								(session) =>
+									session.extension == extension && session.key == "thumb",
+							);
+
+							if (!session) {
+								throw new Error(`Session not found`);
+							}
+							updateNotification(notifId, {
+								message: "Uploading image...",
+							});
+
+							const bufferResponse = await uploadAttributeBuffer(session.uuid, {
+								file,
+							});
+
+							if (bufferResponse.status != 204) {
+								throw new Error(`Unsupported status code ${response.status}`);
+							}
+							updateNotification(notifId, {
+								message: "Uploaded image",
+								isLoading: false,
+							});
+							if (pathname == `/playlist/${playlist.uuid}`) {
+								router.refresh();
+							}
+						} catch (e) {
+							console.error(e);
+							updateNotification(notifId, {
+								message: "Failed to upload image",
+								isLoading: false,
+							});
+						} finally {
+							resetNotificationTimeout(notifId);
+						}
+					},
+				);
+			},
 		},
 		{
 			key: "scan-smart-filters",
@@ -138,6 +217,11 @@ export function PlaylistButtons({ playlist }: Props) {
 					</>
 				)}
 			</div>
+			<RenamePlaylistModal
+				open={isRenameOpen}
+				onClose={() => setIsRenameOpen(false)}
+				playlist={playlist}
+			/>
 		</>
 	);
 }
