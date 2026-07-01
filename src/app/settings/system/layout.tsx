@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import styles from "./layout.module.scss";
+import styles from "../layout.module.scss";
 import Link from "next/link";
 import { useGetAllPluginConfigs } from "@api";
 import { useTranslation } from "@/context/language.context";
@@ -27,16 +27,21 @@ export default function Layout({ children }: Props) {
 		<div className={styles.container}>
 			<div className={styles.sideBar}>
 				<div className={styles.tabs}>
-					<Link href="/settings/libraries">Libraries</Link>
-					<Link href="/settings/attribute-sources">Attribute Sources</Link>
-					<Link href="/settings/identifiers">Identifiers</Link>
-					<Link href="/settings/tasks">Tasks</Link>
+					<Link href="/settings/system/libraries">Libraries</Link>
+					<Link href="/settings/system/attribute-sources">
+						Attribute Sources
+					</Link>
+					<Link href="/settings/system/identifiers">Identifiers</Link>
+					<Link href="/settings/system/tasks">Tasks</Link>
 				</div>
 				<h3>Plugin Configuration</h3>
 				<div className={styles.tabs}>
 					{pluginConfigs ? (
 						pluginConfigs.configs.map((config) => (
-							<Link href={`/settings/plugin/${config.id}`} key={config.id}>
+							<Link
+								href={`/settings/system/plugin/${config.id}`}
+								key={config.id}
+							>
 								{t(`plugin.${config.id}.name`)}
 							</Link>
 						))

@@ -1,4 +1,4 @@
-import { Contents } from "@/app/settings/plugin/[pluginId]/contents";
+import { Contents } from "@/app/settings/system/plugin/[pluginId]/contents";
 
 interface Props {
 	params: Promise<{

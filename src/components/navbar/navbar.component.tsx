@@ -16,6 +16,7 @@ import {
 	IconPlus,
 	IconServerCog,
 	IconUser,
+	IconUserCog,
 } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import { NavbarLink } from "@/components/navbar-link/navbar-link.component";
@@ -102,7 +103,10 @@ export function Navbar() {
 						</div>
 					</div>
 					<div className={styles.bottom}>
-						<Link href="/settings/tasks">
+						<Link href="/settings/user">
+							<IconButton icon={IconUserCog} iconSource="tabler" />
+						</Link>
+						<Link href="/settings/system/tasks">
 							<IconButton icon={IconServerCog} iconSource="tabler" />
 						</Link>
 					</div>
