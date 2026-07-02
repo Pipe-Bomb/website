@@ -43,6 +43,10 @@ export function Navbar() {
 	});
 	const pathname = usePathname();
 
+	if (pathname.startsWith("/settings/")) {
+		return null;
+	}
+
 	return (
 		<>
 			<div className={styles.positioner}>

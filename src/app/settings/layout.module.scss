@@ -1,7 +1,6 @@
 .container {
-	min-height: 100svh;
+	height: 100%;
 	display: flex;
-	// align-items: stretch;
 	align-items: flex-start;
 	gap: 8px;
 	background: var(--bg-base);
@@ -9,10 +8,11 @@
 	.sideBar {
 		padding: 8px;
 		width: 220px;
+		height: 100%;
 		background: var(--bg-surface);
 		border-radius: 8px;
-		position: sticky;
 		top: 0;
+		overflow-y: auto;
 
 		.tabs {
 			display: flex;
@@ -31,6 +31,8 @@
 		position: relative;
 		background: var(--bg-surface);
 		padding: 16px;
-		border-radius: 16px;
+		border-radius: 8px;
+		height: 100%;
+		overflow-y: auto;
 	}
 }

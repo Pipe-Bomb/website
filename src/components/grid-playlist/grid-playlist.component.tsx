@@ -11,7 +11,7 @@ interface Props {
 
 export function GridPlaylist({ playlist }: Props) {
 	const title = useAttribute(playlist.attributes, "title", "string");
-	const thumb = useRawAttribute(playlist.attributes, "front", "buffer");
+	const thumb = useRawAttribute(playlist.attributes, "thumb", "buffer");
 
 	return (
 		<div className={styles.container}>
