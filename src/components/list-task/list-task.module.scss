@@ -15,5 +15,16 @@
 			color: var(--fg-secondary);
 			font-size: 0.8rem;
 		}
+
+		.nameContainer {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+
+			.percent {
+				color: var(--fg-secondary);
+				font-size: 0.8rem;
+			}
+		}
 	}
 }
