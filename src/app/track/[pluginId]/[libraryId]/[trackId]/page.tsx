@@ -42,6 +42,8 @@ export default async function Page({ params }: Props) {
 					resource={front}
 					fallbackSrc="/no_album_art.jpg"
 					className={styles.coverArt}
+					width={240}
+					height={240}
 				/>
 				<div className={styles.topInfo}>
 					<h1 className={styles.title}>{title}</h1>

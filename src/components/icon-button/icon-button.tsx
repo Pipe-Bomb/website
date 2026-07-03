@@ -6,7 +6,7 @@ type ButtonStyle = "simple" | "background" | "ghost";
 type ButtonVariant = "primary" | "secondary" | "tertiary";
 type ButtonSize = "sm" | "md" | "lg" | "xl";
 
-type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+export type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 type Props = {
 	icon: IconComponent;

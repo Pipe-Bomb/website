@@ -23,9 +23,18 @@
 			font-family: var(--font-heading);
 		}
 
-		.ownerLink {
-			text-decoration: underline;
-			color: var(--fg-secondary);
+		.ownerContainer {
+			display: flex;
+			gap: 16px;
+			align-items: center;
+
+			.ownerLink {
+				text-decoration: underline;
+				color: var(--fg-secondary);
+			}
+
+			.visibilityButton {
+			}
 		}
 
 		.topButtons {

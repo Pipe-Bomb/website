@@ -22,8 +22,6 @@ import { useRawAttribute } from "@/hook/raw-attribute.hook";
 import { useTrack } from "@/hook/track.hook";
 import Link from "next/link";
 import { useRightClick } from "@/hook/right-click.hook";
-import { useCallback } from "react";
-import { ContextMenuElement } from "@/context/context-menu.context";
 import { useTrackContextMenu } from "@/hook/track-context-menu.hook";
 
 export function Player() {
@@ -128,6 +126,8 @@ function NowPlaying({ track }: NowPlayingProps) {
 						resource={cover}
 						className={styles.nowPlayingCover}
 						fallbackSrc="/no_album_art.jpg"
+						width={72}
+						height={72}
 					/>
 				</Link>
 
