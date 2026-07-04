@@ -53,3 +53,44 @@ export function randomString(length: number) {
 
 	return result;
 }
+
+const MONTHS_SHORT = [
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"Jun",
+	"Jul",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
+] as const;
+
+export function formatDate(date: Date) {
+	const lastMidnight = new Date();
+	lastMidnight.setHours(0, 0, 0, 0);
+
+	const yesterdayMidnight = new Date(lastMidnight);
+	yesterdayMidnight.setDate(yesterdayMidnight.getDate() - 1);
+
+	const nextMidnight = new Date(lastMidnight);
+	nextMidnight.setDate(nextMidnight.getDate() + 1);
+
+	let dateString: string | null = null;
+	if (date.getTime() < nextMidnight.getTime()) {
+		if (date.getTime() >= lastMidnight.getTime()) {
+			dateString = "Today";
+		} else if (date.getTime() >= yesterdayMidnight.getTime()) {
+			dateString = "Yesterday";
+		}
+	}
+
+	if (dateString) {
+		dateString += ` at ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+	} else {
+		dateString = `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} ${date.getFullYear()}`;
+	}
+
+	return dateString;
+}

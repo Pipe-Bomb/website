@@ -15,6 +15,7 @@ import styles from "./track-list.module.scss";
 import { Virtuoso } from "react-virtuoso";
 import { TrackListModal } from "@/modal/track-list/track-list.modal";
 import { EphemeralTrack, Track, useGetAllLibraries } from "@api";
+import { formatDate, formatTime } from "@/lib/util";
 
 export interface BaseTrackListSpecialColumn<T> {
 	id: string;
@@ -61,10 +62,8 @@ export function BaseTrackList<T>({
 	const allSpecialColumns = useMemo(() => {
 		const columns = [...(specialColumns ?? [])];
 
-		console.log(libraries);
-
 		columns.push({
-			id: "plugin_id",
+			id: "track_plugin_id",
 			formatter: (_entry, index) => {
 				const track = toTrack(index);
 				if (track) {
@@ -75,7 +74,7 @@ export function BaseTrackList<T>({
 		});
 
 		columns.push({
-			id: "library_id",
+			id: "track_library_id",
 			formatter: (_entry, index) => {
 				const track = toTrack(index);
 				if (track) {
@@ -98,6 +97,17 @@ export function BaseTrackList<T>({
 					return `/library/${track.pluginId}/${track.libraryId}`;
 				}
 				return null;
+			},
+		});
+
+		columns.push({
+			id: "track_date_added",
+			formatter: (_entry, index) => {
+				const track = toTrack(index);
+				if (track && "dateAdded" in track) {
+					return formatDate(new Date(track.dateAdded));
+				}
+				return "";
 			},
 		});
 

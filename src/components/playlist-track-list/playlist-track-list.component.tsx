@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { getPlaylistTracks, PlaylistTrack } from "@/api";
 import { LazyTrackList } from "@/components/track-list/lazy-track-list.component";
 import { useTranslation } from "@/context/language.context";
+import { formatDate } from "@/lib/util";
 
 interface Props {
 	playlistUuid: string;
@@ -57,7 +58,7 @@ export function PlaylistTrackList({
 			specialColumns={[
 				{
 					id: "playlist_track_date_added",
-					formatter: (entry) => new Date(entry.dateAdded).toDateString(),
+					formatter: (entry) => formatDate(new Date(entry.dateAdded)),
 				},
 				{
 					id: "playlist_track_added_by",
