@@ -14,7 +14,7 @@ import { useResizeDetector } from "react-resize-detector";
 import styles from "./track-list.module.scss";
 import { Virtuoso } from "react-virtuoso";
 import { TrackListModal } from "@/modal/track-list/track-list.modal";
-import { EphemeralTrack, Track } from "@api";
+import { EphemeralTrack, Track, useGetAllLibraries } from "@api";
 
 export interface BaseTrackListSpecialColumn<T> {
 	id: string;
@@ -28,6 +28,7 @@ interface BaseTrackListProps<T = Track | EphemeralTrack> {
 		index: number,
 		columns: (BasicAttributeColumn | SpecialAttributeColumnFormatter<T>)[],
 	) => ReactNode;
+	toTrack: (index: number) => Track | EphemeralTrack | null;
 	specialColumns?: BaseTrackListSpecialColumn<T>[];
 }
 
@@ -38,6 +39,7 @@ export function BaseTrackList<T>({
 	totalCount,
 	itemContent,
 	specialColumns,
+	toTrack,
 }: BaseTrackListProps<T>) {
 	const { t } = useTranslation();
 	const { columns, setColumns } = useTrackColumns();
@@ -45,6 +47,62 @@ export function BaseTrackList<T>({
 	const { scrollParent } = useScrollParentContext();
 	const [columnModalOpen, setColumnModalOpen] = useState(false);
 	const rankedAttributes = useRankedAttributes("track");
+	const librariesResponse = useGetAllLibraries({
+		query: {
+			enabled: true,
+		},
+	});
+	const libraries =
+		(librariesResponse.isFetched &&
+			librariesResponse.data?.status == 200 &&
+			librariesResponse.data.data) ||
+		[];
+
+	const allSpecialColumns = useMemo(() => {
+		const columns = [...(specialColumns ?? [])];
+
+		console.log(libraries);
+
+		columns.push({
+			id: "plugin_id",
+			formatter: (_entry, index) => {
+				const track = toTrack(index);
+				if (track) {
+					return t(`plugin.${track.pluginId}.name`, track.pluginId);
+				}
+				return "";
+			},
+		});
+
+		columns.push({
+			id: "library_id",
+			formatter: (_entry, index) => {
+				const track = toTrack(index);
+				if (track) {
+					const library = libraries.find(
+						(library) =>
+							library.pluginId == track.pluginId &&
+							library.id == track.libraryId,
+					);
+					if (library) {
+						return library.name;
+					}
+
+					return track.libraryId;
+				}
+				return "";
+			},
+			url: (_entry, index) => {
+				const track = toTrack(index);
+				if (track) {
+					return `/library/${track.pluginId}/${track.libraryId}`;
+				}
+				return null;
+			},
+		});
+
+		return columns;
+	}, [specialColumns, libraries]);
 
 	const rightClick = useRightClick(() => [
 		{
@@ -65,7 +123,7 @@ export function BaseTrackList<T>({
 		)[] = columns
 			.map((column) => {
 				if (column.type == "special") {
-					const formatter = specialColumns?.find((c) => c.id == column.id);
+					const formatter = allSpecialColumns?.find((c) => c.id == column.id);
 					if (formatter) {
 						const special: SpecialAttributeColumnFormatter<T> = {
 							type: "special",
@@ -119,7 +177,7 @@ export function BaseTrackList<T>({
 				width: COLUMN_MIN_WIDTH + scaledFlexibleSpace,
 			};
 		});
-	}, [columns, width, specialColumns]);
+	}, [columns, width, allSpecialColumns]);
 
 	const namedColumns = useMemo(() => {
 		return boundColumns.map((column) => {
@@ -220,7 +278,7 @@ export function BaseTrackList<T>({
 			<TrackListModal
 				open={columnModalOpen}
 				onClose={() => setColumnModalOpen(false)}
-				specialColumns={specialColumns}
+				specialColumns={allSpecialColumns}
 			/>
 		</>
 	);

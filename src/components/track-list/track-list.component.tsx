@@ -14,6 +14,7 @@ export function TrackList({ tracks, trackNumbers, noArt }: Props) {
 	return (
 		<BaseTrackList
 			totalCount={tracks.length}
+			toTrack={(index) => tracks[index] ?? null}
 			itemContent={(index, columns) => (
 				<ListTrack
 					track={tracks[index]}

@@ -11,7 +11,7 @@ import {
 	BasicAttributeColumn,
 	SpecialAttributeColumnFormatter,
 } from "@/context/track-columns.context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Props<T> {
 	totalCount: number;
@@ -38,10 +38,31 @@ export function LazyTrackList<T>({
 	toTrack,
 	inPlaylist,
 }: Props<T>) {
+	const queryClient = useQueryClient();
+
 	return (
 		<BaseTrackList
 			totalCount={totalCount}
 			specialColumns={specialColumns}
+			toTrack={(index) => {
+				const chunkIndex = Math.floor(index / chunkSize);
+				const localIndex = index % chunkSize;
+
+				const cachedChunk = queryClient.getQueryData<T[]>([
+					...queryKey,
+					"chunk",
+					chunkIndex,
+				]);
+
+				const tracks =
+					cachedChunk ?? (chunkIndex === 0 ? initialTracks : undefined);
+
+				const entry = tracks?.[localIndex];
+				if (entry) {
+					return toTrack(entry, index);
+				}
+				return null;
+			}}
 			itemContent={(index, columns) => (
 				<Row<T>
 					index={index}
