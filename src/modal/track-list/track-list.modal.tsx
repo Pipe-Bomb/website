@@ -38,6 +38,7 @@ function Inner({ specialColumns }: InnerProps) {
 	const unorderedAttributes = useRankedAttributes("track");
 	const rankedAttributes = useMemo(() => {
 		return (unorderedAttributes ?? [])
+			.filter((attribute) => attribute.key != "album")
 			.map((attribute) => ({
 				attribute,
 				name: t(

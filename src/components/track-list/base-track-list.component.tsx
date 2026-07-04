@@ -16,6 +16,7 @@ import { Virtuoso } from "react-virtuoso";
 import { TrackListModal } from "@/modal/track-list/track-list.modal";
 import { EphemeralTrack, Track, useGetAllLibraries } from "@api";
 import { formatDate, formatTime } from "@/lib/util";
+import { getAttribute } from "@/lib/attribute.util";
 
 export interface BaseTrackListSpecialColumn<T> {
 	id: string;
@@ -111,6 +112,51 @@ export function BaseTrackList<T>({
 			},
 		});
 
+		columns.push({
+			id: "track_album",
+			formatter: (_entry, index) => {
+				const track = toTrack(index);
+				if (track) {
+					if ("albums" in track) {
+						const album = track.albums?.[0];
+						if (album) {
+							const title = getAttribute(
+								album.attributes,
+								"title",
+								"string",
+								true,
+							);
+							if (title) {
+								return title;
+							}
+						}
+					}
+
+					const albumTitle = getAttribute(
+						track.attributes,
+						"album",
+						"string",
+						true,
+					);
+					if (albumTitle) {
+						return albumTitle;
+					}
+				}
+
+				return "";
+			},
+			url: (_entry, index) => {
+				const track = toTrack(index);
+				if (track && "albums" in track) {
+					const album = track.albums?.[0];
+					if (album) {
+						return `/album/${album.uuid}`;
+					}
+				}
+				return null;
+			},
+		});
+
 		return columns;
 	}, [specialColumns, libraries]);
 
@@ -131,6 +177,7 @@ export function BaseTrackList<T>({
 			| BasicAttributeColumn
 			| SpecialAttributeColumnFormatter<T>
 		)[] = columns
+			.filter((column) => column.type != "basic" || column.attribute != "album")
 			.map((column) => {
 				if (column.type == "special") {
 					const formatter = allSpecialColumns?.find((c) => c.id == column.id);
