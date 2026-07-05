@@ -11,6 +11,8 @@ import { PlaylistTrackList } from "@/components/playlist-track-list/playlist-tra
 import { Metadata } from "next";
 import { PlaylistSmartFilters } from "@/components/playlist-smart-filters/playlist-smart-filters.component";
 import { PlaylistVisibilityButton } from "@/components/playlist-visibility-button/playlist-visibility-button.component";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 interface Props {
 	params: Promise<{ playlistUuid: string }>;
@@ -24,9 +26,13 @@ export async function generateMetadata({
 	try {
 		const headers = await getAuthHeaders();
 
-		const playlistResponse = await getPlaylist(playlistUuid, {
-			headers: headers ?? undefined,
-		});
+		const playlistResponse = await getPlaylist(
+			playlistUuid,
+			{},
+			{
+				headers: headers ?? undefined,
+			},
+		);
 
 		if (playlistResponse.status != 200) {
 			return null;
@@ -45,12 +51,20 @@ export async function generateMetadata({
 				images: image ? [image.url] : [],
 			},
 		};
-	} catch {}
-
-	return null;
+	} finally {
+		return null;
+	}
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+	return (
+		<Suspense fallback={<Loading />}>
+			<Contents {...props} />
+		</Suspense>
+	);
+}
+
+async function Contents({ params }: Props) {
 	const { playlistUuid } = await params;
 	const headers = await getAuthHeaders();
 	if (!headers) {
@@ -58,9 +72,15 @@ export default async function Page({ params }: Props) {
 	}
 
 	try {
-		const playlistResponse = await getPlaylist(playlistUuid, {
-			headers,
-		});
+		const playlistResponse = await getPlaylist(
+			playlistUuid,
+			{
+				tracks: 50,
+			},
+			{
+				headers,
+			},
+		);
 
 		if (playlistResponse.status != 200) {
 			return <h1>Not found</h1>;

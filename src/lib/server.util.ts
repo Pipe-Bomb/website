@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function getAuthHeaders(): Promise<HeadersInit | null> {
 	const cookiesStore = await cookies();
@@ -11,4 +11,9 @@ export async function getAuthHeaders(): Promise<HeadersInit | null> {
 	return {
 		Authorization: `Bearer ${token}`,
 	};
+}
+
+export async function isSSR() {
+	const allHeaders = await headers();
+	return !!allHeaders.get("accept")?.includes("text/html");
 }

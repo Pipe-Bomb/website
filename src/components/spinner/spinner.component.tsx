@@ -1,3 +1,5 @@
+"use client";
+
 import { cc } from "@/lib/util";
 import styles from "./spinner.module.scss";
 import { useMemo } from "react";
