@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import styles from "../layout.module.scss";
 import Link from "next/link";
 import {
@@ -16,6 +16,10 @@ import { CreateWorkflowModal } from "@/modal/create-workflow/create-workflow.mod
 import { useRightClick } from "@/hook/right-click.hook";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
+import {
+	WorkflowContextType,
+	WorkflowProgressProvider,
+} from "@/context/workflow-progress.context";
 
 interface Props {
 	children: ReactNode;
@@ -32,9 +36,31 @@ export default function Layout({ children }: Props) {
 	});
 
 	const workflows = workflowsResponse.data?.data;
+	const context: Record<string, WorkflowContextType> = useMemo(() => {
+		if (!workflows) {
+			return {};
+		}
+
+		const output: Record<string, WorkflowContextType> = {};
+		for (const workflow of workflows) {
+			if (
+				workflow.currentActiveStepIndex !== null &&
+				workflow.currentActiveStepUuid &&
+				workflow.totalActiveSteps !== null
+			) {
+				output[workflow.uuid] = {
+					stepIndex: workflow.currentActiveStepIndex,
+					stepUuid: workflow.currentActiveStepUuid,
+					totalSteps: workflow.totalActiveSteps,
+					stepPercent: workflow.currentActiveStepPercent,
+				};
+			}
+		}
+		return output;
+	}, [workflows]);
 
 	return (
-		<>
+		<WorkflowProgressProvider data={context}>
 			<div className={styles.container}>
 				<div className={styles.sideBar}>
 					<h3>Workflows</h3>
@@ -59,7 +85,7 @@ export default function Layout({ children }: Props) {
 				open={createOpen}
 				onClose={() => setCreateOpen(false)}
 			/>
-		</>
+		</WorkflowProgressProvider>
 	);
 }
 

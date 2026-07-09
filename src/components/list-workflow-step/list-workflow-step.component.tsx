@@ -24,6 +24,8 @@ import { IconButton } from "@/components/icon-button/icon-button";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { Button } from "@/components/button/button.component";
 import { SelectWorkflowStepModal } from "@/modal/select-workflow-step/select-workflow-step.modal";
+import { ProgressBar } from "@/components/progress-bar/progress-bar.component";
+import { useWorkflowProgress } from "@/context/workflow-progress.context";
 
 interface Props {
 	step: WorkflowStep;
@@ -35,6 +37,7 @@ export function ListWorkflowStep({ step }: Props) {
 	const { createNotification, updateNotification, resetNotificationTimeout } =
 		useNotificationStore();
 	const queryClient = useQueryClient();
+	const progress = useWorkflowProgress(step.workflowUuid);
 	const baseLangKey = useMemo(() => {
 		if (step.pluginId) {
 			return `workflow.plugin.${step.pluginId}.step.${step.stepId}`;
@@ -169,6 +172,13 @@ export function ListWorkflowStep({ step }: Props) {
 						</div>
 					))}
 				</div>
+			)}
+
+			{progress?.stepUuid == step.uuid && (
+				<ProgressBar
+					percent={progress.stepPercent}
+					loading={progress.stepPercent == null}
+				/>
 			)}
 		</div>
 	);

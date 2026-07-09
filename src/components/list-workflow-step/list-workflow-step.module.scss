@@ -6,6 +6,7 @@
 	border-radius: 4px;
 	flex-direction: column;
 	overflow: hidden;
+	gap: 16px;
 
 	.topSplit {
 		display: flex;
@@ -28,7 +29,6 @@
 	}
 
 	.optionsList {
-		margin-top: 8px;
 		gap: 8px;
 		flex-wrap: wrap;
 		display: flex;
