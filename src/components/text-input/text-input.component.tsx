@@ -8,6 +8,7 @@ interface Props {
 	onChange?: (value: string) => void;
 	password?: boolean;
 	placeholder?: string;
+	onBlur?: () => void;
 	onEnter?: () => void;
 	autoFocus?: boolean;
 	disabled?: boolean;
@@ -20,6 +21,7 @@ export function TextInput({
 	password,
 	placeholder,
 	onEnter,
+	onBlur,
 	autoFocus,
 	disabled,
 	ref,
@@ -40,6 +42,7 @@ export function TextInput({
 				}}
 				disabled={disabled}
 				ref={ref}
+				onBlur={onBlur}
 			/>
 		</span>
 	);

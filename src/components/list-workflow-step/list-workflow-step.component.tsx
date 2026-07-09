@@ -14,7 +14,7 @@ import {
 import styles from "./list-workflow-step.module.scss";
 import { useTranslation } from "@/context/language.context";
 import { useRightClick } from "@/hook/right-click.hook";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNotificationStore } from "@/store/notification.store";
 import { safeFetch } from "@/lib/api.util";
 import { useQueryClient } from "@tanstack/react-query";
@@ -58,7 +58,7 @@ export function ListWorkflowStep({ step }: Props) {
 
 	const handleOptionChange = (
 		optionId: string,
-		value: string | boolean | number,
+		value: string | boolean | number | null,
 	) => {
 		setOptions((options) =>
 			options.map((option) => {
@@ -191,7 +191,7 @@ interface OptionContentsProps {
 		| IntegerWorkflowStepOptionValue
 		| DecimalWorkflowStepOptionValue
 		| EnumWorkflowStepOptionValue;
-	onChange: (value: string | number | boolean) => void;
+	onChange: (value: string | number | boolean | null) => void;
 }
 
 function OptionContents({ option, onChange }: OptionContentsProps) {
@@ -207,12 +207,20 @@ function OptionContents({ option, onChange }: OptionContentsProps) {
 		return <EnumOptionContents option={option} onChange={onChange} />;
 	}
 
+	if (option.type == "integer") {
+		return <IntegerOptionContents option={option} onChange={onChange} />;
+	}
+
+	if (option.type == "decimal") {
+		return <DecimalOptionContents option={option} onChange={onChange} />;
+	}
+
 	return null;
 }
 
 interface SubContentsProps<T> {
 	option: T;
-	onChange: (value: string | number | boolean) => void;
+	onChange: (value: string | number | boolean | null) => void;
 }
 
 function StringOptionContents({
@@ -223,7 +231,7 @@ function StringOptionContents({
 		<TextInput
 			value={option.value ?? ""}
 			onChange={onChange}
-			placeholder="Option value"
+			placeholder="String value"
 		/>
 	);
 }
@@ -268,5 +276,127 @@ function EnumOptionContents({
 				}}
 			/>
 		</>
+	);
+}
+
+function IntegerOptionContents({
+	option,
+	onChange,
+}: SubContentsProps<IntegerWorkflowStepOptionValue>) {
+	const fallbackValue =
+		option.value !== null && option.value !== undefined
+			? String(option.value)
+			: "";
+	const [inputValue, setInputValue] = useState(fallbackValue);
+
+	useEffect(() => {
+		setInputValue(fallbackValue);
+	}, [option.value]);
+
+	const handleChange = (val: string) => {
+		if (val === "") {
+			setInputValue("");
+			onChange(null);
+			return;
+		}
+
+		if (val === "-") {
+			setInputValue(val);
+			return;
+		}
+
+		if (/^-?\d+$/.test(val)) {
+			const parsed = parseInt(val, 10);
+			if (!isNaN(parsed)) {
+				setInputValue(val);
+				onChange(parsed);
+				return;
+			}
+		}
+
+		setInputValue(fallbackValue);
+		onChange(option.value ?? null);
+	};
+
+	const handleBlur = () => {
+		if (inputValue === "-") {
+			setInputValue(fallbackValue);
+			onChange(option.value ?? null);
+		}
+	};
+
+	return (
+		<TextInput
+			value={inputValue}
+			onChange={handleChange}
+			onBlur={handleBlur}
+			placeholder="Integer value"
+		/>
+	);
+}
+
+function DecimalOptionContents({
+	option,
+	onChange,
+}: SubContentsProps<DecimalWorkflowStepOptionValue>) {
+	const fallbackValue =
+		option.value !== null && option.value !== undefined
+			? String(option.value)
+			: "";
+	const [inputValue, setInputValue] = useState(fallbackValue);
+
+	useEffect(() => {
+		if (option.value !== null && option.value !== undefined) {
+			if (parseFloat(inputValue) !== Number(option.value)) {
+				setInputValue(fallbackValue);
+			}
+		} else {
+			setInputValue("");
+		}
+	}, [option.value]);
+
+	const handleChange = (val: string) => {
+		if (val === "") {
+			setInputValue("");
+			onChange(null);
+			return;
+		}
+
+		if (!/^-?\d*\.?\d*$/.test(val)) {
+			setInputValue(fallbackValue);
+			onChange(option.value ?? null);
+			return;
+		}
+
+		setInputValue(val);
+
+		if (val === "-" || val === "." || val === "-." || val.endsWith(".")) {
+			return;
+		}
+
+		const parsed = parseFloat(val);
+		if (!isNaN(parsed) && Number.isFinite(parsed)) {
+			onChange(parsed);
+		} else {
+			setInputValue(fallbackValue);
+			onChange(option.value ?? null);
+		}
+	};
+
+	const handleBlur = () => {
+		const parsed = parseFloat(inputValue);
+		if (isNaN(parsed) || !Number.isFinite(parsed)) {
+			setInputValue(fallbackValue);
+			onChange(option.value ?? null);
+		}
+	};
+
+	return (
+		<TextInput
+			value={inputValue}
+			onChange={handleChange}
+			onBlur={handleBlur}
+			placeholder="Decimal value"
+		/>
 	);
 }
