@@ -6,6 +6,7 @@
 	cursor: pointer;
 	position: relative;
 	isolation: isolate;
+	flex-shrink: 0;
 
 	&.primary {
 		--bg: var(--button-primary-bg);

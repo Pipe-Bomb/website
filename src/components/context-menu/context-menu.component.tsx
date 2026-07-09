@@ -80,5 +80,9 @@ export const ContextMenu = forwardRef<HTMLDivElement, Props>(
 function ElementContent({ element }: { element: ContextMenuElement }) {
 	const { t } = useTranslation();
 
-	return <div>{t(element.languageKey)}</div>;
+	if ("languageKey" in element) {
+		return <div>{t(element.languageKey)}</div>;
+	}
+
+	return <div>{element.text}</div>;
 }

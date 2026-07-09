@@ -24,7 +24,6 @@ interface Props {
 }
 
 export function AlbumButtons({ album }: Props) {
-	// const { playTrack, addToEnd, insert, currentIndex } = usePlayerStore();
 	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const { trackList: backupTrackList } = useTrackListContext();
 	const isMounted = useIsMounted();

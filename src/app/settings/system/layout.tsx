@@ -33,6 +33,7 @@ export default function Layout({ children }: Props) {
 					</Link>
 					<Link href="/settings/system/identifiers">Identifiers</Link>
 					<Link href="/settings/system/tasks">Tasks</Link>
+					<Link href="/settings/workflows">Workflows</Link>
 				</div>
 				<h3>Plugin Configuration</h3>
 				<div className={styles.tabs}>

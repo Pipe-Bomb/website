@@ -12,7 +12,6 @@ import React, {
 import { createPortal } from "react-dom";
 
 export type ContextMenuElement = {
-	languageKey: string;
 	key: string;
 } & (
 	| {
@@ -22,7 +21,15 @@ export type ContextMenuElement = {
 			href: string;
 			target?: HTMLAttributeAnchorTarget;
 	  }
-);
+) &
+	(
+		| {
+				languageKey: string;
+		  }
+		| {
+				text: string;
+		  }
+	);
 
 type MenuState = {
 	x: number;

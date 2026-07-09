@@ -1,0 +1,47 @@
+.container {
+	display: flex;
+	background: var(--bg-surface);
+	padding: 8px;
+	// gap: 8px;
+	border-radius: 4px;
+	flex-direction: column;
+	overflow: hidden;
+
+	.topSplit {
+		display: flex;
+		gap: 16px;
+
+		.info {
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+		}
+	}
+
+	.pluginName {
+		color: var(--fg-secondary);
+		font-size: 0.8rem;
+	}
+
+	.stepName {
+		font-weight: 500;
+	}
+
+	.optionsList {
+		margin-top: 8px;
+		gap: 8px;
+		flex-wrap: wrap;
+		display: flex;
+
+		.optionContainer {
+			max-width: 250px;
+			display: flex;
+			flex-direction: column;
+
+			.optionName {
+				font-size: 0.8rem;
+				color: var(--fg-secondary);
+			}
+		}
+	}
+}

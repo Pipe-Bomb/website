@@ -1,0 +1,32 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.step {
+		background: var(--bg-elevated);
+		border: none;
+		padding: 4px 8px;
+		text-align: left;
+		// font-weight: 600;
+		border-radius: 8px;
+		border: 2px solid var(--border-strong);
+		display: flex;
+		gap: 8px;
+		align-items: center;
+
+		.triggerInfo {
+			display: flex;
+			flex-direction: column;
+
+			.triggerPlugin {
+				color: var(--fg-secondary);
+				font-size: 0.8rem;
+			}
+
+			.triggerName {
+				font-weight: 500;
+			}
+		}
+	}
+}

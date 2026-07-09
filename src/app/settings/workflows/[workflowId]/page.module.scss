@@ -1,0 +1,27 @@
+.top {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+}
+
+.stepContainer {
+	margin-top: 16px;
+
+	.step {
+		position: relative;
+
+		&:not(:last-of-type) {
+			padding-bottom: 16px;
+
+			&::after {
+				content: "";
+				position: absolute;
+				width: 3px;
+				left: 32px;
+				height: 16px;
+				bottom: 0;
+				background: var(--bg-elevated);
+			}
+		}
+	}
+}
