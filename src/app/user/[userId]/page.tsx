@@ -4,6 +4,7 @@ import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
 import { GridPlaylist } from "@/components/grid-playlist/grid-playlist.component";
 import { Metadata } from "next";
+import { getAuthHeaders } from "@/lib/server.util";
 
 interface Props {
 	params: Promise<{ userId: string }>;
@@ -15,7 +16,9 @@ export async function generateMetadata({
 	const { userId } = await params;
 
 	try {
-		const userResponse = await getUser(userId);
+		const userResponse = await getUser(userId, {
+			headers: (await getAuthHeaders()) ?? {},
+		});
 
 		if (userResponse.status != 200) {
 			return null;
@@ -40,7 +43,9 @@ export async function generateMetadata({
 export default async function Page({ params }: Props) {
 	const { userId } = await params;
 
-	const userResponse = await getUser(userId);
+	const userResponse = await getUser(userId, {
+		headers: (await getAuthHeaders()) ?? {},
+	});
 
 	if (userResponse.status == 404) {
 		return <h1>User not found</h1>;
