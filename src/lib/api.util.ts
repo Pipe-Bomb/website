@@ -1,3 +1,4 @@
+import { getAuthHeaders } from "@/lib/server.util";
 import {
 	getArtistByIdentity,
 	getArtist,
@@ -7,28 +8,36 @@ import {
 	getAlbum,
 } from "@api";
 
-export function getArtistById(id: string): Promise<getArtistResponse> {
+export async function getArtistById(id: string): Promise<getArtistResponse> {
 	if (id.includes("~")) {
 		const parts = id.split("~");
 		if (parts.length == 3) {
 			const [pluginId, identityId, identity] = parts;
-			return getArtistByIdentity(pluginId, identityId, identity);
+			return getArtistByIdentity(pluginId, identityId, identity, {
+				headers: (await getAuthHeaders()) ?? {},
+			});
 		}
 	} else {
-		return getArtist(id);
+		return getArtist(id, {
+			headers: (await getAuthHeaders()) ?? {},
+		});
 	}
 	throw new Error("Invalid Artist ID");
 }
 
-export function getAlbumById(id: string): Promise<getAlbumResponse> {
+export async function getAlbumById(id: string): Promise<getAlbumResponse> {
 	if (id.includes("~")) {
 		const parts = id.split("~");
 		if (parts.length == 3) {
 			const [pluginId, identityId, identity] = parts;
-			return getAlbumByIdentity(pluginId, identityId, identity);
+			return getAlbumByIdentity(pluginId, identityId, identity, {
+				headers: (await getAuthHeaders()) ?? {},
+			});
 		}
 	} else {
-		return getAlbum(id);
+		return getAlbum(id, {
+			headers: (await getAuthHeaders()) ?? {},
+		});
 	}
 	throw new Error("Invalid Album ID");
 }

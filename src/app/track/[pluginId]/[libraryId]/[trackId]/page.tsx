@@ -5,6 +5,7 @@ import { ResourceImage } from "@/components/resource-image/resource-image.compon
 import { TrackArtists } from "@/components/track-artists/track-artists.component";
 import { TrackButtons } from "@/components/track-buttons/track-buttons.component";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
+import { getAuthHeaders } from "@/lib/server.util";
 
 interface Props {
 	params: Promise<{
@@ -17,7 +18,11 @@ interface Props {
 export default async function Page({ params }: Props) {
 	const { pluginId, libraryId, trackId } = await params;
 
-	const trackResponse = await getTrack(pluginId, libraryId, trackId);
+	const authHeaders = await getAuthHeaders();
+
+	const trackResponse = await getTrack(pluginId, libraryId, trackId, {
+		headers: authHeaders ?? {},
+	});
 
 	if (trackResponse.status != 200 || !trackResponse.data) {
 		return <h1>Something went wrong</h1>;
@@ -33,6 +38,9 @@ export default async function Page({ params }: Props) {
 		pluginId,
 		libraryId,
 		trackId,
+		{
+			headers: authHeaders ?? {},
+		},
 	);
 
 	return (
