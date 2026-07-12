@@ -1,4 +1,3 @@
-import { getAuthHeaders } from "@/lib/server.util";
 import {
 	getArtistByIdentity,
 	getArtist,
@@ -8,36 +7,34 @@ import {
 	getAlbum,
 } from "@api";
 
-export async function getArtistById(id: string): Promise<getArtistResponse> {
+export async function getArtistById(
+	id: string,
+	options?: RequestInit,
+): Promise<getArtistResponse> {
 	if (id.includes("~")) {
 		const parts = id.split("~");
 		if (parts.length == 3) {
 			const [pluginId, identityId, identity] = parts;
-			return getArtistByIdentity(pluginId, identityId, identity, {
-				headers: (await getAuthHeaders()) ?? {},
-			});
+			return getArtistByIdentity(pluginId, identityId, identity, options);
 		}
 	} else {
-		return getArtist(id, {
-			headers: (await getAuthHeaders()) ?? {},
-		});
+		return getArtist(id, options);
 	}
 	throw new Error("Invalid Artist ID");
 }
 
-export async function getAlbumById(id: string): Promise<getAlbumResponse> {
+export async function getAlbumById(
+	id: string,
+	options?: RequestInit,
+): Promise<getAlbumResponse> {
 	if (id.includes("~")) {
 		const parts = id.split("~");
 		if (parts.length == 3) {
 			const [pluginId, identityId, identity] = parts;
-			return getAlbumByIdentity(pluginId, identityId, identity, {
-				headers: (await getAuthHeaders()) ?? {},
-			});
+			return getAlbumByIdentity(pluginId, identityId, identity, options);
 		}
 	} else {
-		return getAlbum(id, {
-			headers: (await getAuthHeaders()) ?? {},
-		});
+		return getAlbum(id, options);
 	}
 	throw new Error("Invalid Album ID");
 }

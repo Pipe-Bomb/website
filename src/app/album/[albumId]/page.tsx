@@ -11,6 +11,7 @@ import { AlbumEphemeralContentTabs } from "@/components/ephemeral-content-tabs/a
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { TrackListProvider } from "@/context/tracklist.context";
 import { Metadata } from "next";
+import { getAuthHeaders } from "@/lib/server.util";
 
 interface Props {
 	params: Promise<{
@@ -24,7 +25,9 @@ export async function generateMetadata({
 	const { albumId } = await params;
 
 	try {
-		const albumResponse = await getAlbumById(albumId);
+		const albumResponse = await getAlbumById(albumId, {
+			headers: (await getAuthHeaders()) ?? {},
+		});
 
 		if (albumResponse.status != 200) {
 			return null;
@@ -70,7 +73,11 @@ export async function generateMetadata({
 export default async function Page({ params }: Props) {
 	const { albumId } = await params;
 
-	const albumResponse = await getAlbumById(albumId);
+	const authHeaders = await getAuthHeaders();
+
+	const albumResponse = await getAlbumById(albumId, {
+		headers: authHeaders ?? {},
+	});
 
 	if (albumResponse.status == 404) {
 		return <h1>Album not found</h1>;
@@ -82,7 +89,11 @@ export default async function Page({ params }: Props) {
 	const front = getAttribute(album.attributes, "front", "buffer");
 
 	const albumUrlsResponse =
-		(!!album.uuid && (await getAlbumExternalUrls(album.uuid))) || null;
+		(!!album.uuid &&
+			(await getAlbumExternalUrls(album.uuid, {
+				headers: authHeaders ?? {},
+			}))) ||
+		null;
 
 	return (
 		<TrackListProvider>

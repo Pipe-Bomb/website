@@ -11,6 +11,7 @@ import { ArtistEphemeralContentTabs } from "@/components/ephemeral-content-tabs/
 import { TrackList } from "@/components/track-list/track-list.component";
 import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
+import { getAuthHeaders } from "@/lib/server.util";
 
 interface Props {
 	params: Promise<{
@@ -24,7 +25,9 @@ export async function generateMetadata({
 	const { artistId } = await params;
 
 	try {
-		const artistResponse = await getArtistById(artistId);
+		const artistResponse = await getArtistById(artistId, {
+			headers: (await getAuthHeaders()) ?? {},
+		});
 
 		if (artistResponse.status != 200) {
 			return null;
@@ -53,7 +56,10 @@ export async function generateMetadata({
 export default async function Page({ params }: Props) {
 	const { artistId } = await params;
 
-	const artistResponse = await getArtistById(artistId);
+	const authHeaders = await getAuthHeaders();
+	const artistResponse = await getArtistById(artistId, {
+		headers: authHeaders ?? {},
+	});
 
 	if (artistResponse.status == 404) {
 		return <h1>Artist not found</h1>;
@@ -62,7 +68,11 @@ export default async function Page({ params }: Props) {
 	const artist = artistResponse.data;
 
 	const artistUrlsResponse =
-		(!!artist.uuid && (await getArtistExternalUrls(artist.uuid))) || null;
+		(!!artist.uuid &&
+			(await getArtistExternalUrls(artist.uuid, {
+				headers: authHeaders ?? {},
+			}))) ||
+		null;
 
 	const name = getAttribute(artist.attributes, "name", "string", true);
 	const thumbnail = getAttribute(artist.attributes, "thumb", "buffer");
