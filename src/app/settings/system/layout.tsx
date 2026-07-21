@@ -6,15 +6,17 @@ import Link from "next/link";
 import { useGetAllPluginConfigs } from "@api";
 import { useTranslation } from "@/context/language.context";
 import { Spinner } from "@/components/spinner/spinner.component";
+import { usePrivilegeCheck } from "@/hook/privilege-check.hook";
 
 interface Props {
 	children: ReactNode;
 }
 
 export default function Layout({ children }: Props) {
+	const hasPrivilege = usePrivilegeCheck();
 	const pluginConfigsResponse = useGetAllPluginConfigs({
 		query: {
-			enabled: true,
+			enabled: hasPrivilege("view-plugin-configs"),
 			refetchInterval: 3000,
 		},
 	});
@@ -27,29 +29,43 @@ export default function Layout({ children }: Props) {
 		<div className={styles.container}>
 			<div className={styles.sideBar}>
 				<div className={styles.tabs}>
+					{hasPrivilege("view-privileges") && (
+						<Link href="/settings/system/users">Users</Link>
+					)}
 					<Link href="/settings/system/libraries">Libraries</Link>
-					<Link href="/settings/system/attribute-sources">
-						Attribute Sources
-					</Link>
+					{hasPrivilege("edit-attribute-source-order") && (
+						<Link href="/settings/system/attribute-sources">
+							Attribute Sources
+						</Link>
+					)}
+
 					<Link href="/settings/system/identifiers">Identifiers</Link>
-					<Link href="/settings/system/tasks">Tasks</Link>
-					<Link href="/settings/workflows">Workflows</Link>
-				</div>
-				<h3>Plugin Configuration</h3>
-				<div className={styles.tabs}>
-					{pluginConfigs ? (
-						pluginConfigs.configs.map((config) => (
-							<Link
-								href={`/settings/system/plugin/${config.id}`}
-								key={config.id}
-							>
-								{t(`plugin.${config.id}.name`)}
-							</Link>
-						))
-					) : (
-						<Spinner />
+					{hasPrivilege("view-tasks") && (
+						<Link href="/settings/system/tasks">Tasks</Link>
+					)}
+					{hasPrivilege("view-workflows") && (
+						<Link href="/settings/workflows">Workflows</Link>
 					)}
 				</div>
+				{hasPrivilege("view-plugin-configs") && (
+					<>
+						<h3>Plugin Configuration</h3>
+						<div className={styles.tabs}>
+							{pluginConfigs ? (
+								pluginConfigs.configs.map((config) => (
+									<Link
+										href={`/settings/system/plugin/${config.id}`}
+										key={config.id}
+									>
+										{t(`plugin.${config.id}.name`)}
+									</Link>
+								))
+							) : (
+								<Spinner />
+							)}
+						</div>
+					</>
+				)}
 			</div>
 			<div className={styles.content}>{children}</div>
 		</div>

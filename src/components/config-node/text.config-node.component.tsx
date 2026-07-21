@@ -1,3 +1,4 @@
+import { TextInput } from "@/components/text-input/text-input.component";
 import styles from "./text.config-node.module.scss";
 import { TextConfigNode as TextConfigNodeType } from "@api";
 import { useEffect, useState } from "react";
@@ -5,9 +6,10 @@ import { useEffect, useState } from "react";
 interface Props {
 	node: TextConfigNodeType;
 	onChange: (id: string, value: any) => void;
+	disabled?: boolean;
 }
 
-export function TextConfigNode({ node, onChange }: Props) {
+export function TextConfigNode({ node, onChange, disabled }: Props) {
 	const [value, setValue] = useState(node.value);
 
 	useEffect(() => {
@@ -18,15 +20,14 @@ export function TextConfigNode({ node, onChange }: Props) {
 		<div className={styles.container}>
 			<span className={styles.name}>{node.name}</span>
 			<div className={styles.inputContainer}>
-				<input
-					type="text"
-					className={styles.input}
+				<TextInput
 					placeholder={node.placeholder ?? undefined}
 					value={value}
-					onChange={(e) => {
-						setValue(e.currentTarget.value);
-						onChange(node.id, e.currentTarget.value);
+					onChange={(value) => {
+						setValue(value);
+						onChange(node.id, value);
 					}}
+					disabled={disabled}
 				/>
 			</div>
 		</div>

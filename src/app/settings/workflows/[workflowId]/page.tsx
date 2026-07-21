@@ -1,7 +1,7 @@
 "use client";
 
 import { useGetWorkflow, Workflow } from "@api";
-import { use, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { useButtonMenu } from "@/hook/button-menu.hook";
 import { AddWorkflowTriggerModal } from "@/modal/add-workflow-trigger/add-workflow-trigger.modal";
@@ -10,6 +10,8 @@ import { IconButton } from "@/components/icon-button/icon-button";
 import { IconDots } from "@tabler/icons-react";
 import { ListWorkflowStep } from "@/components/list-workflow-step/list-workflow-step.component";
 import { AddWorkflowStepModal } from "@/modal/add-workflow-step/add-workflow-step.modal";
+import { ContextMenuElement } from "@/context/context-menu.context";
+import { usePrivilegeCheck } from "@/hook/privilege-check.hook";
 
 interface Props {
 	params: Promise<{
@@ -43,35 +45,47 @@ interface InnerProps {
 export function Contents({ workflow }: InnerProps) {
 	const [triggerAddOpen, setTriggerAddOpen] = useState(false);
 	const [stepAddOpen, setStepAddOpen] = useState(false);
+	const hasPrivilege = usePrivilegeCheck();
 
-	const contextMenu = useButtonMenu(() => [
-		{
-			key: "add-trigger",
-			text: "Add trigger",
-			onClick: () => setTriggerAddOpen(true),
-		},
-		{
-			key: "add-step",
-			text: "Add step",
-			onClick: () => setStepAddOpen(true),
-		},
-	]);
+	const canEditWorkflows = hasPrivilege("edit-workflows");
+	const menuElements = useMemo<ContextMenuElement[]>(() => {
+		const elements: ContextMenuElement[] = [];
+		if (canEditWorkflows) {
+			elements.push(
+				{
+					key: "add-trigger",
+					text: "Add trigger",
+					onClick: () => setTriggerAddOpen(true),
+				},
+				{
+					key: "add-step",
+					text: "Add step",
+					onClick: () => setStepAddOpen(true),
+				},
+			);
+		}
+		return elements;
+	}, [canEditWorkflows]);
+
+	const contextMenu = useButtonMenu(() => menuElements);
 
 	return (
 		<>
 			<div>
 				<div className={styles.top}>
 					<h1 className={styles.name}>{workflow.name}</h1>
-					<IconButton
-						icon={IconDots}
-						iconSource="tabler"
-						onClick={contextMenu.onClick}
-					/>
+					{!!menuElements.length && (
+						<IconButton
+							icon={IconDots}
+							iconSource="tabler"
+							onClick={contextMenu.onClick}
+						/>
+					)}
 				</div>
 				<div className={styles.stepContainer}>
 					{workflow.steps?.map((step) => (
 						<div className={styles.step} key={step.uuid}>
-							<ListWorkflowStep step={step} />
+							<ListWorkflowStep step={step} canEdit={canEditWorkflows} />
 						</div>
 					))}
 				</div>

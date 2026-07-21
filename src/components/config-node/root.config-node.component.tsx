@@ -4,13 +4,15 @@ import { PluginConfigUpdateDtoValues } from "@api";
 import { PluginConfig } from "@api";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import styles from "./root.config-node.module.scss";
 
 interface Props {
 	config: PluginConfig;
 	onSave: (values: PluginConfigUpdateDtoValues) => void;
+	canEdit?: boolean;
 }
 
-export function RootConfigNode({ config, onSave }: Props) {
+export function RootConfigNode({ config, onSave, canEdit }: Props) {
 	const defaultValues = useMemo(() => {
 		const values: Record<string, any> = {};
 		const evaluate = (node: PluginConfig["node"]) => {
@@ -27,7 +29,6 @@ export function RootConfigNode({ config, onSave }: Props) {
 		return values;
 	}, [config]);
 
-	const [isSaving, setIsSaving] = useState(false);
 	const [values, setValues] = useState<Record<string, any>>({});
 	const hasChanges = useMemo(() => {
 		for (const [key, value] of Object.entries(defaultValues)) {
@@ -51,15 +52,18 @@ export function RootConfigNode({ config, onSave }: Props) {
 				onChange={(id, value) =>
 					setValues((values) => ({ ...values, [id]: value }))
 				}
+				disabled={!canEdit}
 			/>
-			<div>
-				<IconButton
-					icon={IconDeviceFloppy}
-					iconSource="tabler"
-					style={hasChanges ? "background" : "simple"}
-					onClick={() => onSave(values)}
-				/>
-			</div>
+			{canEdit && (
+				<div className={styles.saveContainer}>
+					<IconButton
+						icon={IconDeviceFloppy}
+						iconSource="tabler"
+						style={hasChanges ? "background" : "simple"}
+						onClick={() => onSave(values)}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

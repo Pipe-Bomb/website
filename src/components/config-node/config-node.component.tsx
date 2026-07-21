@@ -7,16 +7,25 @@ import { ParagraphConfigNode } from "@/components/config-node/paragraph.config-n
 interface Props {
 	node: PluginConfig["node"];
 	onChange: (id: string, value: any) => void;
+	disabled?: boolean;
 }
 
-export function ConfigNode({ node, onChange }: Props) {
+export function ConfigNode({ node, onChange, disabled }: Props) {
 	switch (node.type) {
 		case "section":
-			return <SectionConfigNode node={node} onChange={onChange} />;
+			return (
+				<SectionConfigNode
+					node={node}
+					onChange={onChange}
+					disabled={disabled}
+				/>
+			);
 		case "heading":
 			return <HeadingConfigNode node={node} />;
 		case "text":
-			return <TextConfigNode node={node} onChange={onChange} />;
+			return (
+				<TextConfigNode node={node} onChange={onChange} disabled={disabled} />
+			);
 		case "paragraph":
 			return <ParagraphConfigNode node={node} />;
 	}

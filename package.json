@@ -7,7 +7,8 @@
 		"dev:webpack": "next dev --webpack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint"
+		"lint": "eslint",
+		"load-memory": "rm -rf .next; mkdir -p .next; sudo mount -t tmpfs -o size=1G tmpfs .next"
 	},
 	"dependencies": {
 		"@tabler/icons-react": "^3.41.1",

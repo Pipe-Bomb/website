@@ -1,0 +1,24 @@
+.container {
+	.username {
+		margin: 16px 0;
+	}
+
+	.userList {
+		display: flex;
+		flex-direction: column;
+		max-height: 200px;
+		overflow-y: auto;
+		gap: 1px;
+		max-width: 400px;
+		// background: var(--bg-surface);
+		border-radius: 8px;
+
+		.userEntry {
+			border: none;
+			background: var(--bg-surface);
+			text-align: left;
+			padding: 4px 16px;
+			cursor: pointer;
+		}
+	}
+}

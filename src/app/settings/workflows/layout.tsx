@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import styles from "../layout.module.scss";
 import Link from "next/link";
 import {
@@ -20,6 +20,7 @@ import {
 	WorkflowContextType,
 	WorkflowProgressProvider,
 } from "@/context/workflow-progress.context";
+import { usePrivilegeCheck } from "@/hook/privilege-check.hook";
 
 interface Props {
 	children: ReactNode;
@@ -27,6 +28,12 @@ interface Props {
 
 export default function Layout({ children }: Props) {
 	const [createOpen, setCreateOpen] = useState(false);
+	const canEditWorkflows = usePrivilegeCheck()("edit-workflows");
+	useEffect(() => {
+		if (!canEditWorkflows) {
+			setCreateOpen(false);
+		}
+	}, [canEditWorkflows]);
 
 	const workflowsResponse = useGetAllWorkflows({
 		query: {
@@ -73,11 +80,13 @@ export default function Layout({ children }: Props) {
 							<Spinner />
 						)}
 					</div>
-					<IconButton
-						icon={IconPlus}
-						iconSource="tabler"
-						onClick={() => setCreateOpen(true)}
-					/>
+					{canEditWorkflows && (
+						<IconButton
+							icon={IconPlus}
+							iconSource="tabler"
+							onClick={() => setCreateOpen(true)}
+						/>
+					)}
 				</div>
 				<div className={styles.content}>{children}</div>
 			</div>

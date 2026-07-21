@@ -14,7 +14,7 @@ export default function Page() {
 		},
 	});
 
-	if (!tasksResponse) {
+	if (tasksResponse?.status != 200) {
 		return <Spinner position="expand" />;
 	}
 

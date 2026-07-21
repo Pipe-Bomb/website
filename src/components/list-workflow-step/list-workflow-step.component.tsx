@@ -26,12 +26,14 @@ import { Button } from "@/components/button/button.component";
 import { SelectWorkflowStepModal } from "@/modal/select-workflow-step/select-workflow-step.modal";
 import { ProgressBar } from "@/components/progress-bar/progress-bar.component";
 import { useWorkflowProgress } from "@/context/workflow-progress.context";
+import { ContextMenuElement } from "@/context/context-menu.context";
 
 interface Props {
 	step: WorkflowStep;
+	canEdit: boolean;
 }
 
-export function ListWorkflowStep({ step }: Props) {
+export function ListWorkflowStep({ step, canEdit }: Props) {
 	const { t } = useTranslation();
 	const [isDeleting, setIsDeleting] = useState(false);
 	const { createNotification, updateNotification, resetNotificationTimeout } =
@@ -73,43 +75,48 @@ export function ListWorkflowStep({ step }: Props) {
 		);
 	};
 
-	const rightClick = useRightClick(() => [
-		{
-			key: "delete",
-			text: "Delete step",
-			onClick: () => {
-				if (isDeleting) {
-					return;
-				}
-				setIsDeleting(true);
-				const notificationId = createNotification("Deleting workflow step", {
-					timeout: null,
-					isLoading: true,
-				});
-				safeFetch(deleteWorkflowStep, step.workflowUuid, step.uuid).then(
-					([status, _data, response]) => {
-						resetNotificationTimeout(notificationId);
+	const rightClick = useRightClick(() => {
+		const elements: ContextMenuElement[] = [];
 
-						if (status == 200) {
-							updateNotification(notificationId, {
-								message: "Deleted workflow step",
-								isLoading: false,
-							});
-							queryClient.setQueryData(
-								getGetWorkflowQueryKey(step.workflowUuid),
-								response,
-							);
-						} else {
-							updateNotification(notificationId, {
-								message: "Failed to delete workflow step",
-								isLoading: false,
-							});
-						}
-					},
-				);
-			},
-		},
-	]);
+		if (canEdit) {
+			elements.push({
+				key: "delete",
+				text: "Delete step",
+				onClick: () => {
+					if (isDeleting) {
+						return;
+					}
+					setIsDeleting(true);
+					const notificationId = createNotification("Deleting workflow step", {
+						timeout: null,
+						isLoading: true,
+					});
+					safeFetch(deleteWorkflowStep, step.workflowUuid, step.uuid).then(
+						([status, _data, response]) => {
+							resetNotificationTimeout(notificationId);
+
+							if (status == 200) {
+								updateNotification(notificationId, {
+									message: "Deleted workflow step",
+									isLoading: false,
+								});
+								queryClient.setQueryData(
+									getGetWorkflowQueryKey(step.workflowUuid),
+									response,
+								);
+							} else {
+								updateNotification(notificationId, {
+									message: "Failed to delete workflow step",
+									isLoading: false,
+								});
+							}
+						},
+					);
+				},
+			});
+		}
+		return elements;
+	});
 
 	const saveOptions = () => {
 		if (isSaving || !needsSaving) {
@@ -147,7 +154,7 @@ export function ListWorkflowStep({ step }: Props) {
 					</span>
 					<span className={styles.stepName}>{t(`${baseLangKey}.name`)}</span>
 				</div>
-				{needsSaving && (
+				{needsSaving && canEdit && (
 					<IconButton
 						icon={IconDeviceFloppy}
 						iconSource="tabler"
@@ -168,6 +175,7 @@ export function ListWorkflowStep({ step }: Props) {
 							<OptionContents
 								option={option}
 								onChange={(value) => handleOptionChange(option.id, value)}
+								disabled={!canEdit}
 							/>
 						</div>
 					))}
@@ -192,27 +200,58 @@ interface OptionContentsProps {
 		| DecimalWorkflowStepOptionValue
 		| EnumWorkflowStepOptionValue;
 	onChange: (value: string | number | boolean | null) => void;
+	disabled: boolean;
 }
 
-function OptionContents({ option, onChange }: OptionContentsProps) {
+function OptionContents({ option, onChange, disabled }: OptionContentsProps) {
 	if (option.type == "string") {
-		return <StringOptionContents option={option} onChange={onChange} />;
+		return (
+			<StringOptionContents
+				option={option}
+				onChange={onChange}
+				disabled={disabled}
+			/>
+		);
 	}
 
 	if (option.type == "boolean") {
-		return <BooleanOptionContents option={option} onChange={onChange} />;
+		return (
+			<BooleanOptionContents
+				option={option}
+				onChange={onChange}
+				disabled={disabled}
+			/>
+		);
 	}
 
 	if (option.type == "enum") {
-		return <EnumOptionContents option={option} onChange={onChange} />;
+		return (
+			<EnumOptionContents
+				option={option}
+				onChange={onChange}
+				disabled={disabled}
+			/>
+		);
 	}
 
 	if (option.type == "integer") {
-		return <IntegerOptionContents option={option} onChange={onChange} />;
+		return (
+			<IntegerOptionContents
+				option={option}
+				onChange={onChange}
+				disabled={disabled}
+			/>
+		);
 	}
 
 	if (option.type == "decimal") {
-		return <DecimalOptionContents option={option} onChange={onChange} />;
+		return (
+			<DecimalOptionContents
+				option={option}
+				onChange={onChange}
+				disabled={disabled}
+			/>
+		);
 	}
 
 	return null;
@@ -221,17 +260,20 @@ function OptionContents({ option, onChange }: OptionContentsProps) {
 interface SubContentsProps<T> {
 	option: T;
 	onChange: (value: string | number | boolean | null) => void;
+	disabled: boolean;
 }
 
 function StringOptionContents({
 	option,
 	onChange,
+	disabled,
 }: SubContentsProps<StringWorkflowStepOptionValue>) {
 	return (
 		<TextInput
 			value={option.value ?? ""}
 			onChange={onChange}
 			placeholder="String value"
+			disabled={disabled}
 		/>
 	);
 }
@@ -239,13 +281,21 @@ function StringOptionContents({
 function BooleanOptionContents({
 	option,
 	onChange,
+	disabled,
 }: SubContentsProps<BooleanWorkflowStepOptionValue>) {
-	return <Checkbox checked={!!option.value} onChange={onChange} />;
+	return (
+		<Checkbox
+			checked={!!option.value}
+			onChange={onChange}
+			disabled={disabled}
+		/>
+	);
 }
 
 function EnumOptionContents({
 	option,
 	onChange,
+	disabled,
 }: SubContentsProps<EnumWorkflowStepOptionValue>) {
 	const [modalOpen, setModalOpen] = useState(false);
 	const { t } = useTranslation();
@@ -257,24 +307,40 @@ function EnumOptionContents({
 		return option.options.find((o) => o.id == option.value) ?? null;
 	}, [option.options, option.value]);
 
+	useEffect(() => {
+		if (disabled) {
+			setModalOpen(false);
+		}
+	}, [disabled]);
+
 	return (
 		<>
-			<Button onClick={() => setModalOpen(true)} style="secondary">
+			<Button
+				onClick={() => {
+					if (!disabled) {
+						setModalOpen(true);
+					}
+				}}
+				style="secondary"
+				disabled={disabled}
+			>
 				{selectedOption
 					? selectedOption.languageKey
 						? t(selectedOption.languageKey)
 						: selectedOption.name || selectedOption.id
 					: "Select"}
 			</Button>
-			<SelectWorkflowStepModal
-				open={modalOpen}
-				onClose={() => setModalOpen(false)}
-				options={option.options}
-				onSelect={(id) => {
-					setModalOpen(false);
-					onChange(id);
-				}}
-			/>
+			{!disabled && (
+				<SelectWorkflowStepModal
+					open={modalOpen}
+					onClose={() => setModalOpen(false)}
+					options={option.options}
+					onSelect={(id) => {
+						setModalOpen(false);
+						onChange(id);
+					}}
+				/>
+			)}
 		</>
 	);
 }
@@ -282,6 +348,7 @@ function EnumOptionContents({
 function IntegerOptionContents({
 	option,
 	onChange,
+	disabled,
 }: SubContentsProps<IntegerWorkflowStepOptionValue>) {
 	const fallbackValue =
 		option.value !== null && option.value !== undefined
@@ -331,6 +398,7 @@ function IntegerOptionContents({
 			onChange={handleChange}
 			onBlur={handleBlur}
 			placeholder="Integer value"
+			disabled={disabled}
 		/>
 	);
 }
@@ -338,6 +406,7 @@ function IntegerOptionContents({
 function DecimalOptionContents({
 	option,
 	onChange,
+	disabled,
 }: SubContentsProps<DecimalWorkflowStepOptionValue>) {
 	const fallbackValue =
 		option.value !== null && option.value !== undefined
@@ -397,6 +466,7 @@ function DecimalOptionContents({
 			onChange={handleChange}
 			onBlur={handleBlur}
 			placeholder="Decimal value"
+			disabled={disabled}
 		/>
 	);
 }

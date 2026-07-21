@@ -9,7 +9,20 @@
 	position: relative;
 
 	&.checked {
-		// background: blue;
 		background: var(--accent-primary);
+	}
+
+	&:disabled {
+		background: var(--fg-muted);
+		cursor: initial;
+
+		.tick {
+			color: var(--fg-secondary);
+		}
+	}
+
+	.tick {
+		width: 100%;
+		height: 100%;
 	}
 }

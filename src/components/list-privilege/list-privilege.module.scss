@@ -1,0 +1,25 @@
+.container {
+	display: flex;
+	gap: 16px;
+	background: var(--bg-surface);
+	padding: 8px;
+	gap: 8px;
+	border-radius: 4px;
+	align-items: center;
+
+	.info {
+		display: flex;
+		flex-direction: column;
+
+		.source {
+			color: var(--fg-secondary);
+			font-size: 0.8rem;
+		}
+
+		.name {
+			border: none;
+			background: transparent;
+			cursor: pointer;
+		}
+	}
+}

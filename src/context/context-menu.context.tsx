@@ -62,7 +62,9 @@ export const ContextMenuProvider: React.FC<{ children: React.ReactNode }> = ({
 		elements: ContextMenuElement[],
 		anchor: HTMLElement | null = null,
 	) => {
-		setMenu({ x, y, elements, anchor });
+		if (elements.length) {
+			setMenu({ x, y, elements, anchor });
+		}
 	};
 
 	// Close on outside click

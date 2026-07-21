@@ -26,9 +26,11 @@ import { useAttribute } from "@/hook/attribute.hook";
 import { useRightClick } from "@/hook/right-click.hook";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { usePrivilegeCheck } from "@/hook/privilege-check.hook";
 
 export function Navbar() {
 	const [createPlaylistOpen, setCreatePlaylistOpen] = useState(false);
+	const hasPrivilege = usePrivilegeCheck();
 
 	const libraries = useGetAllLibraries({
 		query: {
@@ -46,6 +48,12 @@ export function Navbar() {
 	if (pathname.startsWith("/settings/")) {
 		return null;
 	}
+
+	const showSettings =
+		hasPrivilege("view-tasks") ||
+		hasPrivilege("view-privileges") ||
+		hasPrivilege("edit-attribute-source-order") ||
+		hasPrivilege("view-workflows");
 
 	return (
 		<>
@@ -110,9 +118,11 @@ export function Navbar() {
 						<Link href="/settings/user">
 							<IconButton icon={IconUserCog} iconSource="tabler" />
 						</Link>
-						<Link href="/settings/system/tasks">
-							<IconButton icon={IconServerCog} iconSource="tabler" />
-						</Link>
+						{showSettings && (
+							<Link href="/settings/system">
+								<IconButton icon={IconServerCog} iconSource="tabler" />
+							</Link>
+						)}
 					</div>
 				</div>
 			</div>

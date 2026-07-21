@@ -53,7 +53,11 @@ export function Contents({ pluginId, configId }: Props) {
 			<h1>{t(`plugin.${pluginId}.name`)}</h1>
 			{configResponse.data ? (
 				configResponse.data.status == 200 ? (
-					<RootConfigNode config={configResponse.data.data} onSave={save} />
+					<RootConfigNode
+						config={configResponse.data.data}
+						onSave={save}
+						canEdit={true}
+					/>
 				) : (
 					<h2>Config not found</h2>
 				)
