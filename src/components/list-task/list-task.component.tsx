@@ -16,12 +16,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getGetTasksQueryKey, startTask } from "@api";
 import { useButtonMenu } from "@/hook/button-menu.hook";
 import { ContextMenuElement } from "@/context/context-menu.context";
+import { usePrivilegeCheck } from "@/hook/privilege-check.hook";
 
 interface Props {
 	task: Task;
 }
 
 export function ListTask({ task }: Props) {
+	const canRun = usePrivilegeCheck()("run-tasks");
 	const [isLoading, setIsLoading] = useState(false);
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
@@ -85,6 +87,9 @@ export function ListTask({ task }: Props) {
 				style="background"
 				iconSource="tabler"
 				onClick={(e) => {
+					if (!canRun) {
+						return;
+					}
 					if (task.status == TaskStatus.running) {
 						console.log("Cancelling task"); // todo: implement
 					} else {
@@ -96,6 +101,7 @@ export function ListTask({ task }: Props) {
 					}
 				}}
 				loading={isLoading}
+				disabled={canRun}
 			/>
 			<div className={styles.right}>
 				<span className={styles.source}>
