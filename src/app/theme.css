@@ -115,7 +115,7 @@
 	/* =========================
      🧾 Inputs / Forms
      ========================= */
-	--input-bg: var(--bg-surface); /* input background */
+	--input-bg: var(--bg-base); /* input background */
 	--input-fg: var(--fg-primary); /* input text */
 	--input-border: var(--border-default);
 	--input-placeholder: var(--fg-tertiary); /* placeholder text */

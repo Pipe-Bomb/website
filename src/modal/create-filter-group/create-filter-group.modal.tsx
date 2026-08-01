@@ -16,12 +16,7 @@ import { SmartFilterDto } from "@/interface/smart-filter.dto";
 import { useAttributeFilterDescription } from "@/hook/attribute-filter-description.hook";
 import { SmartFilterListEntry } from "@/components/smart-filter-list-entry/smart-filter-list-entry.component";
 import { IconButton } from "@/components/icon-button/icon-button";
-import {
-	IconCancel,
-	IconDeviceFloppy,
-	IconPlus,
-	IconTrash,
-} from "@tabler/icons-react";
+import { IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
 
 interface PassthroughProps {
 	existingGroup?: SmartPlaylistFilterGroup | null;

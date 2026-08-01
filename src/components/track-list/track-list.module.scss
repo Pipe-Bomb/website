@@ -1,7 +1,6 @@
 .columnHeadingContainer {
 	display: flex;
 	gap: 3px;
-	border-radius: 8px;
 	overflow: hidden;
 	position: sticky;
 	top: 0;
@@ -12,7 +11,7 @@
 	.columnHeadingExpander {
 		flex-grow: 1;
 		background: var(--bg-elevated);
-		border-radius: 3px;
+		border-radius: 4px;
 	}
 
 	.columnHeading {
@@ -30,6 +29,7 @@
 			text-overflow: ellipsis;
 			width: 100%;
 			display: block;
+			white-space: pre;
 		}
 
 		.mover {

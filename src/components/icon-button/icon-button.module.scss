@@ -8,6 +8,11 @@
 	isolation: isolate;
 	flex-shrink: 0;
 
+	&:focus {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
+	}
+
 	&.primary {
 		--bg: var(--button-primary-bg);
 		--fg: var(--button-primary-fg);

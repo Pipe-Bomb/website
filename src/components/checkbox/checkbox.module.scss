@@ -1,12 +1,19 @@
 .checkbox {
 	width: 24px;
 	height: 24px;
-	background: var(--bg-elevated);
+	background: var(--input-bg);
 	display: block;
-	border: 2px solid var(--border-strong);
-	border-radius: 8px;
+	border: 1px solid var(--border-strong);
+	border-radius: 4px;
 	cursor: pointer;
 	position: relative;
+	overflow: hidden;
+	transition: background 0.1s;
+
+	&:focus {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
+	}
 
 	&.checked {
 		background: var(--accent-primary);
@@ -24,5 +31,17 @@
 	.tick {
 		width: 100%;
 		height: 100%;
+		color: var(--fg-primary);
+		animation: #{fade-in} cubic-bezier(0, 1.74, 0.76, 1) 0.3s;
+		animation-fill-mode: forwards;
+	}
+}
+
+@keyframes #{fade-in} {
+	0% {
+		transform: translateY(100%);
+	}
+	100% {
+		transform: translateY(0);
 	}
 }

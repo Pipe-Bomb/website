@@ -9,6 +9,7 @@ import { cc, compare } from "@/lib/util";
 import { useTranslation } from "@/context/language.context";
 import { useTrackColumns } from "@/context/track-columns.context";
 import { useRankedAttributes } from "@/hook/ranked-attributes.hook";
+import { Checkbox } from "@/components/checkbox/checkbox.component";
 
 interface Props extends InnerProps {
 	open: boolean;
@@ -76,10 +77,7 @@ function Inner({ specialColumns }: InnerProps) {
 						return (
 							<button
 								key={column.id}
-								className={cc(
-									styles.attributeContainer,
-									active && styles.active,
-								)}
+								className={styles.attributeContainer}
 								onClick={() => {
 									if (active) {
 										setColumns(
@@ -102,7 +100,27 @@ function Inner({ specialColumns }: InnerProps) {
 								<span className={styles.attributeName}>
 									{t(`attribute.${column.id}.name`)}
 								</span>
-								<span className={styles.attributeIndicator} />
+								<Checkbox
+									checked={active}
+									onChange={() => {
+										if (active) {
+											setColumns(
+												columns.filter(
+													(c) => c.type != "special" || c.id != column.id,
+												),
+											);
+										} else {
+											setColumns([
+												{
+													type: "special",
+													id: column.id,
+													width: 150,
+												},
+												...columns,
+											]);
+										}
+									}}
+								/>
 							</button>
 						);
 					})}
@@ -120,7 +138,7 @@ function Inner({ specialColumns }: InnerProps) {
 					return (
 						<button
 							key={attribute.key}
-							className={cc(styles.attributeContainer, active && styles.active)}
+							className={styles.attributeContainer}
 							onClick={() => {
 								if (active) {
 									setColumns(
@@ -145,7 +163,31 @@ function Inner({ specialColumns }: InnerProps) {
 							}}
 						>
 							<span className={styles.attributeName}>{name}</span>
-							<span className={styles.attributeIndicator} />
+							<Checkbox
+								checked={active}
+								onChange={() => {
+									if (active) {
+										setColumns(
+											columns.filter(
+												(column) =>
+													column.type != "basic" ||
+													column.attribute != attribute.key ||
+													column.attributeType != attribute.type,
+											),
+										);
+									} else {
+										setColumns([
+											{
+												type: "basic",
+												attribute: attribute.key,
+												attributeType: attribute.type,
+												width: 150,
+											},
+											...columns,
+										]);
+									}
+								}}
+							/>
 						</button>
 					);
 				})}

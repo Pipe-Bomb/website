@@ -105,13 +105,12 @@ export function ListTrack({
 					)}
 
 					<div className={styles.info}>
-						<span className={styles.title}>
-							<Link
-								href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
-							>
-								{title}
-							</Link>
-						</span>
+						<Link
+							className={styles.title}
+							href={`/track/${track.pluginId}/${track.libraryId}/${track.trackId}`}
+						>
+							{title}
+						</Link>
 
 						{"artists" in track && !!track.artists && (
 							<span className={styles.artist}>
@@ -190,14 +189,16 @@ function BufferColumn({ column, attributes }: BufferColumnProps) {
 	}
 
 	return (
-		<Link href={attribute.url} target="_blank">
-			<IconButton
-				icon={IconExternalLinkFilled}
-				iconSource="tabler"
-				size="sm"
-				style="ghost"
-			/>
-		</Link>
+		<IconButton
+			icon={IconExternalLinkFilled}
+			iconSource="tabler"
+			size="sm"
+			style="ghost"
+			href={attribute.url}
+			target="_blank"
+			className={styles.bufferLink}
+			iconClassName={styles.bufferLinkIcon}
+		/>
 	);
 }
 
@@ -213,5 +214,5 @@ function ValueColumn({ column, attributes }: ValueColumnProps) {
 		column.attributeType,
 	);
 
-	return attribute;
+	return <span className={styles.columnValue}>{attribute}</span>;
 }

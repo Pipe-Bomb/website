@@ -4,6 +4,7 @@ import { Spinner } from "@/components/spinner/spinner.component";
 import { useAttribute } from "@/hook/attribute.hook";
 import { Playlist, useGetOwnPlaylists } from "@api";
 import styles from "./playlist-select.module.scss";
+import { PlaylistEntry } from "@/components/playlist-entry/playlist-entry.component";
 
 interface Props extends InnerProps {
 	open: boolean;
@@ -45,23 +46,9 @@ function Inner({ onSelect }: InnerProps) {
 				<PlaylistEntry
 					playlist={playlist}
 					key={playlist.uuid}
-					onSelect={onSelect}
+					onClick={() => onSelect?.(playlist)}
 				/>
 			))}
 		</div>
-	);
-}
-
-interface PlaylistEntryProps extends InnerProps {
-	playlist: Playlist;
-}
-
-function PlaylistEntry({ playlist, onSelect }: PlaylistEntryProps) {
-	const title = useAttribute(playlist.attributes, "title", "string");
-
-	return (
-		<Button style="secondary" onClick={() => onSelect?.(playlist)}>
-			{title ?? "Unnamed Playlist"}
-		</Button>
 	);
 }

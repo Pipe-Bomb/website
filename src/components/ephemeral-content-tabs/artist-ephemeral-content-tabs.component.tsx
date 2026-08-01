@@ -137,10 +137,35 @@ function ViaUuid({ uuid }: ViaUuid) {
 		}
 	}, [activeSource, uuid]);
 
-	if (sourcesQuery.isPending || contentQuery.isPending) {
+	if (sourcesQuery.isPending) {
 		return (
 			<div className={styles.loading}>
 				<Spinner position="expand" />
+			</div>
+		);
+	}
+
+	if (contentQuery.isPending && sources) {
+		return (
+			<div className={styles.container}>
+				<RootPadding>
+					<h2 className={styles.heading}>From Other Sources</h2>
+					<Tabs className={styles.tabs}>
+						{sources.map((source) => (
+							<Button
+								key={`${source.pluginId} ${source.id}`}
+								style={activeSource == source ? "primary" : "secondary"}
+								onClick={() => setSourceId(`${source.pluginId}~${source.id}`)}
+							>
+								{source.name}
+							</Button>
+						))}
+					</Tabs>
+				</RootPadding>
+
+				<div className={styles.loading}>
+					<Spinner position="expand" />
+				</div>
 			</div>
 		);
 	}

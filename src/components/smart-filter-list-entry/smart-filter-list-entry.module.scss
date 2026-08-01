@@ -1,5 +1,6 @@
 .container {
-	border: 2px solid var(--border-strong);
+	border: 1px solid var(--border-strong);
+	background: var(--bg-elevated);
 	border-radius: 8px;
 	padding: 8px;
 	display: flex;

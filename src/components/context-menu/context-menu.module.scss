@@ -7,14 +7,16 @@
 	flex-direction: column;
 	box-shadow: var(--shadow-md);
 	overflow: hidden;
+	border: 1px solid var(--border-strong);
 
 	.element {
-		padding: 8px;
+		padding: 8px 12px;
 		border: none;
 		background: var(--button-ghost-bg);
 		color: var(--button-ghost-fg);
 		cursor: pointer;
 		text-align: left;
+		font-size: 0.9rem;
 
 		&:hover,
 		&:focus {

@@ -3,6 +3,11 @@
 
 	&.artistLink {
 		text-decoration: underline;
+
+		&:focus {
+			color: var(--accent-primary);
+			outline: none;
+		}
 	}
 }
 
