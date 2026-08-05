@@ -13,7 +13,7 @@ export function PlaylistEntry({ playlist, onClick }: Props) {
 	const thumb = useRawAttribute(playlist.attributes, "thumb", "buffer");
 
 	return (
-		<button className={styles.container}>
+		<button className={styles.container} onClick={onClick}>
 			<div className={styles.thumbContainer}>
 				<img
 					src={thumb ? `${thumb.url}?width=32&height=32` : "/no_album_art.jpg"}
