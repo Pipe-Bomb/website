@@ -12,6 +12,7 @@ import { useKeyboardShortcuts } from "@/hook/keyboard-shortcuts.hook";
 import { useState } from "react";
 import { useButtonMenu } from "@/hook/button-menu.hook";
 import { logoutUser } from "@api";
+import { ContextMenuElement } from "@/context/context-menu.context";
 
 export function TopBar() {
 	const user = useAuth();
@@ -45,17 +46,29 @@ export function TopBar() {
 		setQuery(newQuery);
 	};
 
-	const { onClick } = useButtonMenu(() => [
-		{
-			key: "logout",
-			languageKey: "contextmenu.top.logout",
-			onClick: () => {
-				logoutUser().then((response) => {
-					router.refresh();
-				});
+	const { onClick } = useButtonMenu(() => {
+		const items: ContextMenuElement[] = [
+			{
+				key: "logout",
+				languageKey: "contextmenu.top.logout",
+				onClick: () => {
+					logoutUser().then((response) => {
+						router.refresh();
+					});
+				},
 			},
-		},
-	]);
+		];
+
+		if (user) {
+			items.unshift({
+				key: "go-to-profile",
+				languageKey: "contextmenu.top.view-profile",
+				href: `/user/${user.uuid}`,
+			});
+		}
+
+		return items;
+	});
 
 	return (
 		<div className={styles.container}>

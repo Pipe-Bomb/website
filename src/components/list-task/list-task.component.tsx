@@ -24,6 +24,7 @@ interface Props {
 
 export function ListTask({ task }: Props) {
 	const canRun = usePrivilegeCheck()("run-tasks");
+
 	const [isLoading, setIsLoading] = useState(false);
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
@@ -101,7 +102,7 @@ export function ListTask({ task }: Props) {
 					}
 				}}
 				loading={isLoading}
-				disabled={canRun}
+				disabled={!canRun || task.status == TaskStatus.running}
 			/>
 			<div className={styles.right}>
 				<span className={styles.source}>
