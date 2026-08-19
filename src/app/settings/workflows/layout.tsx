@@ -42,7 +42,8 @@ export default function Layout({ children }: Props) {
 		},
 	});
 
-	const workflows = workflowsResponse.data?.data;
+	const workflows =
+		workflowsResponse.data?.status == 200 && workflowsResponse.data?.data;
 	const context: Record<string, WorkflowContextType> = useMemo(() => {
 		if (!workflows) {
 			return {};

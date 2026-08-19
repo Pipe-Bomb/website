@@ -1,10 +1,10 @@
 "use client";
 
-import { ListAttributeSource } from "@/components/list-attribute-source/list-attribute-source.component";
 import { ListIdentifier } from "@/components/list-identifier/list-identifier.component";
 import { List } from "@/components/list/list.component";
 import { Spinner } from "@/components/spinner/spinner.component";
-import { useGetAllAttributeSources, useGetAllIdentifiers } from "@api";
+import { unwrapData } from "@/lib/api.util";
+import { useGetAllIdentifiers } from "@api";
 
 export default function Page() {
 	const { data: identifiersResponse } = useGetAllIdentifiers({
@@ -18,7 +18,7 @@ export default function Page() {
 		return <Spinner position="expand" />;
 	}
 
-	const identifiers = identifiersResponse.data;
+	const identifiers = unwrapData(identifiersResponse);
 
 	return (
 		<div>

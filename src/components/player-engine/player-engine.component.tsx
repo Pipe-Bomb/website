@@ -160,8 +160,8 @@ export default function AudioEngine() {
 		createTrackAudioSession(
 			...(currentTrack.split(":") as [string, string, string]),
 		)
-			.then(({ data: session }) => {
-				if (cancelled || !audio || !session) return;
+			.then(({ status, data: session }) => {
+				if (cancelled || !audio || !session || status != 200) return;
 
 				if (session.type === "stream") {
 					audio.src = `${session.baseUrl}/stream`;

@@ -23,12 +23,15 @@ export default function Layout({ children }: Props) {
 
 	const { t } = useTranslation();
 
-	const pluginConfigs = pluginConfigsResponse.data?.data;
+	const pluginConfigs =
+		pluginConfigsResponse.data?.status == 200 &&
+		pluginConfigsResponse.data?.data;
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.sideBar}>
 				<div className={styles.tabs}>
+					<Link href="/settings/system">System</Link>
 					{hasPrivilege("view-privileges") && (
 						<Link href="/settings/system/users">Users</Link>
 					)}

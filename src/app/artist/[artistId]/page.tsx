@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
-import { getArtistExternalUrls } from "@/api";
-import { getArtistById } from "@/lib/api.util";
+import { Artist, getArtistExternalUrls } from "@/api";
+import { getArtistById, unwrapData } from "@/lib/api.util";
 import { ArtistEphemeralContentTabs } from "@/components/ephemeral-content-tabs/artist-ephemeral-content-tabs.component";
 import { TrackList } from "@/components/track-list/track-list.component";
 import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-scroller.component";
@@ -65,7 +65,7 @@ export default async function Page({ params }: Props) {
 		return <h1>Artist not found</h1>;
 	}
 
-	const artist = artistResponse.data;
+	const artist = unwrapData(artistResponse);
 
 	const artistUrlsResponse =
 		(!!artist.uuid &&

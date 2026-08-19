@@ -5,6 +5,7 @@ import { HorizontalScroller } from "@/components/horizontal-scroller/horizontal-
 import { GridPlaylist } from "@/components/grid-playlist/grid-playlist.component";
 import { Metadata } from "next";
 import { getAuthHeaders } from "@/lib/server.util";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props {
 	params: Promise<{ userId: string }>;
@@ -51,7 +52,7 @@ export default async function Page({ params }: Props) {
 		return <h1>User not found</h1>;
 	}
 
-	const user = userResponse.data;
+	const user = unwrapData(userResponse);
 
 	return (
 		<div>

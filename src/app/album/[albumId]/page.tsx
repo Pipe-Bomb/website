@@ -1,12 +1,12 @@
 import { getAttribute } from "@/lib/attribute.util";
-import { getAlbumExternalUrls } from "@api";
+import { Album, getAlbumExternalUrls } from "@api";
 import styles from "./page.module.scss";
 import { ExternalUrlList } from "@/components/external-url-list/external-url-list.component";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import { AlbumArtists } from "@/components/album-artists/album-artists.component";
 import { AlbumButtons } from "@/components/album-buttons/album-buttons.component";
 import { TrackList } from "@/components/track-list/track-list.component";
-import { getAlbumById } from "@/lib/api.util";
+import { getAlbumById, unwrapData } from "@/lib/api.util";
 import { AlbumEphemeralContentTabs } from "@/components/ephemeral-content-tabs/album-ephemeral-content-tabs.component";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { TrackListProvider } from "@/context/tracklist.context";
@@ -83,7 +83,7 @@ export default async function Page({ params }: Props) {
 		return <h1>Album not found</h1>;
 	}
 
-	const album = albumResponse.data;
+	const album = unwrapData(albumResponse);
 	const title =
 		getAttribute(album.attributes, "title", "string", true) ?? "Unknown Album";
 	const front = getAttribute(album.attributes, "front", "buffer");

@@ -25,6 +25,7 @@ import { TopBar } from "@/components/top-bar/top-bar.component";
 import { ScrollParentProvider } from "@/context/scroll-parent.context";
 import { getAuthHeaders } from "@/lib/server.util";
 import { NotificationList } from "@/components/notification-list/notification-list.component";
+import { unwrapData } from "@/lib/api.util";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -49,66 +50,72 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const user = await getAuthenticatedUser();
-	const res = await getLanguageMap("en_US"); // todo: make this configurable
+	const languageMapResponse = await getLanguageMap("en_US"); // todo: make this configurable
 
-	const cookieStore = await cookies();
-	const trackColumnsCookie = cookieStore.get("track_columns");
-	let initialTrackColumns: AttributeColumn[] = [
-		{
-			type: "basic",
-			attribute: "genre",
-			attributeType: "string",
-			width: 100,
-		},
-		{
-			type: "basic",
-			attribute: "duration",
-			attributeType: "decimal",
-			width: 100,
-		},
-	];
+	try {
+		const languageMap = unwrapData(languageMapResponse);
 
-	if (trackColumnsCookie) {
-		try {
-			initialTrackColumns = JSON.parse(trackColumnsCookie.value);
-		} catch {}
-	}
+		const cookieStore = await cookies();
+		const trackColumnsCookie = cookieStore.get("track_columns");
+		let initialTrackColumns: AttributeColumn[] = [
+			{
+				type: "basic",
+				attribute: "genre",
+				attributeType: "string",
+				width: 100,
+			},
+			{
+				type: "basic",
+				attribute: "duration",
+				attributeType: "decimal",
+				width: 100,
+			},
+		];
 
-	return (
-		<html lang="en" className={cc(inter.variable, outfit.variable)}>
-			<body>
-				<LanguageProvider data={res.data}>
-					<AuthProvider user={user}>
-						<ContextMenuProvider>
-							<TrackColumnsProvider initialColumns={initialTrackColumns}>
-								<ModalProvider>
-									<ReactQueryProvider>
-										<div className={styles.container}>
-											<TopBar />
-											<div className={styles.body}>
-												{user && <Navbar />}
-												<ScrollParentProvider
-													className={styles.contentPlacement}
-												>
-													<div className={styles.content}>{children}</div>
-												</ScrollParentProvider>
+		if (trackColumnsCookie) {
+			try {
+				initialTrackColumns = JSON.parse(trackColumnsCookie.value);
+			} catch {}
+		}
 
-												{user && <SideBar />}
+		return (
+			<html lang="en" className={cc(inter.variable, outfit.variable)}>
+				<body>
+					<LanguageProvider data={languageMap}>
+						<AuthProvider user={user}>
+							<ContextMenuProvider>
+								<TrackColumnsProvider initialColumns={initialTrackColumns}>
+									<ModalProvider>
+										<ReactQueryProvider>
+											<div className={styles.container}>
+												<TopBar />
+												<div className={styles.body}>
+													{user && <Navbar />}
+													<ScrollParentProvider
+														className={styles.contentPlacement}
+													>
+														<div className={styles.content}>{children}</div>
+													</ScrollParentProvider>
+
+													{user && <SideBar />}
+												</div>
+												{user && <Player />}
+												<AudioEngine />
 											</div>
-											{user && <Player />}
-											<AudioEngine />
-										</div>
-										<ModalBackground />
-										<NotificationList />
-									</ReactQueryProvider>
-								</ModalProvider>
-							</TrackColumnsProvider>
-						</ContextMenuProvider>
-					</AuthProvider>
-				</LanguageProvider>
-			</body>
-		</html>
-	);
+											<ModalBackground />
+											<NotificationList />
+										</ReactQueryProvider>
+									</ModalProvider>
+								</TrackColumnsProvider>
+							</ContextMenuProvider>
+						</AuthProvider>
+					</LanguageProvider>
+				</body>
+			</html>
+		);
+	} catch (e) {
+		return <h1>Failed to load language map</h1>;
+	}
 }
 
 async function getAuthenticatedUser() {

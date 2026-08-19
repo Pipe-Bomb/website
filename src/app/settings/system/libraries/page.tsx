@@ -3,6 +3,7 @@
 import { ListLibrary } from "@/components/list-library/list-library.component";
 import { List } from "@/components/list/list.component";
 import { Spinner } from "@/components/spinner/spinner.component";
+import { unwrapData } from "@/lib/api.util";
 import { useGetAllLibraries } from "@api";
 
 export default function Page() {
@@ -17,7 +18,7 @@ export default function Page() {
 		return <Spinner position="expand" />;
 	}
 
-	const libraries = librariesResponse.data;
+	const libraries = unwrapData(librariesResponse);
 
 	return (
 		<div>

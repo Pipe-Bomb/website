@@ -20,7 +20,10 @@ export function useRankedAttributes(entityType: AttributeEntity) {
 	});
 
 	return useMemo(() => {
-		if (!allAttributesQuery.data || !sourcesQuery.data) {
+		if (
+			allAttributesQuery.data?.status != 200 ||
+			sourcesQuery.data?.status != 200
+		) {
 			return null;
 		}
 

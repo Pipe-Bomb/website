@@ -7,6 +7,7 @@ import { useGetArtist } from "@api";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { useTranslation } from "@/context/language.context";
 import Link from "next/link";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props {
 	artist: Artist;
@@ -52,7 +53,9 @@ function Inner({ artistUuid }: InnerProps) {
 		);
 	}
 
-	return <Content artist={fullArtistResponse.data} />;
+	const artist = unwrapData(fullArtistResponse);
+
+	return <Content artist={artist} />;
 }
 
 interface ContentProps {

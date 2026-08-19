@@ -8,6 +8,7 @@ import { GridArtist } from "@/components/grid-artist/grid-artist.component";
 import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
 import { Grid } from "@/components/grid/grid.component";
+import { unwrapData } from "@/lib/api.util";
 
 export function ArtistGrid() {
 	const search = useSearchArtists();
@@ -30,7 +31,7 @@ export function ArtistGrid() {
 		);
 	}
 
-	const artists = search.data.data.artists;
+	const { artists } = unwrapData(search.data);
 
 	return (
 		<div className={styles.container}>

@@ -23,7 +23,7 @@ export default function Page() {
 	});
 
 	const currentSource = useMemo(() => {
-		if (!sourceId || !ephemeralSources) {
+		if (!sourceId || ephemeralSources?.status != 200) {
 			return null;
 		}
 		const parts = sourceId.split("~");

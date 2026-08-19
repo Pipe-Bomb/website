@@ -9,6 +9,7 @@ import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { TrackList } from "@/components/track-list/track-list.component";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props {
 	library: PluginLibrary;
@@ -41,7 +42,7 @@ export function LibraryTracks({ library }: Props) {
 		return <h1>Not found</h1>;
 	}
 
-	const response = search.data.data;
+	const response = unwrapData(search.data);
 	const tracks = response.tracks;
 
 	return (

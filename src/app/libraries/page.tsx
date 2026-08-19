@@ -1,13 +1,14 @@
+import { unwrapData } from "@/lib/api.util";
 import { getAuthHeaders } from "@/lib/server.util";
 import { getAllLibraries } from "@api";
 import Link from "next/link";
 
 export default async function Page() {
-	const librariesResponse = await getAllLibraries({
+	const response = await getAllLibraries({
 		headers: (await getAuthHeaders()) ?? {},
 	});
 
-	const libraries = librariesResponse.data;
+	const libraries = unwrapData(response);
 
 	return (
 		<div>

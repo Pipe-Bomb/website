@@ -1,0 +1,25 @@
+.container {
+	background: var(--bg-surface);
+	padding: 8px;
+	border-radius: 8px;
+
+	.name {
+		display: block;
+	}
+
+	.split {
+		display: flex;
+		gap: 8px;
+		margin-top: 8px;
+
+		.inputContainer {
+			flex-shrink: 0;
+		}
+
+		.description {
+			display: flex;
+			align-items: center;
+			color: var(--fg-secondary);
+		}
+	}
+}

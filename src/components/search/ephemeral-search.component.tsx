@@ -7,6 +7,7 @@ import {
 import { useDebounce } from "@/hook/debounce.hook";
 import { Spinner } from "@/components/spinner/spinner.component";
 import { SearchResults } from "@/components/search-results/search-results.component";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props {
 	query: string;
@@ -47,7 +48,7 @@ export function EphemeralSearch({ query, sourceId, pluginId }: Props) {
 		);
 	}
 
-	const results = search.data.data;
+	const results = unwrapData(search.data);
 
 	return (
 		<SearchResults

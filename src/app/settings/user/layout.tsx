@@ -24,7 +24,7 @@ export default function Layout({ children }: Props) {
 	});
 
 	const pluginConfigSections = useMemo(() => {
-		if (!pluginConfigsResponse.data?.data) {
+		if (pluginConfigsResponse.data?.status != 200) {
 			return {};
 		}
 
@@ -42,8 +42,6 @@ export default function Layout({ children }: Props) {
 	}, [pluginConfigsResponse.data?.data]);
 
 	const { t } = useTranslation();
-
-	const pluginConfigs = pluginConfigsResponse.data?.data;
 
 	return (
 		<div className={styles.container}>

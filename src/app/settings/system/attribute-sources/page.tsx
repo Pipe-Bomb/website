@@ -40,7 +40,9 @@ export default function Page() {
 			})),
 		})
 			.then((response) => {
-				setSources(response.data);
+				if (response.status == 200) {
+					setSources(response.data);
+				}
 			})
 			.finally(() => setIsUpdatingOrder(false));
 	}

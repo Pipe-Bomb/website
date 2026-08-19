@@ -8,6 +8,7 @@ import { Paginator } from "@/components/paginator/paginator.component";
 import { useUrlPagination } from "@/hook/url-pagination.hook";
 import { GridAlbum } from "@/components/grid-album/grid-album.component";
 import { Grid } from "@/components/grid/grid.component";
+import { unwrapData } from "@/lib/api.util";
 
 export function AlbumGrid() {
 	const search = useSearchAlbums();
@@ -30,7 +31,7 @@ export function AlbumGrid() {
 		);
 	}
 
-	const albums = search.data.data.albums;
+	const { albums } = unwrapData(search.data);
 
 	return (
 		<div className={styles.container}>

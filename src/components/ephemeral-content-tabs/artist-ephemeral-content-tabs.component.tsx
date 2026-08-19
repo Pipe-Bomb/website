@@ -69,7 +69,7 @@ function ViaIdentity({ pluginId, identifierId, identity }: ViaIdentityProps) {
 		);
 	}
 
-	if (data.status == 400) {
+	if (data.status != 200) {
 		return null;
 	}
 

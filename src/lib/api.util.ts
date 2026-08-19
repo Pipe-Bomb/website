@@ -59,7 +59,7 @@ export async function safeFetch<
 	} catch (error: any) {
 		// Extract status and data if customFetch threw them inside an error object
 		const status = error?.status ?? error?.response?.status;
-		const data = error?.data ?? error?.response?.data;
+		const data = error?.body ?? error?.response?.body;
 
 		if (typeof status === "number") {
 			const fullResponse = error?.response ?? error;
@@ -74,4 +74,49 @@ export async function safeFetch<
 			error instanceof Error ? error : new Error(String(error)),
 		] as any;
 	}
+}
+
+type Status5xx =
+	| 500
+	| 501
+	| 502
+	| 503
+	| 504
+	| 505
+	| 506
+	| 507
+	| 508
+	| 510
+	| 511;
+
+export class ApiServerError extends Error {
+	constructor(
+		public status: number,
+		public data: any,
+	) {
+		super(
+			typeof data === "object" && data?.message
+				? data.message
+				: `API Server Error (${status})`,
+		);
+		this.name = "ApiServerError";
+	}
+}
+
+export function ensureNot5xx<R extends { status: number; data: any }>(
+	response: R,
+): Extract<R, { status: Exclude<R["status"], Status5xx> }> {
+	if (response.status >= 500) {
+		throw new ApiServerError(response.status, response.data);
+	}
+	return response as any;
+}
+
+export function unwrapData<R extends { status: number; data: any }>(
+	response: R,
+): Extract<R, { status: Exclude<R["status"], Status5xx> }>["data"] {
+	if (response.status >= 500) {
+		throw new ApiServerError(response.status, response.data);
+	}
+	return response.data;
 }

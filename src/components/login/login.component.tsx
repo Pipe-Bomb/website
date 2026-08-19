@@ -8,6 +8,7 @@ import { Button } from "@/components/button/button.component";
 import { createUser, loginUser } from "@api";
 import { useRouter } from "next/navigation";
 import { useNotificationStore } from "@/store/notification.store";
+import { safeFetch } from "@/lib/api.util";
 
 export function LoginComponent() {
 	const [username, setUsername] = useState("");
@@ -18,38 +19,47 @@ export function LoginComponent() {
 	const router = useRouter();
 	const { createNotification } = useNotificationStore();
 
-	const login = () => {
-		if (!username || !password) {
+	const login = async () => {
+		if (!username || !password || isLoggingIn) {
 			return;
 		}
 
 		setIsLoggingIn(true);
 
 		if (mode == "login") {
-			loginUser({ username, password })
-				.then(() => router.refresh())
-				.catch((e) => {
-					console.error(e);
-					if (e.status == 401) {
-						createNotification("Incorrect username or password");
-					} else if (typeof e.body?.message == "string") {
-						createNotification(e.body.message);
-					} else {
-						createNotification("Something went wrong when logging in");
-					}
-				})
-				.finally(() => setIsLoggingIn(false));
-		} else {
-			createUser({
+			const [status, data] = await safeFetch(loginUser, {
 				username,
 				password,
-			})
-				.then(() => router.refresh())
-				.catch((e) => {
-					createNotification("Failed to create account");
-					console.error(e);
-				})
-				.finally(() => setIsLoggingIn(false));
+			});
+
+			if (status == 200) {
+				router.refresh();
+				return;
+			}
+
+			if (status == 401) {
+				createNotification(data.message);
+			} else {
+				createNotification("Something went wrong when logging in");
+			}
+			setIsLoggingIn(false);
+		} else {
+			const [status, data] = await safeFetch(createUser, {
+				username,
+				password,
+			});
+			setIsLoggingIn(false);
+
+			if (status == 201) {
+				router.refresh();
+				return;
+			}
+
+			if (status == 403 || status == 409) {
+				createNotification(data.message);
+			} else {
+				createNotification("Something went wrong when creating account");
+			}
 		}
 	};
 

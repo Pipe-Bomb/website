@@ -4,6 +4,7 @@ import styles from "./page.module.scss";
 import { Metadata } from "next";
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { getAuthHeaders } from "@/lib/server.util";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props {
 	params: Promise<{
@@ -17,11 +18,11 @@ export async function generateMetadata({
 }: Props): Promise<Metadata | null> {
 	const { pluginId, libraryId } = await params;
 
-	const { data } = await getLibrary(pluginId, libraryId, {
+	const { data, status } = await getLibrary(pluginId, libraryId, {
 		headers: (await getAuthHeaders()) ?? {},
 	});
 
-	if (!data) {
+	if (status != 200) {
 		return null;
 	}
 
@@ -39,7 +40,7 @@ export default async function Page({ params }: Props) {
 	if (libraryResponse.status == 404) {
 		return <h1>Not found</h1>;
 	}
-	const library = libraryResponse.data;
+	const library = unwrapData(libraryResponse);
 
 	return (
 		<RootPadding vertical>

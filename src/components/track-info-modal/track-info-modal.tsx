@@ -8,6 +8,7 @@ import { IconCopyFilled } from "@tabler/icons-react";
 import { copyToClipboard } from "@/lib/clipboard/util";
 import { AttributeUnion } from "@/lib/attribute.util";
 import Link from "next/link";
+import { unwrapData } from "@/lib/api.util";
 
 interface Props extends InnerProps {
 	open: boolean;
@@ -57,10 +58,11 @@ function Inner({ track }: InnerProps) {
 		return <h1>Track not found</h1>;
 	}
 
-	const fullTrack = fullTrackResponse.data;
+	const fullTrack = unwrapData(fullTrackResponse);
+
 	const attributes: Record<string, AttributeUnion> | null =
 		fullTrack.attributes;
-	const identities = identitiesResponse.data;
+	const identities = unwrapData(identitiesResponse);
 
 	if (!attributes) {
 		return (

@@ -77,7 +77,7 @@ export function Navbar() {
 
 						<div>
 							<span className={styles.sectionName}>Libraries</span>
-							{libraries.data ? (
+							{libraries.data?.status == 200 ? (
 								<div className={styles.linkList}>
 									{libraries.data.data.map((library) => (
 										<NavbarLink

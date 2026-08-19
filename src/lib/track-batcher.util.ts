@@ -48,9 +48,11 @@ export const fetchTrackBatched = (
 
 					const tracksMap: Record<string, Track | EphemeralTrack> = {};
 					responses.flat().forEach((response) => {
-						for (const track of response.data) {
-							const key = serializeTrackKey(track);
-							tracksMap[key] = track;
+						if (response.status == 200) {
+							for (const track of response.data) {
+								const key = serializeTrackKey(track);
+								tracksMap[key] = track;
+							}
 						}
 					});
 
