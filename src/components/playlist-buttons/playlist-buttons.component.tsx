@@ -18,21 +18,24 @@ import { shuffle } from "@/lib/util";
 import { useButtonMenu } from "@/hook/button-menu.hook";
 import { usePathname, useRouter } from "next/navigation";
 import { RenamePlaylistModal } from "@/modal/rename-playlist/rename-playlist.modal";
+import { PlaylistCollaboratorsModal } from "@/modal/playlist-collaborators/playlist-collaborators.modal";
 import { openFilePicker } from "@/lib/file-upload.util";
 import path from "path";
 import { useNotificationStore } from "@/store/notification.store";
 
 interface Props {
 	playlist: Playlist;
+	isOwner?: boolean;
 }
 
-export function PlaylistButtons({ playlist }: Props) {
+export function PlaylistButtons({ playlist, isOwner }: Props) {
 	const { playEntireList, playListNext, addToEnd } = useQueueActions();
 	const isMounted = useIsMounted();
 	const [isLoadingTracklist, setIsLoadingTracklist] = useState(false);
 	const router = useRouter();
 	const pathname = usePathname();
 	const [isRenameOpen, setIsRenameOpen] = useState(false);
+	const [isCollaboratorsOpen, setIsCollaboratorsOpen] = useState(false);
 	const { createNotification, updateNotification, resetNotificationTimeout } =
 		useNotificationStore();
 
@@ -67,6 +70,15 @@ export function PlaylistButtons({ playlist }: Props) {
 			languageKey: "contextmenu.playlist.rename",
 			onClick: () => setIsRenameOpen(true),
 		},
+		...(isOwner
+			? [
+					{
+						key: "manage-collaborators",
+						languageKey: "contextmenu.playlist.manage-collaborators",
+						onClick: () => setIsCollaboratorsOpen(true),
+					},
+				]
+			: []),
 		{
 			key: "change-thumb",
 			languageKey: "contextmenu.playlist.change-thumbnail",
@@ -220,6 +232,11 @@ export function PlaylistButtons({ playlist }: Props) {
 			<RenamePlaylistModal
 				open={isRenameOpen}
 				onClose={() => setIsRenameOpen(false)}
+				playlist={playlist}
+			/>
+			<PlaylistCollaboratorsModal
+				open={isCollaboratorsOpen}
+				onClose={() => setIsCollaboratorsOpen(false)}
 				playlist={playlist}
 			/>
 		</>

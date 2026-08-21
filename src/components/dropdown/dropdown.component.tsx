@@ -25,6 +25,7 @@ interface Props {
 	onToggle?: (shouldOpen: boolean) => void;
 	onChange?: (entry: DropdownEntry) => void;
 	className?: string;
+	floating?: boolean;
 }
 
 export function Dropdown({
@@ -34,6 +35,7 @@ export function Dropdown({
 	onToggle,
 	onChange,
 	className,
+	floating,
 }: Props) {
 	const { t } = useTranslation();
 
@@ -52,20 +54,24 @@ export function Dropdown({
 						: "Select"}
 					<IconChevronDownFilled className={styles.arrow} />
 				</button>
-				<div className={styles.optionsContainer}>
-					<div className={styles.optionsSize}>
-						<div className={styles.options}>
-							{entries.map((entry) => (
-								<button
-									key={entry.key}
-									onClick={() => onChange?.(entry)}
-									className={styles.option}
-								>
-									<span>
-										{"t" in entry ? t(entry.t, entry.content) : entry.content}
-									</span>
-								</button>
-							))}
+				<div
+					className={cc(styles.optionsPosition, floating && styles.floating)}
+				>
+					<div className={styles.optionsContainer}>
+						<div className={styles.optionsSize}>
+							<div className={styles.options}>
+								{entries.map((entry) => (
+									<button
+										key={entry.key}
+										onClick={() => onChange?.(entry)}
+										className={styles.option}
+									>
+										<span>
+											{"t" in entry ? t(entry.t, entry.content) : entry.content}
+										</span>
+									</button>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>

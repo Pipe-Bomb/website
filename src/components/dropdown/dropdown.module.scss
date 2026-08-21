@@ -1,18 +1,20 @@
 .container {
 	display: inline-block;
 	user-select: none;
+	// height: 30px;
 
 	.flex {
-		display: inline-block;
+		// display: block;
+		display: inline-flex;
+		flex-direction: column;
 		position: relative;
-		border: 1px solid var(--border-strong);
 		border-radius: 8px;
-		overflow: hidden;
 		min-width: 100%;
 
 		.top {
 			min-width: 100%;
 			background: var(--bg-elevated);
+			border-radius: 8px;
 			color: var(--fg-primary);
 			font-size: 1rem;
 			padding: 3px 8px;
@@ -23,36 +25,53 @@
 			align-items: center;
 			gap: 4px;
 			justify-content: space-between;
+			border: 1px solid var(--border-strong);
 
 			.arrow {
 				width: 20px;
 			}
 		}
 
-		.optionsContainer {
-			display: grid;
-			grid-template-rows: 0fr;
-			transition: grid-template-rows 0.2s;
+		.optionsPosition {
+			position: relative;
 
-			.optionsSize {
+			&.floating {
+				height: 0;
+			}
+
+			.optionsContainer {
+				display: grid;
+				grid-template-rows: 0fr;
+				transition: grid-template-rows 0.2s;
+				padding-top: 8px;
+				margin-top: -8px;
+				background: var(--bg-elevated);
+				border: 1px solid var(--border-strong);
+				border-top-width: 0;
+				border-radius: 0 0 8px 8px;
 				overflow: hidden;
 
-				.options {
-					display: flex;
-					flex-direction: column;
+				.optionsSize {
+					overflow: hidden;
 
-					.option {
-						cursor: pointer;
-						border: none;
-						color: var(--fg-secondary);
-						padding: 2px 8px;
-						font-weight: 500;
-						background: var(--bg-elevated);
-						text-align: left;
+					.options {
+						display: flex;
+						flex-direction: column;
 
-						&:hover {
-							background: var(--list-hover);
-							color: var(--fg-primary);
+						.option {
+							cursor: pointer;
+							border: none;
+							color: var(--fg-secondary);
+							padding: 2px 8px;
+							font-weight: 500;
+							// background: var(--bg-elevated);
+							background: transparent;
+							text-align: left;
+
+							&:hover {
+								background: var(--list-hover);
+								color: var(--fg-primary);
+							}
 						}
 					}
 				}
@@ -65,7 +84,7 @@
 			rotate: 180deg;
 		}
 
-		.optionsContainer {
+		.optionsPosition .optionsContainer {
 			grid-template-rows: 1fr;
 		}
 	}

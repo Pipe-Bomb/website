@@ -1,0 +1,37 @@
+.container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: var(--bg-elevated);
+	padding: 4px 8px;
+	border-radius: 8px;
+	border: 1px solid var(--border-strong);
+	color: var(--color-primary);
+
+	.name {
+		flex: 1;
+		font-weight: 500;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
+		text-align: left;
+	}
+
+	.controls {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+
+		.checkboxContainer {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	.label {
+		font-size: 0.8rem;
+		color: var(--color-secondary);
+		white-space: nowrap;
+	}
+}

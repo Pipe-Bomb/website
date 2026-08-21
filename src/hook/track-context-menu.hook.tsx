@@ -90,7 +90,7 @@ export function useTrackContextMenu(
 						})
 						.catch((e) => {
 							console.error(e);
-							createNotification("Failed to from track from playlist");
+							createNotification("Failed to remove from track from playlist");
 						});
 				},
 			});

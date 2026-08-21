@@ -1,7 +1,7 @@
 import { RootPadding } from "@/components/root-padding/root-padding.component";
 import { getAttribute } from "@/lib/attribute.util";
 import { getAuthHeaders } from "@/lib/server.util";
-import { getPlaylist, getPlaylistResponseError } from "@api";
+import { getPlaylist, getPlaylistResponseError, getSelf } from "@api";
 import styles from "./page.module.scss";
 import { ResourceImage } from "@/components/resource-image/resource-image.component";
 import Link from "next/link";
@@ -88,6 +88,16 @@ async function Contents({ params }: Props) {
 
 		const playlist = playlistResponse.data;
 
+		let isOwner = false;
+		try {
+			const selfResponse = await getSelf({ headers });
+			if (selfResponse.status === 200) {
+				isOwner =
+					selfResponse.data.uuid ===
+					(playlist.ownerUuid as unknown as string | null);
+			}
+		} catch {}
+
 		const title = getAttribute(playlist.attributes, "title", "string", true);
 		const thumb = getAttribute(playlist.attributes, "thumb", "buffer", false);
 
@@ -115,7 +125,7 @@ async function Contents({ params }: Props) {
 							</span>
 						</div>
 						<div className={styles.topButtons}>
-							<PlaylistButtons playlist={playlist} />
+							<PlaylistButtons playlist={playlist} isOwner={isOwner} />
 						</div>
 						<PlaylistUpdateProgress
 							playlist={playlist}
