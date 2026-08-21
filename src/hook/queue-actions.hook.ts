@@ -12,8 +12,11 @@ export function useQueueActions() {
 	const processTrackInput = (item: QueueActionInput): string => {
 		const key = serializeTrackKey(item);
 
-		if ("attributes" in item && item.attributes) {
+		if ("title" in item) {
 			queryClient.setQueryData(["track", key], item);
+			if (!item.attributes) {
+				queryClient.invalidateQueries({ queryKey: ["track", key] });
+			}
 		}
 
 		return key;

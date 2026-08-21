@@ -12,15 +12,18 @@ export const deserializeTrackKey = (key: string): TrackIdDto => {
 const MAX_BATCH_SIZE = 50;
 
 let queue: string[] = [];
-let resolvers: ((value: any) => void)[] = [];
+let resolvers: Array<{
+	resolve: (value: Track | EphemeralTrack | null) => void;
+	reject: (reason?: unknown) => void;
+}> = [];
 let batchTimeout: NodeJS.Timeout | null = null;
 
 export const fetchTrackBatched = (
 	trackKey: string,
-): Promise<Track | EphemeralTrack> => {
-	return new Promise((resolve) => {
+): Promise<Track | EphemeralTrack | null> => {
+	return new Promise((resolve, reject) => {
 		queue.push(trackKey);
-		resolvers.push(resolve);
+		resolvers.push({ resolve, reject });
 
 		if (!batchTimeout) {
 			batchTimeout = setTimeout(async () => {
@@ -57,11 +60,11 @@ export const fetchTrackBatched = (
 					});
 
 					currentQueue.forEach((trackKey, index) => {
-						currentResolvers[index](tracksMap[trackKey] ?? null);
+						currentResolvers[index].resolve(tracksMap[trackKey] ?? null);
 					});
 				} catch (error) {
 					console.error("Failed to execute chunked track batch lookups", error);
-					currentResolvers.forEach((res) => res(null));
+					currentResolvers.forEach(({ reject }) => reject(error));
 				}
 			}, 0);
 		}
