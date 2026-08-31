@@ -24,6 +24,19 @@ export const metadata: Metadata = {
 	title: "Pipe Bomb - Self-hosted music streaming",
 	description:
 		"Pipe Bomb is a self-hosted music streaming platform with a plugin system, flexible attribute schema, and an app-quality client. Run your music library on hardware you own.",
+	openGraph: {
+		title: "Pipe Bomb - Self-hosted music streaming",
+		description:
+			"A self-hosted music streaming platform with a plugin system, flexible attribute schema, and an app-quality client.",
+		images: [
+			{
+				width: 1748,
+				height: 1037,
+				url: "https://pipebomb.net/screenshot.jpeg",
+				alt: "Screenshot of Pipe Bomb frontend",
+			},
+		],
+	},
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
