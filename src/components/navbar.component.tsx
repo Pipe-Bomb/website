@@ -12,6 +12,7 @@ export function Navbar() {
 					width={28}
 					height={28}
 					className={styles.logoMark}
+					loading="eager"
 				/>
 				<span className={styles.wordmark}>PIPE BOMB</span>
 			</a>

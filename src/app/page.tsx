@@ -136,7 +136,13 @@ export default function Page() {
 					</div>
 				</div>
 				<div className={styles.heroArt} aria-hidden>
-					<Image src="/logo.png" alt="" width={540} height={540} />
+					<Image
+						src="/logo.png"
+						alt=""
+						width={540}
+						height={540}
+						loading="eager"
+					/>
 				</div>
 			</section>
 
@@ -176,14 +182,13 @@ export default function Page() {
 							<span className={styles.screenshotDot} />
 						</div>
 						<div className={styles.screenshotBody}>
-							<IconPhoto
-								className={styles.screenshotPlaceholderIcon}
-								size={28}
-								stroke={1.5}
+							<Image
+								width={1748}
+								height={1037}
+								src="/screenshot.jpeg"
+								alt="Screenshot of Pipe Bomb frontend"
+								className={styles.screenshot}
 							/>
-							<span className={styles.screenshotPlaceholderText}>
-								Screenshot coming soon
-							</span>
 						</div>
 					</div>
 				</div>
