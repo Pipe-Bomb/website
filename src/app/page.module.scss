@@ -101,10 +101,11 @@
 	.heroCtas {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: 8px 4px;
 		margin-top: 44px;
 		animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 		animation-delay: 0.35s;
+		flex-wrap: wrap;
 	}
 
 	.heroArt {
@@ -665,6 +666,7 @@
 	.ctaActions {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: 8px 4px;
+		flex-wrap: wrap;
 	}
 }

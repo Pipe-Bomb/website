@@ -53,6 +53,10 @@
 		font-weight: 700;
 		letter-spacing: 0.07em;
 		color: var(--fg-primary);
+
+		@media (max-width: 440px) {
+			display: none;
+		}
 	}
 }
 

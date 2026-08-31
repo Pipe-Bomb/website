@@ -5,6 +5,7 @@
 	flex-direction: column;
 	isolation: isolate;
 	background: var(--bg-base);
+	overflow-x: hidden;
 }
 
 .footer {
@@ -21,6 +22,8 @@
 
 		@media (max-width: 640px) {
 			width: calc(100% - 48px);
+			flex-direction: column-reverse;
+			gap: 16px;
 		}
 	}
 
