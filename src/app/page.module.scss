@@ -489,17 +489,6 @@
 	}
 
 	.screenshotBody {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-		min-height: 420px;
-
-		@media (max-width: 640px) {
-			min-height: 240px;
-		}
-
 		.screenshot {
 			width: 100%;
 			height: auto;
