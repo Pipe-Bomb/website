@@ -78,6 +78,18 @@
 		}
 	}
 
+	.wikiLink {
+		display: inline-flex;
+		align-items: center;
+		font-size: 0.875rem;
+		color: var(--fg-tertiary);
+		transition: color 0.15s ease;
+
+		&:hover {
+			color: var(--fg-primary);
+		}
+	}
+
 	.githubLink {
 		display: inline-flex;
 		align-items: center;
