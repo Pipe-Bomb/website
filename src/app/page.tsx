@@ -117,22 +117,21 @@ export default function Page() {
 						Extendable with plugins.
 					</p>
 					<div className={styles.heroCtas}>
-						<a
-							href="https://github.com/Pipe-Bomb/docker"
+						<Link
+							href="/wiki/installation"
 							className={styles.ctaPrimary}
-							target="_blank"
 							rel="noopener noreferrer"
 						>
 							Get started <IconArrowRight size={16} stroke={2.5} />
-						</a>
-						<a
+						</Link>
+						<Link
 							href="https://demo.pipebomb.net"
 							className={styles.ctaGhost}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							Try the demo <IconArrowUpRight size={16} stroke={2} />
-						</a>
+						</Link>
 					</div>
 				</div>
 				<div className={styles.heroArt} aria-hidden>
@@ -305,14 +304,13 @@ export default function Page() {
 						<code className={styles.codeText}>docker compose up -d</code>
 					</div>
 					<p className={styles.gsNote}>
-						<a
-							href="https://github.com/Pipe-Bomb/docker"
+						<Link
+							href="/wiki/installation"
 							className={styles.gsLink}
-							target="_blank"
 							rel="noopener noreferrer"
 						>
 							Full setup guide <IconArrowUpRight size={14} stroke={2} />
-						</a>
+						</Link>
 					</p>
 				</div>
 			</section>
@@ -322,22 +320,22 @@ export default function Page() {
 					<p className={styles.ctaNote}>Open source with zero lock in</p>
 					<h2 className={styles.ctaHeading}>Run it yourself.</h2>
 					<div className={styles.ctaActions}>
-						<a
+						<Link
 							href="https://github.com/Pipe-Bomb/docker"
 							className={styles.ctaPrimary}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							Clone on GitHub <IconArrowRight size={16} stroke={2.5} />
-						</a>
-						<a
+						</Link>
+						<Link
 							href="https://github.com/Pipe-Bomb"
 							className={styles.ctaGhost}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							Browse the org <IconArrowUpRight size={16} stroke={2} />
-						</a>
+						</Link>
 					</div>
 				</div>
 			</section>
