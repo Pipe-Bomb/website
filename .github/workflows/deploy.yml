@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+  repository_dispatch:
+    types: [wiki-updated]
 
 jobs:
   deploy:
@@ -21,6 +23,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Clone wiki content
+        run: git clone --depth 1 https://github.com/Pipe-Bomb/server.wiki.git wiki-content
 
       - name: Build site
         run: npm run build

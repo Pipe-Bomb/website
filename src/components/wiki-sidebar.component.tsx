@@ -14,7 +14,6 @@ function slugToHref(slug: string[]): string {
 	return "/wiki/" + slug.join("/");
 }
 
-
 function WikiTreeNode({
 	node,
 	depth,
