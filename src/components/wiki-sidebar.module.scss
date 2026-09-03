@@ -1,0 +1,66 @@
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 16px 8px;
+	overflow-y: auto;
+	height: 100%;
+}
+
+.pageLink {
+	display: block;
+	padding: 6px 10px;
+	border-radius: 6px;
+	font-size: 1rem;
+	color: var(--fg-primary);
+	border-left: 3px solid transparent;
+	transition:
+		color 0.15s ease,
+		background 0.15s ease;
+
+	&:hover {
+		background: var(--bg-elevated);
+		color: var(--fg-primary);
+	}
+
+	&.active {
+		color: var(--fg-primary);
+		background: var(--bg-elevated);
+	}
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.sectionToggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 6px 10px;
+	border-radius: 6px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: background 0.15s ease;
+
+	&:hover {
+		background: var(--bg-elevated);
+	}
+
+	.sectionLabel {
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--fg-tertiary);
+	}
+
+	.chevron {
+		color: var(--fg-secondary);
+		flex-shrink: 0;
+	}
+}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { IconArrowUpRight, IconBrandGithub } from "@tabler/icons-react";
 import styles from "./navbar.module.scss";
 
@@ -25,6 +26,9 @@ export function Navbar() {
 				>
 					Try demo <IconArrowUpRight size={14} stroke={2} />
 				</a>
+				<Link href="/wiki" className={styles.wikiLink}>
+					Wiki
+				</Link>
 				<a
 					href="https://github.com/Pipe-Bomb/docker"
 					className={styles.githubLink}
